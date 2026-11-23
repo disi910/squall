@@ -71,7 +71,12 @@ export function Matrix() {
               key={m.id}
               type="button"
               aria-pressed={m.id === metric.id}
-              onClick={() => setParams((p) => (p.set('metric', m.id), p), { replace: true })}
+              onClick={() =>
+                setParams((p) => (p.set('metric', m.id), p), {
+                  replace: true,
+                  preventScrollReset: true,
+                })
+              }
               className={`cursor-pointer border-line-strong px-3.5 py-1.5 text-sm not-first:border-l ${
                 m.id === metric.id
                   ? 'bg-surface-2 text-fg shadow-[inset_0_-2px_0_var(--fg)]'

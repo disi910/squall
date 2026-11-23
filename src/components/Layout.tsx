@@ -83,6 +83,11 @@ function SiteFooter() {
   )
 }
 
+/**
+ * main has a full-viewport minimum height so the footer starts below the fold:
+ * otherwise it sits on screen while a page loads and jumps down when the
+ * content arrives (a layout shift Lighthouse counts against us).
+ */
 export function Layout() {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -96,7 +101,7 @@ export function Layout() {
         <PreviewBanner />
         <SiteHeader />
       </header>
-      <main id="main" tabIndex={-1} className={`${container} flex-1 py-8 sm:py-10`}>
+      <main id="main" tabIndex={-1} className={`${container} min-h-dvh flex-1 py-8 sm:py-10`}>
         <Suspense fallback={<PageSkeleton />}>
           <Outlet />
         </Suspense>

@@ -51,14 +51,16 @@
     --fg: #14202b;
     --muted: #4c5c6b;
     --faint: #5f6d7a;
-    --fault: #9a5900;
+    /* Light-theme amber, dark enough for small chip text on fault-soft over any surface (about 5.2:1). */
+    --fault: #8a4f00;
     --fault-soft: rgb(196 120 0 / 0.12);
     /* Darker than the step color so small pill text on ok-soft passes WCAG AA (about 5.3:1). */
     --ok: #157046;
     --ok-soft: rgb(27 133 83 / 0.1);
     --fail: #566a7e;
     --fail-soft: rgb(86 106 126 / 0.12);
-    --unsafe: #c4303a;
+    /* Dark enough for small pill text on unsafe-soft (about 5.6:1). */
+    --unsafe: #a8222e;
     --unsafe-soft: rgb(196 48 58 / 0.1);
     --link: #0b6694;
     --step-observation: #6b7b8c;

@@ -75,7 +75,7 @@ export function Leaderboard() {
         for (const [k, v] of Object.entries(next)) p.set(k, v)
         return p
       },
-      { replace: true },
+      { replace: true, preventScrollReset: true },
     )
 
   const onSort = (key: SortKey) => {
