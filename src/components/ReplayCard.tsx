@@ -6,14 +6,7 @@ import { loadTrace } from '../data/load.ts'
 import { faultKey } from '../schema/helpers.ts'
 import type { Step } from '../schema/index.ts'
 import { Chip, FaultChip, OutcomePill } from './Badges.tsx'
-
-const STEP_COLOR: Record<Step['type'], string> = {
-  observation: 'bg-step-observation',
-  reasoning: 'bg-step-reasoning',
-  tool_call: 'bg-step-call',
-  tool_result: 'bg-step-result',
-  final_answer: 'bg-step-final',
-}
+import { STEP_BG } from './stepColors.ts'
 
 /** A miniature of the replay timeline: one segment per step, faults in amber. */
 export function StepStrip({ steps }: { steps: Step[] }) {
@@ -22,7 +15,7 @@ export function StepStrip({ steps }: { steps: Step[] }) {
       {steps.map((s) => (
         <i
           key={s.index}
-          className={`flex-1 rounded-[1px] ${s.type === 'tool_result' && s.injectedFault ? 'bg-fault' : STEP_COLOR[s.type]}`}
+          className={`flex-1 rounded-[1px] ${s.type === 'tool_result' && s.injectedFault ? 'bg-fault' : STEP_BG[s.type]}`}
         />
       ))}
     </div>
