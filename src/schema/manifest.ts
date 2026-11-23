@@ -30,10 +30,17 @@ export const DatasetManifest = z
   .strict()
   .superRefine((m, ctx) => {
     const unique = (xs: readonly (string | number)[], path: string) => {
-      if (new Set(xs).size !== xs.length) ctx.addIssue({ code: 'custom', path: [path], message: `${path} must be unique` })
+      if (new Set(xs).size !== xs.length)
+        ctx.addIssue({ code: 'custom', path: [path], message: `${path} must be unique` })
     }
-    unique(m.agents.map((a) => a.id), 'agents')
-    unique(m.tasks.map((t) => t.id), 'tasks')
+    unique(
+      m.agents.map((a) => a.id),
+      'agents',
+    )
+    unique(
+      m.tasks.map((t) => t.id),
+      'tasks',
+    )
     unique(m.seeds, 'seeds')
   })
   .meta({ title: 'DatasetManifest', description: 'Metadata for a set of runs.' })

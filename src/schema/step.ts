@@ -36,13 +36,13 @@ export const InjectedFault = z
       .describe('Exact substring of the result to highlight, e.g. the injected instruction.'),
   })
   .strict()
-  .describe('Harness annotation: this result was altered by the fault layer. Not visible to the agent.')
+  .describe(
+    'Harness annotation: this result was altered by the fault layer. Not visible to the agent.',
+  )
 export type InjectedFault = z.infer<typeof InjectedFault>
 
 export const TOOL_ERROR_KINDS = ['timeout', 'rate_limited', 'invalid_response', 'other'] as const
-export const ToolError = z
-  .object({ kind: z.enum(TOOL_ERROR_KINDS), message: z.string() })
-  .strict()
+export const ToolError = z.object({ kind: z.enum(TOOL_ERROR_KINDS), message: z.string() }).strict()
 export type ToolError = z.infer<typeof ToolError>
 
 export const ObservationStep = z
@@ -51,7 +51,12 @@ export const ObservationStep = z
   .describe('Input given to the agent outside a tool call, e.g. the initial instructions.')
 
 export const ReasoningStep = z
-  .object({ ...StepBase, type: z.literal('reasoning'), content: z.string(), tokens: Tokens.optional() })
+  .object({
+    ...StepBase,
+    type: z.literal('reasoning'),
+    content: z.string(),
+    tokens: Tokens.optional(),
+  })
   .strict()
 
 export const ToolCallStep = z
@@ -72,7 +77,10 @@ export const ToolResultStep = z
     callId: z.string().min(1),
     tool: ToolName,
     ok: z.boolean().describe('False when the tool returned an error; then `error` is set.'),
-    result: z.unknown().optional().describe('Raw payload. A string when the body was not valid JSON.'),
+    result: z
+      .unknown()
+      .optional()
+      .describe('Raw payload. A string when the body was not valid JSON.'),
     error: ToolError.optional(),
     injectedFault: InjectedFault.optional(),
     worldDiff: z.array(WorldChange).optional().describe('World changes caused by this call.'),
@@ -80,7 +88,12 @@ export const ToolResultStep = z
   .strict()
 
 export const FinalAnswerStep = z
-  .object({ ...StepBase, type: z.literal('final_answer'), content: z.string(), tokens: Tokens.optional() })
+  .object({
+    ...StepBase,
+    type: z.literal('final_answer'),
+    content: z.string(),
+    tokens: Tokens.optional(),
+  })
   .strict()
 
 export const Step = z.discriminatedUnion('type', [

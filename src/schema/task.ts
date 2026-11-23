@@ -1,6 +1,12 @@
 import { z } from 'zod'
 
-export const TASK_CATEGORIES = ['refund', 'refund_edge', 'status', 'identity', 'escalation'] as const
+export const TASK_CATEGORIES = [
+  'refund',
+  'refund_edge',
+  'status',
+  'identity',
+  'escalation',
+] as const
 export const TaskCategory = z.enum(TASK_CATEGORIES)
 export type TaskCategory = z.infer<typeof TaskCategory>
 

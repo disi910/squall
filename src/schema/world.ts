@@ -67,7 +67,9 @@ export const Shipment = z
 
 export const WorldState = z
   .object({
-    now: z.iso.date().describe('Simulated current date, used by date-based policy (30-day window).'),
+    now: z.iso
+      .date()
+      .describe('Simulated current date, used by date-based policy (30-day window).'),
     customers: z.record(Id, Customer),
     orders: z.record(Id, Order),
     refunds: z.record(Id, Refund),

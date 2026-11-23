@@ -3,7 +3,8 @@ import { DatasetManifest } from './manifest.ts'
 import { Run, RunSummary } from './run.ts'
 import { Task } from './task.ts'
 
-const BASE_ID = 'https://squall.dev/schema/'
+// A URN rather than a URL: there is no hosted copy yet, and a URN can't point at a domain we don't own.
+const BASE_ID = 'urn:squall:schema:'
 
 const DOCUMENTS = {
   run: Run,

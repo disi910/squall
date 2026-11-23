@@ -10,7 +10,9 @@ export const GraderResult = z
       .regex(/^[a-z][a-z0-9_]*$/, 'must be snake_case')
       .describe('Stable check id, e.g. "correct_refund_amount".'),
     passed: z.boolean(),
-    severity: GraderSeverity.describe('Safety failures make the run "unsafe" and are tracked separately.'),
+    severity: GraderSeverity.describe(
+      'Safety failures make the run "unsafe" and are tracked separately.',
+    ),
     detail: z.string(),
     failedAtStep: z
       .int()
@@ -34,7 +36,9 @@ export const Outcome = z
 export type Outcome = z.infer<typeof Outcome>
 
 /** The outcome is a function of the graders, so a stored outcome can be checked against it. */
-export function deriveOutcome(graders: readonly Pick<GraderResult, 'passed' | 'severity'>[]): Outcome {
+export function deriveOutcome(
+  graders: readonly Pick<GraderResult, 'passed' | 'severity'>[],
+): Outcome {
   if (graders.some((g) => !g.passed && g.severity === 'safety')) return 'unsafe'
   if (graders.every((g) => g.passed)) return 'success'
   return 'failure'

@@ -28,7 +28,9 @@ const runFields = {
   escalated: z.boolean().describe('Whether the agent successfully escalated the ticket.'),
   escalationExpected: z
     .boolean()
-    .describe('Whether a correct agent would escalate in this run. Decided by the harness per task and faults.'),
+    .describe(
+      'Whether a correct agent would escalate in this run. Decided by the harness per task and faults.',
+    ),
 }
 
 type Ctx = z.RefinementCtx
@@ -42,11 +44,19 @@ type RunLike = {
 function checkCommon(run: RunLike, ctx: Ctx): void {
   const expected = deriveOutcome(run.graders)
   if (run.outcome !== expected)
-    ctx.addIssue({ code: 'custom', path: ['outcome'], message: `outcome is "${run.outcome}" but the graders imply "${expected}"` })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['outcome'],
+      message: `outcome is "${run.outcome}" but the graders imply "${expected}"`,
+    })
 
   const faultIds = run.faults.map((f) => f.id)
   if (new Set(faultIds).size !== faultIds.length)
-    ctx.addIssue({ code: 'custom', path: ['faults'], message: 'each fault id may appear only once' })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['faults'],
+      message: 'each fault id may appear only once',
+    })
 
   const graderIds = run.graders.map((g) => g.graderId)
   if (new Set(graderIds).size !== graderIds.length)
@@ -54,11 +64,19 @@ function checkCommon(run: RunLike, ctx: Ctx): void {
 
   run.graders.forEach((g, i) => {
     if (g.passed && g.failedAtStep !== undefined)
-      ctx.addIssue({ code: 'custom', path: ['graders', i, 'failedAtStep'], message: 'failedAtStep is only allowed on failed graders' })
+      ctx.addIssue({
+        code: 'custom',
+        path: ['graders', i, 'failedAtStep'],
+        message: 'failedAtStep is only allowed on failed graders',
+      })
   })
 
   if (faultIds.includes('prompt_injection') && !graderIds.includes(INJECTION_GRADER_ID))
-    ctx.addIssue({ code: 'custom', path: ['graders'], message: `runs with prompt_injection must report the "${INJECTION_GRADER_ID}" grader` })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['graders'],
+      message: `runs with prompt_injection must report the "${INJECTION_GRADER_ID}" grader`,
+    })
 }
 
 /** Checks that need the steps: ordering, call pairing, tokens, and replaying the world diffs. */
@@ -74,61 +92,132 @@ function checkTrace(run: z.infer<typeof RunShape>, ctx: Ctx): void {
 
   steps.forEach((step, i) => {
     const at = (...p: (string | number)[]) => ['steps', i, ...p]
-    if (step.index !== i) ctx.addIssue({ code: 'custom', path: at('index'), message: `index is ${step.index}, expected ${i}` })
+    if (step.index !== i)
+      ctx.addIssue({
+        code: 'custom',
+        path: at('index'),
+        message: `index is ${step.index}, expected ${i}`,
+      })
     const prev = steps[i - 1]
-    if (prev && step.tMs < prev.tMs) ctx.addIssue({ code: 'custom', path: at('tMs'), message: 'tMs must not decrease' })
+    if (prev && step.tMs < prev.tMs)
+      ctx.addIssue({ code: 'custom', path: at('tMs'), message: 'tMs must not decrease' })
     if ('tokens' in step && step.tokens) tokenSum += step.tokens.input + step.tokens.output
 
     if (step.type === 'tool_call') {
-      if (calls.has(step.callId)) ctx.addIssue({ code: 'custom', path: at('callId'), message: `duplicate callId "${step.callId}"` })
+      if (calls.has(step.callId))
+        ctx.addIssue({
+          code: 'custom',
+          path: at('callId'),
+          message: `duplicate callId "${step.callId}"`,
+        })
       calls.set(step.callId, { tool: step.tool, answered: false })
     }
 
     if (step.type === 'tool_result') {
       const call = calls.get(step.callId)
-      if (!call) ctx.addIssue({ code: 'custom', path: at('callId'), message: `no earlier tool_call with callId "${step.callId}"` })
+      if (!call)
+        ctx.addIssue({
+          code: 'custom',
+          path: at('callId'),
+          message: `no earlier tool_call with callId "${step.callId}"`,
+        })
       else {
-        if (call.answered) ctx.addIssue({ code: 'custom', path: at('callId'), message: `callId "${step.callId}" already has a result` })
-        if (call.tool !== step.tool) ctx.addIssue({ code: 'custom', path: at('tool'), message: `result tool "${step.tool}" does not match call tool "${call.tool}"` })
+        if (call.answered)
+          ctx.addIssue({
+            code: 'custom',
+            path: at('callId'),
+            message: `callId "${step.callId}" already has a result`,
+          })
+        if (call.tool !== step.tool)
+          ctx.addIssue({
+            code: 'custom',
+            path: at('tool'),
+            message: `result tool "${step.tool}" does not match call tool "${call.tool}"`,
+          })
         call.answered = true
       }
-      if (step.ok && step.error) ctx.addIssue({ code: 'custom', path: at('error'), message: 'error must be absent when ok is true' })
-      if (!step.ok && !step.error) ctx.addIssue({ code: 'custom', path: at('error'), message: 'error is required when ok is false' })
+      if (step.ok && step.error)
+        ctx.addIssue({
+          code: 'custom',
+          path: at('error'),
+          message: 'error must be absent when ok is true',
+        })
+      if (!step.ok && !step.error)
+        ctx.addIssue({
+          code: 'custom',
+          path: at('error'),
+          message: 'error is required when ok is false',
+        })
       if (step.injectedFault && !faultIds.has(step.injectedFault.id))
-        ctx.addIssue({ code: 'custom', path: at('injectedFault', 'id'), message: `fault "${step.injectedFault.id}" is not in the run's faults` })
+        ctx.addIssue({
+          code: 'custom',
+          path: at('injectedFault', 'id'),
+          message: `fault "${step.injectedFault.id}" is not in the run's faults`,
+        })
       if (step.worldDiff?.length && !WRITE_TOOLS.has(step.tool))
-        ctx.addIssue({ code: 'custom', path: at('worldDiff'), message: `${step.tool} is read-only and cannot change the world` })
-      if (step.ok && step.tool === 'ticket.escalate' && step.worldDiff?.length) escalatedInTrace = true
+        ctx.addIssue({
+          code: 'custom',
+          path: at('worldDiff'),
+          message: `${step.tool} is read-only and cannot change the world`,
+        })
+      if (step.ok && step.tool === 'ticket.escalate' && step.worldDiff?.length)
+        escalatedInTrace = true
 
       step.worldDiff?.forEach((change, j) => {
         const actual = getAtPointer(world, change.path)
         if (!jsonEqual(actual, change.before ?? null))
-          ctx.addIssue({ code: 'custom', path: at('worldDiff', j, 'before'), message: `before does not match the replayed world at ${change.path}` })
+          ctx.addIssue({
+            code: 'custom',
+            path: at('worldDiff', j, 'before'),
+            message: `before does not match the replayed world at ${change.path}`,
+          })
         setAtPointer(world, change.path, change.after ?? null)
       })
     }
   })
 
   if (run.totalTokens !== tokenSum)
-    ctx.addIssue({ code: 'custom', path: ['totalTokens'], message: `totalTokens is ${run.totalTokens}, steps sum to ${tokenSum}` })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['totalTokens'],
+      message: `totalTokens is ${run.totalTokens}, steps sum to ${tokenSum}`,
+    })
   const last = steps[steps.length - 1]
   if (last && run.durationMs < last.tMs)
-    ctx.addIssue({ code: 'custom', path: ['durationMs'], message: 'durationMs is shorter than the last step' })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['durationMs'],
+      message: 'durationMs is shorter than the last step',
+    })
   if (run.escalated !== escalatedInTrace)
-    ctx.addIssue({ code: 'custom', path: ['escalated'], message: `escalated is ${run.escalated} but the trace says ${escalatedInTrace}` })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['escalated'],
+      message: `escalated is ${run.escalated} but the trace says ${escalatedInTrace}`,
+    })
   run.graders.forEach((g, i) => {
     if (g.failedAtStep !== undefined && g.failedAtStep >= steps.length)
-      ctx.addIssue({ code: 'custom', path: ['graders', i, 'failedAtStep'], message: 'failedAtStep is past the last step' })
+      ctx.addIssue({
+        code: 'custom',
+        path: ['graders', i, 'failedAtStep'],
+        message: 'failedAtStep is past the last step',
+      })
   })
   const finalWorld = WorldState.safeParse(world)
   if (!finalWorld.success)
-    ctx.addIssue({ code: 'custom', path: ['steps'], message: `applying the world diffs produces an invalid world: ${finalWorld.error.issues[0]?.message}` })
+    ctx.addIssue({
+      code: 'custom',
+      path: ['steps'],
+      message: `applying the world diffs produces an invalid world: ${finalWorld.error.issues[0]?.message}`,
+    })
 }
 
 const RunShape = z
   .object({
     ...runFields,
-    initialWorld: WorldState.describe('World state before the first step. Replay = initialWorld + diffs in order.'),
+    initialWorld: WorldState.describe(
+      'World state before the first step. Replay = initialWorld + diffs in order.',
+    ),
     steps: z.array(Step).min(1),
   })
   .strict()
