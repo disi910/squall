@@ -31,6 +31,12 @@
   --step-call: #4fb6dc;
   --step-result: #5a7d92;
   --step-final: #4cc38a;
+  /* Heatmap ramps: cells mix from heat-lo toward heat-hi (good) or heat-bad (harm). */
+  --heat-lo: #18222c;
+  --heat-hi: #5ccbbb;
+  --heat-bad: #f2676c;
+  /* Text on the strong end of a ramp. */
+  --heat-ink: #0a1714;
 }
 
 @media (prefers-color-scheme: light) {
@@ -60,6 +66,10 @@
     --step-call: #13799f;
     --step-result: #6f8a9b;
     --step-final: #1b8553;
+    --heat-lo: #edf1f4;
+    --heat-hi: #0b6b61;
+    --heat-bad: #b8293a;
+    --heat-ink: #ffffff;
   }
 }
 

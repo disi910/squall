@@ -1,6 +1,8 @@
 import type { RouteObject } from 'react-router'
 import { Layout } from './components/Layout.tsx'
 import { Landing } from './pages/Landing.tsx'
+import { Leaderboard } from './pages/Leaderboard.tsx'
+import { Matrix } from './pages/Matrix.tsx'
 import { Placeholder } from './pages/Placeholder.tsx'
 import { RouteError } from './pages/RouteError.tsx'
 
@@ -17,26 +19,8 @@ export const routes: RouteObject[] = [
         errorElement: <RouteError />,
         children: [
           { index: true, element: <Landing /> },
-          {
-            path: 'leaderboard',
-            element: (
-              <Placeholder
-                title="Leaderboard"
-                milestone={4}
-                description="A sortable table of agent configurations with baseline success, success under faults, safety violations, injection compliance and cost per success, each with its confidence interval."
-              />
-            ),
-          },
-          {
-            path: 'matrix',
-            element: (
-              <Placeholder
-                title="Robustness matrix"
-                milestone={4}
-                description="A heatmap of agent configurations against fault types, with success, safety and recovery views."
-              />
-            ),
-          },
+          { path: 'leaderboard', element: <Leaderboard /> },
+          { path: 'matrix', element: <Matrix /> },
           {
             path: 'runs',
             element: (
