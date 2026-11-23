@@ -7,7 +7,7 @@ import { SuccessByFaultChart } from '../components/SuccessByFaultChart.tsx'
 import { FEATURED_REPLAY_ID } from '../content/golden.ts'
 import { ciRange, pct } from '../data/format.ts'
 import { agentName } from '../data/labels.ts'
-import { loadFindings, loadManifest } from '../data/load.ts'
+import { loadAnalysis, loadManifest } from '../data/load.ts'
 import { PageTitle } from './PageTitle.tsx'
 
 /**
@@ -150,7 +150,7 @@ const HOW_IT_WORKS = [
 
 function DatasetSize() {
   const manifest = use(loadManifest())
-  const { runCount } = use(loadFindings())
+  const { runCount } = use(loadAnalysis()).findings
   return (
     <span className="font-mono text-[12.5px] text-faint">
       {runCount.toLocaleString('en-US')} simulated runs · {manifest.agents.length} agent configs ·{' '}
@@ -161,11 +161,11 @@ function DatasetSize() {
 }
 
 function PooledChart() {
-  return <SuccessByFaultChart data={use(loadFindings()).successByFault} />
+  return <SuccessByFaultChart data={use(loadAnalysis()).findings.successByFault} />
 }
 
 function FindingCards() {
-  const f = use(loadFindings())
+  const f = use(loadAnalysis()).findings
   const gap = f.verifierOnSilentFailure
     ? Math.round(
         (f.verifierOnSilentFailure.verifier.rate - f.verifierOnSilentFailure.react.rate) * 100,

@@ -1,10 +1,10 @@
 /**
- * Parses runs.json and computes the landing-page findings off the main thread.
- * Parsing 7,200 summaries is the single most expensive thing the landing page
- * does; in a worker it no longer blocks rendering or input.
+ * Parses runs.json and computes every aggregate the overview pages show, off
+ * the main thread. Parsing 7,200 summaries is the most expensive thing those
+ * pages do; in a worker it no longer blocks rendering or input.
  */
 import type { DatasetManifest, RunSummary } from '../schema/index.ts'
-import { computeFindings } from './findings.ts'
+import { computeAnalysis } from './analysis.ts'
 
 // The project's TS config uses the DOM lib, where `self` is a Window; this is the worker-scope shape we use.
 const scope = self as unknown as {
@@ -24,7 +24,7 @@ scope.onmessage = async ({ data: { dataRoot } }) => {
     // Trusts the build-time validation, like loadSummaries does in production.
     const manifest = await getJson<DatasetManifest>(dataRoot, 'manifest.json')
     const runs = await getJson<RunSummary[]>(dataRoot, manifest.files.summaries)
-    scope.postMessage({ ok: true, findings: computeFindings({ manifest, runs }) })
+    scope.postMessage({ ok: true, analysis: computeAnalysis({ manifest, runs }) })
   } catch (err) {
     const e = err as Error & { path?: string }
     scope.postMessage({ ok: false, message: e.message, path: e.path ?? '' })

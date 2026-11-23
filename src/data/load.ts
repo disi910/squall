@@ -1,6 +1,6 @@
 import type { DatasetManifest, Run, RunSummary } from '../schema/index.ts'
-import { computeFindings } from './findings.ts'
-import type { Findings } from './findings.ts'
+import { computeAnalysis } from './analysis.ts'
+import type { Analysis } from './analysis.ts'
 
 /**
  * Fetches the generated dataset (public/data/). Each file is fetched once and
@@ -92,29 +92,29 @@ export const loadTrace = (runId: string) =>
   })
 
 /**
- * The landing-page findings, computed in a Web Worker so parsing runs.json
- * never blocks the main thread. Falls back to the main thread where workers
- * are unavailable.
+ * Every aggregate the overview pages show (landing findings, matrix,
+ * leaderboard), computed in a Web Worker so parsing runs.json never blocks
+ * the main thread. Falls back to the main thread where workers are unavailable.
  */
-export const loadFindings = () =>
-  cached('findings', (): Promise<Findings> => {
-    if (typeof Worker === 'undefined') return loadDataset().then(computeFindings)
+export const loadAnalysis = () =>
+  cached('analysis', (): Promise<Analysis> => {
+    if (typeof Worker === 'undefined') return loadDataset().then(computeAnalysis)
     return new Promise((resolve, reject) => {
-      const worker = new Worker(new URL('./findings.worker.ts', import.meta.url), {
+      const worker = new Worker(new URL('./analysis.worker.ts', import.meta.url), {
         type: 'module',
       })
       worker.onmessage = ({
         data,
       }: MessageEvent<
-        { ok: true; findings: Findings } | { ok: false; message: string; path: string }
+        { ok: true; analysis: Analysis } | { ok: false; message: string; path: string }
       >) => {
         worker.terminate()
-        if (data.ok) resolve(data.findings)
+        if (data.ok) resolve(data.analysis)
         else reject(new DataLoadError(data.message, data.path))
       }
       worker.onerror = (e) => {
         worker.terminate()
-        reject(new Error(e.message || 'The findings worker failed.'))
+        reject(new Error(e.message || 'The analysis worker failed.'))
       }
       worker.postMessage({ dataRoot: DATA_ROOT })
     })
