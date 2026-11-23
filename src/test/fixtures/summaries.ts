@@ -61,7 +61,10 @@ export function makeSummary(o: SummaryOpts = {}): RunSummary {
 }
 
 /** A manifest matching summaries built with makeSummary, for UI and findings tests. */
-export function makeManifest(agents: { id: string; design: AgentDesign }[]): DatasetManifest {
+export function makeManifest(
+  agents: { id: string; design: AgentDesign }[],
+  overrides: Partial<DatasetManifest> = {},
+): DatasetManifest {
   return {
     schemaVersion: SCHEMA_VERSION,
     source: 'simulated',
@@ -83,5 +86,6 @@ export function makeManifest(agents: { id: string; design: AgentDesign }[]): Dat
     files: { summaries: 'runs.json', traceTemplate: 'traces/{runId}.json' },
     tracedRunIds: [],
     goldenRunIds: [],
+    ...overrides,
   }
 }

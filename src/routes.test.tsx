@@ -23,11 +23,16 @@ vi.mock('./data/load.ts', async (importOriginal) => {
   const { computeAnalysis } = await import('./data/analysis.ts')
   const analysis = Promise.resolve(computeAnalysis({ manifest, runs }))
   const manifestPromise = Promise.resolve(manifest)
+  const { buildRunIndex } = await import('./data/requests.ts')
+  const runIndex = Promise.resolve(buildRunIndex({ manifest, runs }))
+  const noSummary = Promise.resolve(null)
   return {
     ...actual,
     loadManifest: () => manifestPromise,
     loadDataset: () => dataset,
     loadAnalysis: () => analysis,
+    loadRunIndex: () => runIndex,
+    loadRunSummary: () => noSummary,
   }
 })
 
