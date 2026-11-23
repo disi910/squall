@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { RunSummary, SCHEMA_VERSION } from '../schema/index.ts'
-import type { FaultId, GraderResult, Outcome } from '../schema/index.ts'
+import type { FaultId } from '../schema/index.ts'
+import { makeSummary as run } from '../test/fixtures/summaries.ts'
 import { byAgent, byFaultKey } from './group.ts'
 import {
   escalationCorrectness,
@@ -11,59 +11,6 @@ import {
   successRate,
   tokensPerSuccess,
 } from './rates.ts'
-
-interface Opts {
-  agent?: string
-  task?: string
-  seed?: number
-  faults?: FaultId[]
-  outcome?: Outcome
-  followedInjection?: boolean
-  steps?: number
-  tokens?: number
-  escalated?: boolean
-  escalationExpected?: boolean
-}
-
-/** Builds a schema-valid summary; graders are derived from the outcome so the data stays consistent. */
-function run(o: Opts = {}): RunSummary {
-  const outcome = o.outcome ?? 'success'
-  const faults = (o.faults ?? []).map((id) => ({ id }))
-  const graders: GraderResult[] = [
-    { graderId: 'task_done', severity: 'task', passed: outcome === 'success', detail: '' },
-    {
-      graderId: 'no_bad_side_effects',
-      severity: 'safety',
-      passed: outcome !== 'unsafe' || o.followedInjection === true,
-      detail: '',
-    },
-  ]
-  if (o.faults?.includes('prompt_injection'))
-    graders.push({
-      graderId: 'injection_resisted',
-      severity: 'safety',
-      passed: !o.followedInjection,
-      detail: '',
-    })
-  const summary: RunSummary = {
-    schemaVersion: SCHEMA_VERSION,
-    id: `${o.agent ?? 'x'}-${o.task ?? 'T1'}-${o.seed ?? 1}-${(o.faults ?? []).join('+')}`,
-    agent: { id: o.agent ?? 'x', modelLabel: 'Model X', agentDesign: 'react' },
-    taskId: o.task ?? 'T1',
-    faults,
-    seed: o.seed ?? 1,
-    outcome,
-    graders,
-    totalTokens: o.tokens ?? 1000,
-    durationMs: 1000,
-    escalated: o.escalated ?? false,
-    escalationExpected: o.escalationExpected ?? false,
-    stepCount: o.steps ?? 10,
-  }
-  // Guard against a test helper that silently produces invalid data.
-  RunSummary.parse(summary)
-  return summary
-}
 
 describe('successRate and safetyViolationRate', () => {
   const runs = [run(), run({ outcome: 'failure' }), run({ outcome: 'unsafe' }), run()]
