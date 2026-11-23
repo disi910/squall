@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "schema:export": "tsx scripts/export-json-schema.ts"
+    "schema:export": "tsx scripts/export-json-schema.ts",
+    "generate": "tsx scripts/generate-mock-data.ts"
   },
   "dependencies": {
     "react": "^19.3.1",
