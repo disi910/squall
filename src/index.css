@@ -1,111 +1,133 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Dark slate is the default (HANDOFF §8); a light palette
+ * follows the system setting. Amber is reserved for faults: nothing else on
+ * the site uses it, so a fault always stands out. Outcome colors (ok / fail /
+ * unsafe) are semantic and separate from that accent.
+ */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  color-scheme: dark;
+  --bg: #0e1319;
+  --raised: #121920;
+  --surface: #17202a;
+  --surface-2: #1e2934;
+  --line: #273441;
+  --line-strong: #364656;
+  --fg: #e3e9ef;
+  --muted: #9babba;
+  --faint: #7d8c9b;
+  --fault: #f2a93b;
+  --fault-soft: rgb(242 169 59 / 0.14);
+  --ok: #4cc38a;
+  --ok-soft: rgb(76 195 138 / 0.14);
+  --fail: #8ea2b6;
+  --fail-soft: rgb(142 162 182 / 0.14);
+  --unsafe: #f2676c;
+  --unsafe-soft: rgb(242 103 108 / 0.15);
+  --link: #7cc4e8;
+  --step-observation: #7d8da0;
+  --step-reasoning: #a294f5;
+  --step-call: #4fb6dc;
+  --step-result: #5a7d92;
+  --step-final: #4cc38a;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+    color-scheme: light;
+    --bg: #f3f5f7;
+    --raised: #fafbfc;
+    --surface: #ffffff;
+    --surface-2: #edf1f4;
+    --line: #d9e0e6;
+    --line-strong: #c1ccd5;
+    --fg: #14202b;
+    --muted: #4c5c6b;
+    --faint: #5f6d7a;
+    --fault: #9a5900;
+    --fault-soft: rgb(196 120 0 / 0.12);
+    /* Darker than the step color so small pill text on ok-soft passes WCAG AA (about 5.3:1). */
+    --ok: #157046;
+    --ok-soft: rgb(27 133 83 / 0.1);
+    --fail: #566a7e;
+    --fail-soft: rgb(86 106 126 / 0.12);
+    --unsafe: #c4303a;
+    --unsafe-soft: rgb(196 48 58 / 0.1);
+    --link: #0b6694;
+    --step-observation: #6b7b8c;
+    --step-reasoning: #6a55d6;
+    --step-call: #13799f;
+    --step-result: #6f8a9b;
+    --step-final: #1b8553;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+/* Expose the tokens as Tailwind utilities: bg-surface, text-muted, border-line, text-fault, ... */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--raised);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-fault: var(--fault);
+  --color-fault-soft: var(--fault-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-fail: var(--fail);
+  --color-fail-soft: var(--fail-soft);
+  --color-unsafe: var(--unsafe);
+  --color-unsafe-soft: var(--unsafe-soft);
+  --color-link: var(--link);
+  --color-step-observation: var(--step-observation);
+  --color-step-reasoning: var(--step-reasoning);
+  --color-step-call: var(--step-call);
+  --color-step-result: var(--step-result);
+  --color-step-final: var(--step-final);
+
+  --font-sans: 'IBM Plex Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk Variable', 'IBM Plex Sans Variable', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+  }
+  body {
+    @apply bg-bg font-sans text-[15px] leading-normal text-fg antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold tracking-tight text-balance;
+  }
+  a {
+    @apply text-link;
+  }
+  :focus-visible {
+    @apply rounded-sm outline-2 outline-offset-2 outline-link;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+    }
   }
 }
-p {
-  margin: 0;
-}
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@layer components {
+  /* Small uppercase label used for section eyebrows and metadata. */
+  .eyebrow {
+    @apply font-mono text-[11.5px] tracking-[0.08em] text-faint uppercase;
+  }
+  .card {
+    @apply rounded-md border border-line bg-surface;
+  }
 }

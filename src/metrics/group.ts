@@ -1,5 +1,6 @@
-import { faultKey } from '../schema/index.ts'
-import type { FaultKey, RunSummary } from '../schema/index.ts'
+import { faultKey } from '../schema/helpers.ts'
+import type { FaultKey } from '../schema/helpers.ts'
+import type { RunSummary } from '../schema/index.ts'
 
 /** Groups runs by a key, keeping first-seen order. */
 export function groupBy<K>(

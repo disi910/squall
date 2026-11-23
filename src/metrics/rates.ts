@@ -1,4 +1,4 @@
-import { faultKey, INJECTION_GRADER_ID } from '../schema/index.ts'
+import { faultKey, INJECTION_GRADER_ID } from '../schema/helpers.ts'
 import type { FaultId, RunSummary } from '../schema/index.ts'
 import { wilson } from './wilson.ts'
 import type { Proportion } from './wilson.ts'

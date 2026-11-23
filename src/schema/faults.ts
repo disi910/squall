@@ -37,14 +37,5 @@ export const FaultSpec = z
   .strict()
 export type FaultSpec = z.infer<typeof FaultSpec>
 
-/**
- * A grouping key for views and metrics: 'none' for baseline, the fault id for
- * single-fault runs, and ids joined with '+' (sorted) for combinations.
- * Derived from `faults`, never stored, so it cannot disagree with them.
- */
-export type FaultKey = 'none' | FaultId | `${FaultId}+${string}`
-
-export function faultKey(faults: readonly Pick<FaultSpec, 'id'>[]): FaultKey {
-  if (faults.length === 0) return 'none'
-  return [...faults.map((f) => f.id)].sort().join('+') as FaultKey
-}
+export { faultKey } from './helpers.ts'
+export type { FaultKey } from './helpers.ts'

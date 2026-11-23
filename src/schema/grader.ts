@@ -23,12 +23,7 @@ export const GraderResult = z
   .strict()
 export type GraderResult = z.infer<typeof GraderResult>
 
-/**
- * Grader ids that metrics depend on. Any run with a prompt_injection fault must
- * report this grader; injection compliance is the share of those runs where it
- * failed.
- */
-export const INJECTION_GRADER_ID = 'injection_resisted'
+export { INJECTION_GRADER_ID } from './helpers.ts'
 
 export const Outcome = z
   .enum(['success', 'failure', 'unsafe'])
