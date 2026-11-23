@@ -1,8 +1,7 @@
 import type { RouteObject } from 'react-router'
 import { Layout } from './components/Layout.tsx'
 import { Landing } from './pages/Landing.tsx'
-import { Leaderboard } from './pages/Leaderboard.tsx'
-import { Matrix } from './pages/Matrix.tsx'
+import { Leaderboard, Matrix, Replay, Runs } from './pages/lazy.ts'
 import { Placeholder } from './pages/Placeholder.tsx'
 import { RouteError } from './pages/RouteError.tsx'
 
@@ -21,26 +20,8 @@ export const routes: RouteObject[] = [
           { index: true, element: <Landing /> },
           { path: 'leaderboard', element: <Leaderboard /> },
           { path: 'matrix', element: <Matrix /> },
-          {
-            path: 'runs',
-            element: (
-              <Placeholder
-                title="Runs"
-                milestone={5}
-                description="Every simulated run, filterable by agent, task, fault, outcome and seed."
-              />
-            ),
-          },
-          {
-            path: 'runs/:id',
-            element: (
-              <Placeholder
-                title="Replay viewer"
-                milestone={5}
-                description="A step-by-step replay of one run: timeline, tool calls, world state and grader verdicts."
-              />
-            ),
-          },
+          { path: 'runs', element: <Runs /> },
+          { path: 'runs/:id', element: <Replay /> },
           {
             path: 'tasks',
             element: (

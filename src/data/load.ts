@@ -1,6 +1,6 @@
 import type { DatasetManifest, Run, RunSummary } from '../schema/index.ts'
-import { computeAnalysis } from './analysis.ts'
-import type { Analysis } from './analysis.ts'
+import { handleRequest } from './requests.ts'
+import type { DataRequest, DataResponses } from './requests.ts'
 
 /**
  * Fetches the generated dataset (public/data/). Each file is fetched once and
@@ -91,31 +91,56 @@ export const loadTrace = (runId: string) =>
     )
   })
 
-/**
- * Every aggregate the overview pages show (landing findings, matrix,
- * leaderboard), computed in a Web Worker so parsing runs.json never blocks
- * the main thread. Falls back to the main thread where workers are unavailable.
- */
-export const loadAnalysis = () =>
-  cached('analysis', (): Promise<Analysis> => {
-    if (typeof Worker === 'undefined') return loadDataset().then(computeAnalysis)
-    return new Promise((resolve, reject) => {
-      const worker = new Worker(new URL('./analysis.worker.ts', import.meta.url), {
-        type: 'module',
-      })
-      worker.onmessage = ({
-        data,
-      }: MessageEvent<
-        { ok: true; analysis: Analysis } | { ok: false; message: string; path: string }
-      >) => {
-        worker.terminate()
-        if (data.ok) resolve(data.analysis)
-        else reject(new DataLoadError(data.message, data.path))
-      }
-      worker.onerror = (e) => {
-        worker.terminate()
-        reject(new Error(e.message || 'The analysis worker failed.'))
-      }
-      worker.postMessage({ dataRoot: DATA_ROOT })
-    })
+// ---------- The data worker ----------
+
+type WorkerReply =
+  | { id: number; ok: true; value: unknown }
+  | { id: number; ok: false; message: string; path: string }
+
+let worker: Worker | null = null
+let nextId = 0
+const pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>()
+
+/** One worker for the whole visit, so runs.json is parsed once however many pages ask. */
+function getWorker(): Worker {
+  if (worker) return worker
+  const w = new Worker(new URL('./data.worker.ts', import.meta.url), { type: 'module' })
+  w.onmessage = ({ data }: MessageEvent<WorkerReply>) => {
+    const p = pending.get(data.id)
+    if (!p) return
+    pending.delete(data.id)
+    if (data.ok) p.resolve(data.value)
+    else p.reject(new DataLoadError(data.message, data.path))
+  }
+  w.onerror = (e) => {
+    // A crashed worker fails every pending request and is replaced on the next one.
+    for (const p of pending.values()) p.reject(new Error(e.message || 'The data worker failed.'))
+    pending.clear()
+    worker = null
+  }
+  worker = w
+  return w
+}
+
+/** Sends a request to the data worker, or answers it on the main thread where workers are unavailable. */
+function ask<K extends DataRequest['kind']>(
+  request: Extract<DataRequest, { kind: K }>,
+): Promise<DataResponses[K]> {
+  if (typeof Worker === 'undefined')
+    return loadDataset().then((d) => handleRequest(d, request) as DataResponses[K])
+  return new Promise((resolve, reject) => {
+    const id = nextId++
+    pending.set(id, { resolve: resolve as (v: unknown) => void, reject })
+    getWorker().postMessage({ id, dataRoot: DATA_ROOT, request })
   })
+}
+
+/** Every aggregate the overview pages show: landing findings, matrix cells, leaderboard rows. */
+export const loadAnalysis = () => cached('analysis', () => ask({ kind: 'analysis' }))
+
+/** One compact row per run, for the run explorer. */
+export const loadRunIndex = () => cached('runIndex', () => ask({ kind: 'runIndex' }))
+
+/** One run summary, or null if the id is not in the dataset. */
+export const loadRunSummary = (runId: string) =>
+  cached(`summary:${runId}`, () => ask({ kind: 'summary', runId }))
