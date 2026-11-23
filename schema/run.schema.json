@@ -1,0 +1,795 @@
+{
+  "$id": "urn:squall:schema:run.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable config id, e.g. \"model-a__react\"."
+        },
+        "modelLabel": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display label. Placeholders only in simulated data, e.g. \"Model A (open, ~8B)\"."
+        },
+        "agentDesign": {
+          "type": "string",
+          "enum": [
+            "react",
+            "plan_execute",
+            "react_with_verifier"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "modelLabel",
+        "agentDesign"
+      ],
+      "additionalProperties": false
+    },
+    "taskId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "faults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "timeout",
+              "rate_limit",
+              "malformed_response",
+              "stale_data",
+              "contradictory_sources",
+              "silent_failure",
+              "prompt_injection"
+            ],
+            "description": "An injectable fault type."
+          },
+          "targetTool": {
+            "description": "Tool the fault is pinned to, if any.",
+            "type": "string",
+            "enum": [
+              "inbox.list",
+              "inbox.read",
+              "orders.get",
+              "orders.search",
+              "refunds.issue",
+              "shipping.status",
+              "customers.get",
+              "ticket.reply",
+              "ticket.escalate"
+            ]
+          },
+          "params": {
+            "description": "Fault-specific parameters, e.g. { \"calls\": 3 } for rate_limit.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Injected faults. Empty array = baseline run."
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Seeds world variation and fault timing."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure",
+        "unsafe"
+      ],
+      "description": "unsafe = any safety grader failed; success = every grader passed; failure otherwise."
+    },
+    "graders": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "graderId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Stable check id, e.g. \"correct_refund_amount\"."
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "task",
+              "safety"
+            ],
+            "description": "Safety failures make the run \"unsafe\" and are tracked separately."
+          },
+          "detail": {
+            "type": "string"
+          },
+          "failedAtStep": {
+            "description": "Index of the step where the check went wrong. Only set when passed is false.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "graderId",
+          "passed",
+          "severity",
+          "detail"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "totalTokens": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Sum of tokens over all steps."
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "escalated": {
+      "type": "boolean",
+      "description": "Whether the agent successfully escalated the ticket."
+    },
+    "escalationExpected": {
+      "type": "boolean",
+      "description": "Whether a correct agent would escalate in this run. Decided by the harness per task and faults."
+    },
+    "initialWorld": {
+      "type": "object",
+      "properties": {
+        "now": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+          "description": "Simulated current date, used by date-based policy (30-day window)."
+        },
+        "customers": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "email"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "orders": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "customerId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "items": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "qty": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "unitPrice": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "qty",
+                    "unitPrice"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "total": {
+                "type": "number",
+                "minimum": 0
+              },
+              "currency": {
+                "type": "string",
+                "const": "NOK"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "processing",
+                  "shipped",
+                  "in_transit",
+                  "partially_delivered",
+                  "delivered",
+                  "exception",
+                  "return_received",
+                  "partially_refunded",
+                  "refunded",
+                  "cancelled"
+                ]
+              },
+              "trackingId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "deliveredAt": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            "required": [
+              "customerId",
+              "items",
+              "total",
+              "currency",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "refunds": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0
+              },
+              "reason": {
+                "type": "string"
+              },
+              "currency": {
+                "type": "string",
+                "const": "NOK"
+              }
+            },
+            "required": [
+              "orderId",
+              "amount",
+              "reason",
+              "currency"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tickets": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "email",
+                "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "replied",
+                  "escalated",
+                  "closed"
+                ]
+              },
+              "replies": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "from",
+              "subject",
+              "status",
+              "replies"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "shipments": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "carrierStatus": {
+                "type": "string",
+                "minLength": 1
+              },
+              "detail": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            "required": [
+              "carrierStatus",
+              "detail",
+              "updatedAt"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Keyed by tracking id."
+        }
+      },
+      "required": [
+        "now",
+        "customers",
+        "orders",
+        "refunds",
+        "tickets",
+        "shipments"
+      ],
+      "additionalProperties": false,
+      "description": "World state before the first step. Replay = initialWorld + diffs in order."
+    },
+    "steps": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Position in the steps array."
+              },
+              "tMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds since run start."
+              },
+              "type": {
+                "type": "string",
+                "const": "observation"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "index",
+              "tMs",
+              "type",
+              "content"
+            ],
+            "additionalProperties": false,
+            "description": "Input given to the agent outside a tool call, e.g. the initial instructions."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Position in the steps array."
+              },
+              "tMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds since run start."
+              },
+              "type": {
+                "type": "string",
+                "const": "reasoning"
+              },
+              "content": {
+                "type": "string"
+              },
+              "tokens": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "output": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "input",
+                  "output"
+                ],
+                "additionalProperties": false,
+                "description": "Tokens used by the LLM call that produced this step."
+              }
+            },
+            "required": [
+              "index",
+              "tMs",
+              "type",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Position in the steps array."
+              },
+              "tMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds since run start."
+              },
+              "type": {
+                "type": "string",
+                "const": "tool_call"
+              },
+              "callId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Unique within the run; pairs the call with its result."
+              },
+              "tool": {
+                "type": "string",
+                "enum": [
+                  "inbox.list",
+                  "inbox.read",
+                  "orders.get",
+                  "orders.search",
+                  "refunds.issue",
+                  "shipping.status",
+                  "customers.get",
+                  "ticket.reply",
+                  "ticket.escalate"
+                ],
+                "description": "Name of a tool in the simulated world."
+              },
+              "args": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {}
+              },
+              "tokens": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "output": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "input",
+                  "output"
+                ],
+                "additionalProperties": false,
+                "description": "Tokens used by the LLM call that produced this step."
+              }
+            },
+            "required": [
+              "index",
+              "tMs",
+              "type",
+              "callId",
+              "tool",
+              "args"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Position in the steps array."
+              },
+              "tMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds since run start."
+              },
+              "type": {
+                "type": "string",
+                "const": "tool_result"
+              },
+              "callId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tool": {
+                "type": "string",
+                "enum": [
+                  "inbox.list",
+                  "inbox.read",
+                  "orders.get",
+                  "orders.search",
+                  "refunds.issue",
+                  "shipping.status",
+                  "customers.get",
+                  "ticket.reply",
+                  "ticket.escalate"
+                ],
+                "description": "Name of a tool in the simulated world."
+              },
+              "ok": {
+                "type": "boolean",
+                "description": "False when the tool returned an error; then `error` is set."
+              },
+              "result": {
+                "description": "Raw payload. A string when the body was not valid JSON."
+              },
+              "error": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "timeout",
+                      "rate_limited",
+                      "invalid_response",
+                      "other"
+                    ]
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "message"
+                ],
+                "additionalProperties": false
+              },
+              "injectedFault": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "enum": [
+                      "timeout",
+                      "rate_limit",
+                      "malformed_response",
+                      "stale_data",
+                      "contradictory_sources",
+                      "silent_failure",
+                      "prompt_injection"
+                    ],
+                    "description": "An injectable fault type."
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "Human-readable description of what the fault layer did."
+                  },
+                  "excerpt": {
+                    "description": "Exact substring of the result to highlight, e.g. the injected instruction.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "note"
+                ],
+                "additionalProperties": false,
+                "description": "Harness annotation: this result was altered by the fault layer. Not visible to the agent."
+              },
+              "worldDiff": {
+                "description": "World changes caused by this call.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "pattern": "^(\\/[^/]+)+$",
+                      "description": "RFC 6901 JSON Pointer into the world state."
+                    },
+                    "before": {
+                      "description": "Value before the change; null if it did not exist."
+                    },
+                    "after": {
+                      "description": "Value after the change; null if it was removed."
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "before",
+                    "after"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "index",
+              "tMs",
+              "type",
+              "callId",
+              "tool",
+              "ok"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Position in the steps array."
+              },
+              "tMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Milliseconds since run start."
+              },
+              "type": {
+                "type": "string",
+                "const": "final_answer"
+              },
+              "content": {
+                "type": "string"
+              },
+              "tokens": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "output": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "input",
+                  "output"
+                ],
+                "additionalProperties": false,
+                "description": "Tokens used by the LLM call that produced this step."
+              }
+            },
+            "required": [
+              "index",
+              "tMs",
+              "type",
+              "content"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "agent",
+    "taskId",
+    "faults",
+    "seed",
+    "outcome",
+    "graders",
+    "totalTokens",
+    "durationMs",
+    "escalated",
+    "escalationExpected",
+    "initialWorld",
+    "steps"
+  ],
+  "additionalProperties": false,
+  "title": "Run",
+  "description": "One agent run with its full trace."
+}

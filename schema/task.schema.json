@@ -1,0 +1,53 @@
+{
+  "$id": "urn:squall:schema:task.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "refund",
+        "refund_edge",
+        "status",
+        "identity",
+        "escalation"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the customer wants."
+    },
+    "expectedOutcome": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable success criterion."
+    },
+    "expectedAction": {
+      "type": "string",
+      "enum": [
+        "refund",
+        "decline",
+        "reply",
+        "escalate"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "category",
+    "title",
+    "description",
+    "expectedOutcome",
+    "expectedAction"
+  ],
+  "additionalProperties": false
+}

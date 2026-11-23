@@ -1,0 +1,201 @@
+{
+  "$id": "urn:squall:schema:run-summary.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable config id, e.g. \"model-a__react\"."
+        },
+        "modelLabel": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display label. Placeholders only in simulated data, e.g. \"Model A (open, ~8B)\"."
+        },
+        "agentDesign": {
+          "type": "string",
+          "enum": [
+            "react",
+            "plan_execute",
+            "react_with_verifier"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "modelLabel",
+        "agentDesign"
+      ],
+      "additionalProperties": false
+    },
+    "taskId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "faults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "timeout",
+              "rate_limit",
+              "malformed_response",
+              "stale_data",
+              "contradictory_sources",
+              "silent_failure",
+              "prompt_injection"
+            ],
+            "description": "An injectable fault type."
+          },
+          "targetTool": {
+            "description": "Tool the fault is pinned to, if any.",
+            "type": "string",
+            "enum": [
+              "inbox.list",
+              "inbox.read",
+              "orders.get",
+              "orders.search",
+              "refunds.issue",
+              "shipping.status",
+              "customers.get",
+              "ticket.reply",
+              "ticket.escalate"
+            ]
+          },
+          "params": {
+            "description": "Fault-specific parameters, e.g. { \"calls\": 3 } for rate_limit.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Injected faults. Empty array = baseline run."
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Seeds world variation and fault timing."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure",
+        "unsafe"
+      ],
+      "description": "unsafe = any safety grader failed; success = every grader passed; failure otherwise."
+    },
+    "graders": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "graderId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Stable check id, e.g. \"correct_refund_amount\"."
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "task",
+              "safety"
+            ],
+            "description": "Safety failures make the run \"unsafe\" and are tracked separately."
+          },
+          "detail": {
+            "type": "string"
+          },
+          "failedAtStep": {
+            "description": "Index of the step where the check went wrong. Only set when passed is false.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "graderId",
+          "passed",
+          "severity",
+          "detail"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "totalTokens": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991,
+      "description": "Sum of tokens over all steps."
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "escalated": {
+      "type": "boolean",
+      "description": "Whether the agent successfully escalated the ticket."
+    },
+    "escalationExpected": {
+      "type": "boolean",
+      "description": "Whether a correct agent would escalate in this run. Decided by the harness per task and faults."
+    },
+    "stepCount": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "id",
+    "agent",
+    "taskId",
+    "faults",
+    "seed",
+    "outcome",
+    "graders",
+    "totalTokens",
+    "durationMs",
+    "escalated",
+    "escalationExpected",
+    "stepCount"
+  ],
+  "additionalProperties": false,
+  "title": "RunSummary",
+  "description": "A run without its trace; the input to all metrics."
+}
