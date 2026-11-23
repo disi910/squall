@@ -11,7 +11,7 @@ import { getAtPointer, jsonEqual, setAtPointer, WorldState } from './world.ts'
  * breaking ones. Every top-level document carries it so a reader can refuse
  * data it does not understand.
  */
-export const SCHEMA_VERSION = '0.1.0'
+export const SCHEMA_VERSION = '0.2.0'
 
 /** Fields shared by the full run and its summary. */
 const runFields = {

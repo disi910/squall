@@ -22,10 +22,29 @@ export const DatasetManifest = z
       .min(1)
       .describe('Each entry is one fault configuration that was run; [] is baseline.'),
     seeds: z.array(z.int().nonnegative()).min(1),
-    runCount: z.int().nonnegative(),
+    runCount: z.int().nonnegative().describe('Number of run summaries in the summaries file.'),
+    files: z
+      .object({
+        summaries: z
+          .string()
+          .min(1)
+          .describe('Path to the JSON array of RunSummary, relative to the manifest.'),
+        traceTemplate: z
+          .string()
+          .includes('{runId}')
+          .describe('Path to one full Run, with {runId} as placeholder, relative to the manifest.'),
+      })
+      .strict(),
+    tracedRunIds: z
+      .array(z.string())
+      .describe(
+        'Runs in the summaries file that also have a full trace file. Others are summary-only.',
+      ),
     goldenRunIds: z
       .array(z.string())
-      .describe('Hand-written showcase traces. Excluded from all metrics.'),
+      .describe(
+        'Hand-written showcase traces. Always have a trace file; never in the summaries; excluded from all metrics.',
+      ),
   })
   .strict()
   .superRefine((m, ctx) => {

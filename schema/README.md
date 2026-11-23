@@ -1,4 +1,4 @@
-# Squall data contract (schema v0.1.0)
+# Squall data contract (schema v0.2.0)
 
 This folder is the contract between Squall's frontend and the future Python harness. The harness emits runs in this format; the website reads them.
 
@@ -24,7 +24,21 @@ zod checks these and the TypeScript side enforces them. They are dropped from th
 3. `failedAtStep` is only set on graders that failed.
 4. A run with a `prompt_injection` fault reports the `injection_resisted` grader.
 
-**Full runs only** 5. `steps[i].index === i`, and `tMs` never decreases. `durationMs` is at least the last step's `tMs`. 6. Every `tool_result` has an earlier `tool_call` with the same `callId` and `tool`. Each call has at most one result. `callId`s are unique. 7. `ok: true` means no `error`; `ok: false` requires `error`. 8. `injectedFault.id` is one of the run's `faults`. 9. Only write tools (`refunds.issue`, `ticket.reply`, `ticket.escalate`) may carry a `worldDiff`. 10. Replaying every `worldDiff` in order from `initialWorld` must work: each change's `before` equals the current value at its path, and the final world is still a valid `WorldState`. 11. `totalTokens` equals the sum of `tokens.input + tokens.output` over all steps. 12. `escalated` is true exactly when the trace contains a successful `ticket.escalate` that changed the world. 13. `failedAtStep` points at an existing step.
+**Full runs only**
+
+5. `steps[i].index === i`, and `tMs` never decreases. `durationMs` is at least the last step's `tMs`.
+6. Every `tool_result` has an earlier `tool_call` with the same `callId` and `tool`. Each call has at most one result. `callId`s are unique.
+7. `ok: true` means no `error`; `ok: false` requires `error`.
+8. `injectedFault.id` is one of the run's `faults`.
+9. Only write tools (`refunds.issue`, `ticket.reply`, `ticket.escalate`) may carry a `worldDiff`.
+10. Replaying every `worldDiff` in order from `initialWorld` must work: each change's `before` equals the current value at its path, and the final world is still a valid `WorldState`.
+11. `totalTokens` equals the sum of `tokens.input + tokens.output` over all steps.
+12. `escalated` is true exactly when the trace contains a successful `ticket.escalate` that changed the world.
+13. `failedAtStep` points at an existing step.
+
+**Manifests**
+
+14. Agent ids, task ids and seeds are unique.
 
 ## Changes from the brief's draft, and why
 
@@ -54,11 +68,31 @@ All rates come with a 95% **Wilson score interval**. Metrics take `RunSummary[]`
 - **Escalation correctness:** share of runs where `escalated === escalationExpected`.
 - **Mean steps, mean tokens, tokens per success** (total tokens ÷ successful runs).
 
+## Dataset layout
+
+A dataset is a folder (`public/data/` for the site) with:
+
+| Path                  | Contents                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| `manifest.json`       | `DatasetManifest`. Names the other files and lists which runs have traces.                          |
+| `runs.json`           | `RunSummary[]` for every run in the study. The only input to metrics. Never contains golden runs.   |
+| `traces/<runId>.json` | A full `Run` for each id in `manifest.tracedRunIds` and `manifest.goldenRunIds`. Fetched on demand. |
+
+**Why not ship every trace?** The simulated study has 7,200 runs. Full traces average about 4.6 KB, so all of them would be about 33 MB, more than twice the 15 MB budget. The mock dataset ships traces for **seed 1** of every agent × fault × task cell (1,440 runs) plus the 3 golden traces: about 11.6 MB in total, with `runs.json` at about 220 KB gzipped. Every cell in the matrix still has a replayable example; other runs show their summary and graders only. The real harness can ship all traces if hosting allows, and the manifest format stays the same.
+
+## Escalation policy (used to set `escalationExpected`)
+
+Escalation is expected for escalation-policy tasks (legal threats, chargebacks, press or data requests), for unverified account changes, and for status questions where the order DB and the carrier conflict (the `stale_data` and `contradictory_sources` faults on status tasks). An agent cannot resolve that conflict without a human. The schema only records the result; the rule lives in the generator (`scripts/mock/generate-run.ts`) and later in the harness.
+
 ## Versioning
 
-`0.y.z` while the mockup phase lasts. After 1.0: bump the minor version for additive changes (new optional fields, new enum values) and the major version for anything that breaks an existing reader.
+`0.y.z` while the mockup phase lasts: bump the minor version for additive changes. After 1.0: minor for additive changes (new optional fields, new enum values), major for anything that breaks an existing reader.
 
-## Open questions for review
+| Version | Change                                                                                                                                       |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.2.0   | Manifest gains `files` (paths to summaries and traces) and `tracedRunIds`, so the UI knows which runs have a trace without probing for 404s. |
+| 0.1.0   | First version, reviewed at the end of Milestone 1.                                                                                           |
 
-1. **When is escalation expected?** The mockup treats it as expected for escalation tasks, address changes from unverified emails, and status tasks where the order DB and carrier conflict. The schema leaves this to the harness via `escalationExpected`; the rule itself still needs your sign-off before Milestone 2 bakes it into the generator.
-2. **Fault combinations.** The schema allows several faults per run; the mock data will use one fault per run. Combinations would need their own matrix columns.
+## Open questions
+
+1. **Fault combinations.** The schema allows several faults per run; the mock data uses one fault per run. Combinations would need their own matrix columns.
