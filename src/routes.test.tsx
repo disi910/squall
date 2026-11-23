@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 // Both from 'react-router': under Vitest, 'react-router/dom' resolves to a separate copy whose context the components can't see.
 import { createMemoryRouter, RouterProvider } from 'react-router'
@@ -20,14 +20,14 @@ vi.mock('./data/load.ts', async (importOriginal) => {
     }),
   ]
   const dataset = Promise.resolve({ manifest, runs })
-  const { computeFindings } = await import('./data/findings.ts')
-  const findings = Promise.resolve(computeFindings({ manifest, runs }))
+  const { computeAnalysis } = await import('./data/analysis.ts')
+  const analysis = Promise.resolve(computeAnalysis({ manifest, runs }))
   const manifestPromise = Promise.resolve(manifest)
   return {
     ...actual,
     loadManifest: () => manifestPromise,
     loadDataset: () => dataset,
-    loadFindings: () => findings,
+    loadAnalysis: () => analysis,
   }
 })
 
@@ -40,8 +40,11 @@ beforeAll(() => {
 })
 afterEach(cleanup)
 
+// Awaited act(): React 19 does not retry a suspended render inside a synchronous act scope.
 const renderAt = (path: string) =>
-  render(<RouterProvider router={createMemoryRouter(routes, { initialEntries: [path] })} />)
+  act(async () => {
+    render(<RouterProvider router={createMemoryRouter(routes, { initialEntries: [path] })} />)
+  })
 
 describe('every route shows the simulated-data banner (HANDOFF §2)', () => {
   for (const path of [
@@ -55,7 +58,7 @@ describe('every route shows the simulated-data banner (HANDOFF §2)', () => {
     '/no-such-page',
   ]) {
     it(path, async () => {
-      renderAt(path)
+      await renderAt(path)
       expect(await screen.findByText(BANNER)).toBeTruthy()
     })
   }
@@ -63,7 +66,7 @@ describe('every route shows the simulated-data banner (HANDOFF §2)', () => {
 
 describe('landing page', () => {
   it('renders the hook line and findings computed from the data', async () => {
-    renderAt('/')
+    await renderAt('/')
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain(
       'Squall tests them in storms',
     )
@@ -75,7 +78,7 @@ describe('landing page', () => {
 
 describe('unknown routes', () => {
   it('render a 404 inside the layout', async () => {
-    renderAt('/no-such-page')
+    await renderAt('/no-such-page')
     expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeTruthy()
   })
 })
