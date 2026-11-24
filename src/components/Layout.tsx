@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router'
+import type { Location } from 'react-router'
 import { Logo } from './Logo.tsx'
 import { PageSkeleton } from './Skeleton.tsx'
 
@@ -88,6 +89,17 @@ function SiteFooter() {
  * otherwise it sits on screen while a page loads and jumps down when the
  * content arrives (a layout shift Lighthouse counts against us).
  */
+/**
+ * Scroll restoration key. React Router gives the first history entry of every
+ * full page load the same key ("default"), and restores before lazy page
+ * content has loaded, so a fresh load could open part-way down the page. The
+ * first entry gets a key unique to this page load, so a fresh load always
+ * starts at the top; back/forward within the app restores as usual.
+ */
+const PAGE_LOAD_ID = Math.random().toString(36).slice(2)
+const scrollKey = (location: Location) =>
+  location.key === 'default' ? `load-${PAGE_LOAD_ID}` : location.key
+
 export function Layout() {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -107,7 +119,7 @@ export function Layout() {
         </Suspense>
       </main>
       <SiteFooter />
-      <ScrollRestoration />
+      <ScrollRestoration getKey={scrollKey} />
     </div>
   )
 }
