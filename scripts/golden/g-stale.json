@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "id": "g-stale",
   "agent": { "id": "model-c__plan_execute", "modelLabel": "Model C (API)", "agentDesign": "plan_execute" },
   "taskId": "T10",

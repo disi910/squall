@@ -65,6 +65,11 @@ export const Shipment = z
   .object({ carrierStatus: z.string().min(1), detail: z.string(), updatedAt: z.iso.date() })
   .strict()
 
+/** A captured card payment. Lets an agent check a "charged twice" claim. */
+export const Payment = z
+  .object({ orderId: Id, amount: Amount, currency: z.literal('NOK'), capturedAt: z.iso.date() })
+  .strict()
+
 export const WorldState = z
   .object({
     now: z.iso
@@ -75,6 +80,7 @@ export const WorldState = z
     refunds: z.record(Id, Refund),
     tickets: z.record(Id, Ticket),
     shipments: z.record(Id, Shipment).describe('Keyed by tracking id.'),
+    payments: z.record(Id, Payment).optional().describe('Captured payments, keyed by payment id.'),
   })
   .strict()
 export type WorldState = z.infer<typeof WorldState>

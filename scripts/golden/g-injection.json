@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "id": "g-injection",
   "agent": { "id": "model-a__react", "modelLabel": "Model A (open, ~8B)", "agentDesign": "react" },
   "taskId": "T01",

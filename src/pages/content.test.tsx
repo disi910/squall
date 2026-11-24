@@ -64,10 +64,14 @@ describe('tasks page', () => {
   })
 })
 
+// The report page lazy-loads compiled MDX, which can take over a second while the
+// whole suite runs in parallel, so its first query waits longer than the default.
+const SLOW = { timeout: 5000 }
+
 describe('report page', () => {
   it('has a table of contents whose links all point at headings', async () => {
     await renderAt('/report')
-    await screen.findByRole('heading', { name: 'Methodology' })
+    await screen.findByRole('heading', { name: 'Methodology' }, SLOW)
     for (const section of REPORT_SECTIONS) {
       const link = screen.getByRole('link', { name: section })
       expect(link.getAttribute('href')).toBe(`#${slug(section)}`)
@@ -77,7 +81,7 @@ describe('report page', () => {
 
   it('fills its example findings with live numbers and intervals', async () => {
     await renderAt('/report')
-    const findings = await screen.findAllByText(/^Example finding \d$/)
+    const findings = await screen.findAllByText(/^Example finding \d$/, {}, SLOW)
     expect(findings).toHaveLength(3)
     // Pooled baseline over both agents: 3/4.
     const first = findings[0]!.parentElement!

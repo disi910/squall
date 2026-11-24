@@ -1,4 +1,4 @@
-# Squall data contract (schema v0.2.0)
+# Squall data contract (schema v0.3.0)
 
 This folder is the contract between Squall's frontend and the future Python harness. The harness emits runs in this format; the website reads them.
 
@@ -23,22 +23,23 @@ zod checks these and the TypeScript side enforces them. They are dropped from th
 2. Fault ids in `faults` are unique. Grader ids in `graders` are unique.
 3. `failedAtStep` is only set on graders that failed.
 4. A run with a `prompt_injection` fault reports the `injection_resisted` grader.
+5. `faultFired` is only present on runs with a fault.
 
 **Full runs only**
 
-5. `steps[i].index === i`, and `tMs` never decreases. `durationMs` is at least the last step's `tMs`.
-6. Every `tool_result` has an earlier `tool_call` with the same `callId` and `tool`. Each call has at most one result. `callId`s are unique.
-7. `ok: true` means no `error`; `ok: false` requires `error`.
-8. `injectedFault.id` is one of the run's `faults`.
-9. Only write tools (`refunds.issue`, `ticket.reply`, `ticket.escalate`) may carry a `worldDiff`.
-10. Replaying every `worldDiff` in order from `initialWorld` must work: each change's `before` equals the current value at its path, and the final world is still a valid `WorldState`.
-11. `totalTokens` equals the sum of `tokens.input + tokens.output` over all steps.
-12. `escalated` is true exactly when the trace contains a successful `ticket.escalate` that changed the world.
-13. `failedAtStep` points at an existing step.
+6. `steps[i].index === i`, and `tMs` never decreases. `durationMs` is at least the last step's `tMs`.
+7. Every `tool_result` has an earlier `tool_call` with the same `callId` and `tool`. Each call has at most one result. `callId`s are unique.
+8. `ok: true` means no `error`; `ok: false` requires `error`.
+9. `injectedFault.id` is one of the run's `faults`.
+10. Only write tools (`refunds.issue`, `ticket.reply`, `ticket.escalate`) may carry a `worldDiff`.
+11. Replaying every `worldDiff` in order from `initialWorld` must work: each change's `before` equals the current value at its path, and the final world is still a valid `WorldState`.
+12. `totalTokens` equals the sum of `tokens.input + tokens.output` over all steps.
+13. `escalated` is true exactly when the trace contains a successful `ticket.escalate` that changed the world.
+14. `failedAtStep` points at an existing step.
 
 **Manifests**
 
-14. Agent ids, task ids and seeds are unique.
+15. Agent ids, task ids and seeds are unique.
 
 ## Changes from the brief's draft, and why
 
@@ -88,10 +89,11 @@ Escalation is expected for escalation-policy tasks (legal threats, chargebacks, 
 
 `0.y.z` while the mockup phase lasts: bump the minor version for additive changes. After 1.0: minor for additive changes (new optional fields, new enum values), major for anything that breaks an existing reader.
 
-| Version | Change                                                                                                                                       |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0.2.0   | Manifest gains `files` (paths to summaries and traces) and `tracedRunIds`, so the UI knows which runs have a trace without probing for 404s. |
-| 0.1.0   | First version, reviewed at the end of Milestone 1.                                                                                           |
+| Version | Change                                                                                                                                                                                           |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0.3.0   | Fields for harness data, all optional: `faultFired` on runs, `modelId` and `reasoningEffort` on agents, `payments` in the world, `featuredRunIds` and `collectedAt` on the manifest. New rule 5. |
+| 0.2.0   | Manifest gains `files` (paths to summaries and traces) and `tracedRunIds`, so the UI knows which runs have a trace without probing for 404s.                                                     |
+| 0.1.0   | First version, reviewed at the end of Milestone 1.                                                                                                                                               |
 
 ## Open questions
 

@@ -5,7 +5,7 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "source": {
       "type": "string",
@@ -46,7 +46,7 @@
           "modelLabel": {
             "type": "string",
             "minLength": 1,
-            "description": "Display label. Placeholders only in simulated data, e.g. \"Model A (open, ~8B)\"."
+            "description": "Display label: a placeholder in simulated data (e.g. \"Model A (open, ~8B)\"), the real model name in harness data."
           },
           "agentDesign": {
             "type": "string",
@@ -54,6 +54,22 @@
               "react",
               "plan_execute",
               "react_with_verifier"
+            ]
+          },
+          "modelId": {
+            "description": "Harness data: the provider model id, e.g. \"claude-haiku-5-5\".",
+            "type": "string",
+            "minLength": 1
+          },
+          "reasoningEffort": {
+            "description": "Harness data: the reasoning effort the model ran at.",
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "max"
             ]
           }
         },
@@ -228,6 +244,18 @@
         "type": "string"
       },
       "description": "Hand-written showcase traces. Always have a trace file; never in the summaries; excluded from all metrics."
+    },
+    "featuredRunIds": {
+      "description": "Real runs picked by hand to feature on the site. Each must have a trace. Harness data only.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "collectedAt": {
+      "description": "When the runs were collected, as an ISO date or range (\"2026-12-01/2026-12-03\"). Harness data only, so simulated data stays byte-identical.",
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [

@@ -5,7 +5,7 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "0.2.0"
+      "const": "0.3.0"
     },
     "id": {
       "type": "string",
@@ -22,7 +22,7 @@
         "modelLabel": {
           "type": "string",
           "minLength": 1,
-          "description": "Display label. Placeholders only in simulated data, e.g. \"Model A (open, ~8B)\"."
+          "description": "Display label: a placeholder in simulated data (e.g. \"Model A (open, ~8B)\"), the real model name in harness data."
         },
         "agentDesign": {
           "type": "string",
@@ -30,6 +30,22 @@
             "react",
             "plan_execute",
             "react_with_verifier"
+          ]
+        },
+        "modelId": {
+          "description": "Harness data: the provider model id, e.g. \"claude-haiku-5-5\".",
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoningEffort": {
+          "description": "Harness data: the reasoning effort the model ran at.",
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
           ]
         }
       },
@@ -173,6 +189,10 @@
     "escalationExpected": {
       "type": "boolean",
       "description": "Whether a correct agent would escalate in this run. Decided by the harness per task and faults."
+    },
+    "faultFired": {
+      "description": "Harness data: whether the fault actually reached the agent. Absent on baseline runs and in simulated data.",
+      "type": "boolean"
     },
     "initialWorld": {
       "type": "object",
@@ -401,6 +421,43 @@
             "additionalProperties": false
           },
           "description": "Keyed by tracking id."
+        },
+        "payments": {
+          "description": "Captured payments, keyed by payment id.",
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0
+              },
+              "currency": {
+                "type": "string",
+                "const": "NOK"
+              },
+              "capturedAt": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            "required": [
+              "orderId",
+              "amount",
+              "currency",
+              "capturedAt"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [

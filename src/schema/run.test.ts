@@ -168,3 +168,35 @@ describe('helpers', () => {
     expect(doc).toEqual({ 'a/b': {} })
   })
 })
+
+describe('schema 0.3.0 fields', () => {
+  it('accepts faultFired on a run with a fault', () => {
+    const run = { ...makeRun(), faultFired: true }
+    expect(issues(run)).toEqual([])
+    expect(issues({ ...toSummary(makeRun()), faultFired: false }, RunSummary)).toEqual([])
+  })
+
+  it('rejects faultFired on a baseline run', () => {
+    const summary = { ...toSummary(makeRun()), faults: [], faultFired: false }
+    expect(issues(summary, RunSummary)).toContainEqual(
+      expect.stringContaining('faultFired requires a fault'),
+    )
+  })
+
+  it('accepts modelId and reasoningEffort on the agent', () => {
+    const run = makeRun()
+    const agent = { ...run.agent, modelId: 'claude-haiku-5-5', reasoningEffort: 'medium' }
+    expect(issues({ ...run, agent })).toEqual([])
+  })
+
+  it('accepts payments in the world', () => {
+    const run = makeRun()
+    const initialWorld = {
+      ...run.initialWorld,
+      payments: {
+        'P-1': { orderId: '4402', amount: 289, currency: 'NOK', capturedAt: '2026-11-10' },
+      },
+    }
+    expect(issues({ ...run, initialWorld })).toEqual([])
+  })
+})
