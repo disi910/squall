@@ -43,7 +43,7 @@ export function Report() {
         <h1 className="text-3xl">Robustness of tool-using agents under injected faults</h1>
         <p className="text-muted">
           A first write-up of the Haiku trial. The methods are final; the numbers come from one
-          model and one seed, and are computed live from the runs.
+          model so far, and are computed live from the runs.
         </p>
       </div>
       <div className="grid items-start gap-10 lg:grid-cols-[200px_minmax(0,1fr)]">

@@ -9,6 +9,7 @@ export type DataSource = 'simulated' | 'harness'
 interface BuildData {
   source: DataSource
   agentCount: number
+  seedCount: number
   /** The first featured run, for the hero's replay link. */
   featured: string | null
 }
@@ -18,7 +19,7 @@ declare const __SQUALL_DATA__: BuildData
 /** The dataset this build was made from; tests and missing data fall back to simulated. */
 export const BUILD_DATA: BuildData =
   typeof __SQUALL_DATA__ === 'undefined'
-    ? { source: 'simulated', agentCount: 0, featured: null }
+    ? { source: 'simulated', agentCount: 0, seedCount: 0, featured: null }
     : __SQUALL_DATA__
 
 export function bannerText(source: DataSource, agentCount: number): string {

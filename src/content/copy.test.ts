@@ -5,7 +5,10 @@ describe('copy for the data source', () => {
   it('labels simulated findings as examples and real ones as observations', () => {
     expect(copyFor('simulated').findingEyebrow('injection')).toBe('Example finding · injection')
     expect(copyFor('harness').findingEyebrow('injection')).toBe('Finding · injection')
-    expect(copyFor('harness').findingsNote).toMatch(/^Observed in/)
+    expect(copyFor('harness').findingsNote(1, 1)).toMatch(/^Observed in/)
+    expect(copyFor('harness').findingsNote(1, 1)).toContain('one model and one seed per setting')
+    expect(copyFor('harness').findingsNote(1, 3)).toContain('one model and 3 seeds per setting')
+    expect(copyFor('harness').findingsNote(3, 3)).toContain('3 models and 3 seeds per setting')
     expect(copyFor('harness').chartCaption).not.toMatch(/simulated/i)
   })
 
