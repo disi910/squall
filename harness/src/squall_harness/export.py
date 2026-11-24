@@ -20,7 +20,7 @@ from typing import Any
 from inspect_ai.log import EvalLog, EvalSample, read_eval_log, resolve_sample_attachments
 from inspect_ai.model import ContentReasoning, ContentText
 
-from .inspect_task import REASONING_EFFORT, STORE_KEY, fault_key
+from .inspect_task import REASONING_EFFORT, STORE_KEY, fault_key, grade_record
 from .policy import SYSTEM_PROMPT
 from .scenarios import load_catalog
 from .tools import TOOL_SPECS
@@ -201,10 +201,11 @@ def _sample_run(log: EvalLog, sample: EvalSample, report: ExportReport) -> dict:
         "modelId": model_id,
         "reasoningEffort": effort,
     }
-    assert sample.scores is not None
-    meta = sample.scores["squall_scorer"].metadata or {}
     record = sample.store[STORE_KEY]
     task_id = sample.metadata["task_id"]
+    # Regrade from the stored record with the current graders rather than trusting the
+    # score saved in the log, so a grading fix applies without rerunning any model.
+    meta = grade_record(record, task_id)
     fault = sample.metadata["fault"]
     plan = record["plan"]
     faults = []
@@ -274,7 +275,7 @@ def export_logs(
             # Inspect stores long strings (tool arguments, messages) as attachment://
             # references in its logs; resolve them so events match the call records.
             sample = resolve_sample_attachments(sample)
-            if sample.error is not None or not sample.scores or STORE_KEY not in sample.store:
+            if sample.error is not None or STORE_KEY not in sample.store:
                 report.skipped_errors += 1
                 continue
             run = _sample_run(log, sample, report)

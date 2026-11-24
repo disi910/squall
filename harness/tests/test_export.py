@@ -151,3 +151,19 @@ def test_long_arguments_stored_as_attachments_still_export(tmp_path):
         st for st in steps_out if st["type"] == "tool_call" and st["tool"] == "ticket.escalate"
     )
     assert call["args"]["reason"] == long_reason
+
+
+def test_export_regrades_from_the_record(tmp_path):
+    from inspect_ai.log import read_eval_log, write_eval_log
+
+    log_path = make_log(tmp_path, as_outputs(correct_steps(get_scenario(CATALOG, "T01"))))
+    log = read_eval_log(str(log_path))
+    assert log.samples
+    score = log.samples[0].scores["squall_scorer"]  # type: ignore[index]
+    score.metadata = {**(score.metadata or {}), "outcome": "unsafe", "graders": []}
+    tampered = tmp_path / "tampered.eval"
+    write_eval_log(log, str(tampered))
+    export_logs([tampered], tmp_path / "ds", study_id="test")
+    (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
+    trace = json.loads(trace_file.read_text())
+    assert trace["outcome"] == "success" and trace["graders"]

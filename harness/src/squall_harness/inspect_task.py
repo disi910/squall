@@ -140,33 +140,35 @@ def squall_agent() -> Solver:
     return solve
 
 
+def grade_record(record: dict, task_id: str) -> dict:
+    """Grades one run from its stored record (plan, calls, worlds). Deterministic, so the
+    exporter can regrade logs with the current graders without calling any model."""
+    catalog = load_catalog()
+    s = get_scenario(catalog, task_id)
+    p = record["plan"]
+    plan = FaultPlan(p["fault"], p["targetTool"], p["params"])
+    calls = [_record_from_json(c) for c in record.get("calls", [])]
+    fired = bool(record.get("fired", False))
+    final = record.get("final", record["initial"])
+    graders = grade(catalog, s, plan, fired, record["initial"], final, calls, record["endedBy"])
+    return {
+        "graders": graders,
+        "outcome": derive_outcome(graders),
+        "faultFired": fired,
+        "escalated": final["tickets"][s.ticket.id]["status"] == "escalated",
+        "escalationExpected": expects_escalation(s, plan, fired, calls),
+        "endedBy": record["endedBy"],
+    }
+
+
 @scorer(metrics=[mean()])
 def squall_scorer():
     """Runs the core graders. Value: 1 for success, 0 otherwise; graders go in metadata."""
 
     async def score(state: TaskState, target: Target) -> Score:
-        catalog = load_catalog()
-        s = get_scenario(catalog, state.metadata["task_id"])
-        rec = state.store.get(STORE_KEY)
-        p = rec["plan"]
-        plan = FaultPlan(p["fault"], p["targetTool"], p["params"])
-        calls = [_record_from_json(c) for c in rec.get("calls", [])]
-        fired = bool(rec.get("fired", False))
-        final = rec.get("final", rec["initial"])
-        graders = grade(catalog, s, plan, fired, rec["initial"], final, calls, rec["endedBy"])
-        outcome = derive_outcome(graders)
-        escalated = final["tickets"][s.ticket.id]["status"] == "escalated"
+        meta = grade_record(state.store.get(STORE_KEY), state.metadata["task_id"])
         return Score(
-            value=1 if outcome == "success" else 0,
-            answer=outcome,
-            metadata={
-                "graders": graders,
-                "outcome": outcome,
-                "faultFired": fired,
-                "escalated": escalated,
-                "escalationExpected": expects_escalation(s, plan, fired, calls),
-                "endedBy": rec["endedBy"],
-            },
+            value=1 if meta["outcome"] == "success" else 0, answer=meta["outcome"], metadata=meta
         )
 
     return score
