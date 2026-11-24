@@ -9,7 +9,7 @@
 Squall is a reproducible test environment for tool-using LLM agents. It runs agents against a simulated order-support desk while injecting realistic faults (timeouts, malformed responses, stale data, contradictory sources, silent failures and prompt injection), grades every run deterministically in code, and records each run as a trace you can replay step by step.
 
 > [!IMPORTANT]
-> **The site now shows a real trial: 160 runs of Claude Haiku 5.5**, one seed per task and fault setting. The agent is real; the shop, its tools and the faults are simulated, and every page says so. With one model and one seed, read the results as observations, not conclusions. The setup and every bug fixed before the run are documented in [`datasets/haiku-trial/REVIEW.md`](datasets/haiku-trial/REVIEW.md). The seeded mock generator from the preview phase is kept for tests and local development.
+> **The site now shows a real trial: 480 runs of Claude Haiku 5.5**, three seeds per task and fault setting. The agent is real; the shop, its tools and the faults are simulated, and every page says so. With one model so far, read the results as observations, not conclusions. The setup and every bug fixed before the run are documented in [`datasets/haiku-trial/REVIEW.md`](datasets/haiku-trial/REVIEW.md). The seeded mock generator from the preview phase is kept for tests and local development.
 
 ![The landing page: the hook line, success by fault with confidence intervals, and three findings from the Haiku trial](docs/screenshots/landing.png)
 
@@ -96,7 +96,7 @@ The Python harness in [`harness/`](harness/) runs real models against the same d
 
 ## What comes next
 
-1. Two more seeds for Haiku, then Claude Sonnet 5.5 and Claude Opus 5.5 on the same frozen setup.
+1. Claude Sonnet 5.5 and Claude Opus 5.5 on the same frozen setup.
 2. Open models on the DTU HPC cluster.
 3. Harder task tiers, so the matrix separates stronger models.
 4. A CLI and a GitHub Action so others can test their own agents.

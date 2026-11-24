@@ -17,7 +17,7 @@ Agent benchmarks usually assume tools that answer quickly, correctly and honestl
 - **Environment.** A simulated order-support desk: 20 tasks across 5 categories and 9 tools. The tools and the world state (orders, payments, refunds, tickets, customers, carrier records) are simulated; the agent is real.
 - **Faults.** Seven fault types plus a baseline, injected by a seeded layer between the agent and its tools. The seed fixes which tool is hit and how, so every run meets the same fault again. A fault reaches the agent only if it calls the targeted tool; in this trial that happened in <Exposure /> of fault runs.
 - **Design.** <DatasetScale />.
-- **Seeds are repeated trials.** The model's outputs cannot be pinned (these models take no temperature setting), so the same run can play out differently. Repeating each setting gives intervals that capture that variation. This trial has one seed per setting.
+- **Seeds are repeated trials.** The model's outputs cannot be pinned (these models take no temperature setting), so the same run can play out differently. Repeating each setting gives intervals that capture that variation; the design line above gives the number of seeds.
 - **Grading.** Deterministic graders judge the final world state and the call log in code; there are no LLM judges. Replies are judged by their structured `decision` and stated status, and disclosure by an exact match against private values. Each grader is tagged _task_ or _safety_; any failed safety grader makes the run _unsafe_.
 - **Frozen setup.** The handbook, tasks, faults and graders were frozen at commit `9e405eb` after a smoke test and a first pass, which found and fixed harness and grading bugs. A final review fixed three grading rules and one fault-data bug at `047b21d`; the three runs that bug affected were rerun, and every run was regraded. Nothing was changed to make the results more or less interesting. The bugs and fixes are listed in the trial's review notes (`datasets/haiku-trial/REVIEW.md`).
 - **Traces.** Every step (reasoning, tool call, tool result, world change) is recorded in a versioned JSON format and can be replayed step by step.
@@ -36,7 +36,7 @@ CI = ( p̂ + z²/2n ± z·√( p̂(1−p̂)/n + z²/4n² ) ) / ( 1 + z²/n ),  z
 
 ## Findings
 
-The findings below are **observations** from one model and one seed per setting. The numbers are computed live from the runs.
+The findings below are **observations** from one model so far. The numbers are computed live from the runs.
 
 <Finding n={1}>
   Baseline success is <BaselineSuccess />. The hardest fault is <HardestFault />: every time a
@@ -56,15 +56,15 @@ The findings below are **observations** from one model and one seed per setting.
 
 ## Limitations
 
-- One model and one seed per setting. With 20 runs per cell, intervals are about ±20 points wide, so only large effects are visible.
+- One model so far. With <CellSize /> runs per matrix cell, intervals are still wide, so only large effects are visible.
 - One simulated domain. Results may not transfer to coding agents, browsing agents or other tool sets.
 - Faults are injected one at a time. Real outages often stack, and combinations are not studied yet.
-- The graders trust the reply's structured `decision` field. A hand check of 20 replies found no mismatch between the field and the message, but the check is a sample.
+- The graders trust the reply's structured `decision` field. A hand check of 40 replies found no mismatch between the field and the message, but the check is a sample.
 - The tools are simulated, so their responses are cleaner and more uniform than a real backend's.
 - The model's internal reasoning is not visible in the replays: Claude's thinking is not returned by default, so traces show tool calls and results, replies, and any text the model writes between tool calls.
 
 ## Next steps
 
-- Two more seeds for Haiku, then Claude Sonnet 5.5 and Claude Opus 5.5 on the same frozen setup.
+- Claude Sonnet 5.5 and Claude Opus 5.5 on the same frozen setup.
 - Harder task tiers, so the matrix separates stronger models.
 - A CLI and a GitHub Action so others can run Squall against their own agents.

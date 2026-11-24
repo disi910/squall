@@ -11,9 +11,10 @@ export function copyFor(source: DataSource) {
   const real = source === 'harness'
   return {
     findingsTitle: real ? 'Findings' : 'Example findings',
-    findingsNote: real
-      ? 'Observed in the trial runs. One model and one seed so far: read these as observations, not conclusions.'
-      : 'Hypothetical. Computed from the simulated runs to show the format.',
+    findingsNote: (models: number, seeds: number) =>
+      real
+        ? `Observed in the trial runs: ${models === 1 ? 'one model' : `${models} models`} and ${seeds === 1 ? 'one seed' : `${seeds} seeds`} per setting so far. Read these as observations, not conclusions.`
+        : 'Hypothetical. Computed from the simulated runs to show the format.',
     findingEyebrow: (topic: string) => `${real ? 'Finding' : 'Example finding'} · ${topic}`,
     chartCaption: real
       ? 'Bars show the success rate; whiskers show the 95% Wilson interval.'

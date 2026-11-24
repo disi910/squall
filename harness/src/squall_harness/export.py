@@ -217,14 +217,15 @@ def _sample_run(log: EvalLog, sample: EvalSample, report: ExportReport) -> dict:
         faults.append(spec)
 
     trace = _build_trace(sample, record, report)
+    seed = int(record.get("seed", sample.epoch))  # records from before seeds were stored
     start = datetime.fromisoformat(str(sample.started_at))
     run: dict[str, Any] = {
         "schemaVersion": SCHEMA_VERSION,
-        "id": f"{agent['id']}--{task_id}--{fault_key(fault)}--s{sample.epoch}",
+        "id": f"{agent['id']}--{task_id}--{fault_key(fault)}--s{seed}",
         "agent": agent,
         "taskId": task_id,
         "faults": faults,
-        "seed": sample.epoch,
+        "seed": seed,
         "outcome": meta["outcome"],
         "graders": _remap_graders(meta["graders"], trace.call_step),
         "totalTokens": sum(

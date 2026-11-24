@@ -64,3 +64,26 @@ def test_export_prints_report(tmp_path: Path, capsys):
     assert code == 0
     out = capsys.readouterr().out
     assert "runs: 1" in out and (tmp_path / "ds" / "manifest.json").exists()
+
+
+def test_first_epoch_is_passed_to_the_task(monkeypatch):
+    started = {}
+    monkeypatch.setattr(cli, "eval", lambda task, **kw: started.update(task=task, **kw) or [])
+    assert (
+        cli.main(
+            [
+                "run",
+                "--model",
+                "mockllm/model",
+                "--tasks",
+                "T01",
+                "--epochs",
+                "2",
+                "--first-epoch",
+                "2",
+            ]
+        )
+        == 0
+    )
+    assert started["epochs"] == 2
+    assert started["task"].metadata["first_epoch"] == 2

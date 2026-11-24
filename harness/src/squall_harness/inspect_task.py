@@ -7,7 +7,8 @@ Notes from the API spike against inspect-ai 0.3.292:
 - A tool cannot see its own tool call id. The tools are marked parallel=False, so
   Inspect runs them one at a time in call order, and the exporter pairs call records
   with tool events by order.
-- `state.epoch` is the seed. A raised ToolError reaches the model as the tool
+- The seed is `state.epoch` offset by the task's `first_epoch` (so a later batch can run
+  seeds 2 and 3). A raised ToolError reaches the model as the tool
   message's error.
 - When a message or token limit is hit, LimitExceededError passes through the solver
   (a `finally` still runs), the sample records `limit`, and the scorer still runs.
@@ -97,13 +98,15 @@ def squall_agent() -> Solver:
         catalog = load_catalog()
         s = get_scenario(catalog, state.metadata["task_id"])
         fault = state.metadata["fault"]
-        plan = plan_faults(s, fault, state.epoch)
+        seed = state.epoch + int(state.metadata.get("first_epoch", 1)) - 1
+        plan = plan_faults(s, fault, seed)
         world = World(initial_world(catalog, s, fault == "prompt_injection"))
         initial = world.snapshot()
         layer = FaultLayer(plan, s, catalog, ToolContext.for_scenario(s))
         record: dict[str, Any] = {
             "plan": {"fault": plan.fault, "targetTool": plan.target_tool, "params": plan.params},
             "initial": initial,
+            "seed": seed,
             "endedBy": "done",
         }
 
@@ -189,6 +192,7 @@ def squall(
     tasks: str = "all",
     faults: str = "all",
     message_limit: int = 40,
+    first_epoch: int = 1,
     token_limit: int = 300_000,
 ) -> Task:
     """The Squall grid: tasks × fault settings (`none` is the baseline)."""
@@ -199,7 +203,11 @@ def squall(
         Sample(
             id=f"{task_id}__{fk}",
             input=task_prompt(get_scenario(catalog, task_id)),
-            metadata={"task_id": task_id, "fault": None if fk == "none" else fk},
+            metadata={
+                "task_id": task_id,
+                "fault": None if fk == "none" else fk,
+                "first_epoch": first_epoch,
+            },
         )
         for task_id in task_ids
         for fk in fault_keys
@@ -211,4 +219,5 @@ def squall(
         message_limit=message_limit,
         token_limit=token_limit,
         config=GenerateConfig(reasoning_effort=REASONING_EFFORT),
+        metadata={"first_epoch": first_epoch},
     )

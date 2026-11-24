@@ -178,3 +178,24 @@ def test_replace_lets_a_later_log_supersede_runs(tmp_path):
     assert report.runs == 1 and report.replaced == 1
     (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
     assert json.loads(trace_file.read_text())["outcome"] == "success"
+
+
+def test_first_epoch_offsets_seed(tmp_path):
+    from squall_harness.faults import plan_faults
+
+    s = get_scenario(CATALOG, "T01")
+    log_dir = tmp_path / "logs"
+    model = get_model("mockllm/model", custom_outputs=as_outputs(correct_steps(s)))
+    eval(
+        squall(tasks="T01", faults="timeout", first_epoch=2),
+        model=model,
+        display="none",
+        log_dir=str(log_dir),
+    )
+    (log,) = log_dir.glob("*.eval")
+    export_logs([log], tmp_path / "ds", study_id="test")
+    (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
+    trace = json.loads(trace_file.read_text())
+    assert trace["id"].endswith("--s2") and trace["seed"] == 2
+    expected = plan_faults(s, "timeout", 2)
+    assert trace["faults"][0]["targetTool"] == expected.target_tool

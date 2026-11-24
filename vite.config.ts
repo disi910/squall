@@ -12,15 +12,17 @@ import { defineConfig } from 'vite'
 function dataInfo(): {
   source: 'simulated' | 'harness'
   agentCount: number
+  seedCount: number
   featured: string | null
 } {
   const path = 'public/data/manifest.json'
   if (process.env.VITEST || !existsSync(path))
-    return { source: 'simulated', agentCount: 0, featured: null }
+    return { source: 'simulated', agentCount: 0, seedCount: 0, featured: null }
   const manifest = JSON.parse(readFileSync(path, 'utf8'))
   return {
     source: manifest.source,
     agentCount: manifest.agents.length,
+    seedCount: manifest.seeds.length,
     featured: manifest.featuredRunIds?.[0] ?? null,
   }
 }
