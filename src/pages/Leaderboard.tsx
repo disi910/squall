@@ -1,6 +1,8 @@
 import { use } from 'react'
 import { useSearchParams } from 'react-router'
 import { Rate } from '../components/Rate.tsx'
+import { BUILD_DATA } from '../content/banner.ts'
+import { copyFor } from '../content/copy.ts'
 import type { LeaderboardRow } from '../data/analysis.ts'
 import { fmtInt } from '../data/format.ts'
 import { DESIGN_LABEL, faultLabel } from '../data/labels.ts'
@@ -100,8 +102,8 @@ export function Leaderboard() {
         <span className="eyebrow">Leaderboard</span>
         <h1 className="text-3xl">Agent configurations</h1>
         <p className="text-muted">
-          {analysis.agents.length} agent configs: placeholder models × agent designs. Every rate is
-          a share of runs with its 95% Wilson interval. Click a column to sort.
+          {copyFor(BUILD_DATA.source).leaderboardIntro(analysis.agents.length)} Every rate is a
+          share of runs with its 95% Wilson interval. Click a column to sort.
         </p>
       </div>
 

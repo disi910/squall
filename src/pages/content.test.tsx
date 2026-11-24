@@ -79,13 +79,19 @@ describe('report page', () => {
     }
   })
 
-  it('fills its example findings with live numbers and intervals', async () => {
+  it('fills its findings with live numbers and intervals', async () => {
     await renderAt('/report')
-    const findings = await screen.findAllByText(/^Example finding \d$/, {}, SLOW)
+    const findings = await screen.findAllByText(/^Finding \d$/, {}, SLOW)
     expect(findings).toHaveLength(3)
     // Pooled baseline over both agents: 3/4.
     const first = findings[0]!.parentElement!
     await vi.waitFor(() => expect(first.textContent).toContain('75% (95% CI 30–95)'))
-    expect(screen.getByText(/findings below are/).textContent).toContain('hypothetical')
+    expect(screen.getByText(/findings below are/).textContent).toContain('observations')
+  })
+
+  it('names the commit the setup was frozen at', async () => {
+    await renderAt('/report')
+    await screen.findByRole('heading', { name: 'Methodology' }, SLOW)
+    expect(document.body.textContent).toContain('9e405eb')
   })
 })

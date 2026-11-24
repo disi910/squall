@@ -23,6 +23,9 @@ jobs:
       - run: npm test
       # The acceptance check from the brief: generate the data, then build the static site.
       - run: npm run generate && npm run build
+      # The published dataset must pass the contract, and the site must build from it.
+      - run: npm run validate:dataset -- datasets/haiku-trial
+      - run: node scripts/copy-dataset.mjs datasets/haiku-trial && npm run build
 
   harness:
     runs-on: ubuntu-latest

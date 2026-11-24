@@ -10,7 +10,7 @@ export const REPORT_SECTIONS = [
   'Question',
   'Methodology',
   'Metrics and uncertainty',
-  'Example findings',
+  'Findings',
   'Limitations',
   'Next steps',
 ]

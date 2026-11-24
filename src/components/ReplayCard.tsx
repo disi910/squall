@@ -1,6 +1,6 @@
 import { use } from 'react'
 import { Link } from 'react-router'
-import { GOLDEN_COPY } from '../content/golden.ts'
+import { FEATURED_COPY, GOLDEN_COPY } from '../content/golden.ts'
 import { DESIGN_LABEL } from '../data/labels.ts'
 import { loadTrace } from '../data/load.ts'
 import { faultKey } from '../schema/helpers.ts'
@@ -22,16 +22,19 @@ export function StepStrip({ steps }: { steps: Step[] }) {
   )
 }
 
-/** A card linking to a golden replay. Suspends while its trace loads. */
+/** A card linking to a featured or golden replay. Suspends while its trace loads. */
 export function ReplayCard({ runId }: { runId: string }) {
   const run = use(loadTrace(runId))
-  const copy = GOLDEN_COPY[runId]
+  const golden = GOLDEN_COPY[runId]
+  const copy = golden ?? FEATURED_COPY[runId]
   return (
     <Link
       to={`/runs/${runId}`}
       className="card flex flex-col gap-2.5 p-4 text-fg no-underline transition-colors hover:border-line-strong hover:bg-surface-2"
     >
-      <span className="eyebrow">Golden trace · {run.steps.length} steps</span>
+      <span className="eyebrow">
+        {golden ? 'Golden trace' : 'Featured run'} · {run.steps.length} steps
+      </span>
       <h3 className="text-base">{copy?.title ?? runId}</h3>
       {copy && <p className="text-[13.5px] text-muted">{copy.blurb}</p>}
       <StepStrip steps={run.steps} />

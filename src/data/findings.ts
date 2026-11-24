@@ -1,6 +1,7 @@
 import {
   byAgent,
   byFaultKey,
+  exposureRate,
   injectionComplianceRate,
   meanSteps,
   successRate,
@@ -21,6 +22,10 @@ export interface Findings {
   verifierOnSilentFailure: { verifier: Proportion; react: Proportion } | null
   /** Mean steps of failed or unsafe runs vs successful runs. */
   steps: { failed: number; succeeded: number } | null
+  /** Share of fault runs where the fault reached the agent (harness data only). */
+  exposure: Proportion | null
+  /** The single fault with the lowest pooled success rate. */
+  hardestFault: { key: FaultKey; rate: Proportion } | null
   /** Success rate per fault setting, pooled over every agent, in manifest order. */
   successByFault: { key: FaultKey; rate: Proportion }[]
   runCount: number
@@ -51,8 +56,15 @@ export function computeFindings({ manifest, runs }: Dataset): Findings {
     return rate ? [{ key, rate }] : []
   })
 
+  const hardestFault =
+    successByFault
+      .filter((d) => d.key !== 'none' && !d.key.includes('+'))
+      .sort((a, b) => a.rate.rate - b.rate.rate)[0] ?? null
+
   return {
     mostInjectable,
+    exposure: exposureRate(runs),
+    hardestFault,
     verifierOnSilentFailure: verifier && react ? { verifier, react } : null,
     steps: failed !== null && succeeded !== null ? { failed, succeeded } : null,
     successByFault,

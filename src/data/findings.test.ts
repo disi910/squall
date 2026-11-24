@@ -81,6 +81,18 @@ describe('computeFindings', () => {
     expect(f.runCount).toBe(runs.length)
   })
 
+  it('names the hardest single fault', () => {
+    expect(f.hardestFault?.key).toBe('silent_failure')
+  })
+
+  it('hides the verifier comparison when only one design has run', () => {
+    const one = computeFindings({
+      manifest: makeManifest([{ id: 'a', design: 'react' }]),
+      runs: [makeSummary({ agent: 'a', faults: ['silent_failure'] })],
+    })
+    expect(one.verifierOnSilentFailure).toBeNull()
+  })
+
   it('returns empty findings instead of crashing on no data', () => {
     const empty = computeFindings({ manifest, runs: [] })
     expect(empty.mostInjectable).toBeNull()

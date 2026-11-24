@@ -28,7 +28,7 @@ const components = {
   ),
   Finding: ({ n, children }: { n: number; children: ReactNode }) => (
     <div className="flex flex-col gap-1 rounded-md border border-l-[3px] border-line border-l-muted bg-surface px-3.5 py-3">
-      <span className="eyebrow">Example finding {n}</span>
+      <span className="eyebrow">Finding {n}</span>
       <span>{children}</span>
     </div>
   ),
@@ -39,11 +39,11 @@ export function Report() {
     <div className="flex flex-col gap-7">
       <PageTitle title="Report" />
       <div className="flex max-w-[760px] flex-col gap-2">
-        <span className="eyebrow">Write-up · skeleton</span>
+        <span className="eyebrow">Write-up · trial</span>
         <h1 className="text-3xl">Robustness of tool-using agents under injected faults</h1>
         <p className="text-muted">
-          A skeleton for the future study. The structure and methods are real; every number comes
-          from simulated data and is a placeholder.
+          A first write-up of the Haiku trial. The methods are final; the numbers come from one
+          model and one seed, and are computed live from the runs.
         </p>
       </div>
       <div className="grid items-start gap-10 lg:grid-cols-[200px_minmax(0,1fr)]">

@@ -42,6 +42,12 @@ const TIP_W = 264
  */
 const INK_SWITCH = { light: 0.8, dark: 0.55 }
 
+/** How often the fault reached the agent in this cell; empty for simulated data and the baseline. */
+const exposureText = (cell: MatrixCell | undefined) =>
+  cell?.exposure
+    ? `The fault reached the agent in ${cell.exposure.successes} of ${cell.exposure.n} runs.`
+    : ''
+
 const splitModel = (label: string) => {
   const m = label.match(/^(.*?) \((.*)\)$/)
   return m ? { name: m[1]!, size: m[2]! } : { name: label, size: '' }
@@ -205,8 +211,9 @@ export function Heatmap({ analysis, metric, onOpen }: HeatmapProps) {
                 const isActive = active[0] === r && active[1] === c
                 const where = `${agent.modelLabel}, ${DESIGN_LABEL[agent.agentDesign]}, ${faultLabel(key)}`
                 // Starts with the visible text ("81% ±8" or "ref."), so voice-control users can say what they see (WCAG 2.5.3).
+                const reach = exposureText(cell)
                 const label = p
-                  ? `${pct(p.rate)} ±${Math.round(((p.upper - p.lower) / 2) * 100)}: ${metric.label} for ${where}. 95% CI ${ciRange(p)}, n=${p.n}. Press Enter to open these runs.`
+                  ? `${pct(p.rate)} ±${Math.round(((p.upper - p.lower) / 2) * 100)}: ${metric.label} for ${where}. 95% CI ${ciRange(p)}, n=${p.n}.${reach ? ` ${reach}` : ''} Press Enter to open these runs.`
                   : `ref.: ${where}, no ${metric.label.toLowerCase()} value (reference column). Press Enter to open these runs.`
                 const t = p
                   ? Math.max(
@@ -335,6 +342,9 @@ export function Heatmap({ analysis, metric, onOpen }: HeatmapProps) {
             {tipCell.counts.success} success · {tipCell.counts.failure} failure ·{' '}
             {tipCell.counts.unsafe} unsafe
           </span>
+          {exposureText(tipCell) && (
+            <span className="text-xs text-faint">{exposureText(tipCell)}</span>
+          )}
           <span className="text-xs text-faint">Click or press Enter to open these runs</span>
         </div>
       )}

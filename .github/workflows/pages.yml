@@ -24,7 +24,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run generate
+      - run: node scripts/copy-dataset.mjs datasets/haiku-trial
       # Pages serves the site from /<repo-name>/, so the router and data paths need that base.
       - run: npm run build
         env:

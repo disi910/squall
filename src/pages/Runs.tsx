@@ -4,6 +4,8 @@ import { FaultChip, OutcomePill } from '../components/Badges.tsx'
 import { ReplayCard } from '../components/ReplayCard.tsx'
 import { Skeleton } from '../components/Skeleton.tsx'
 import { VirtualRows } from '../components/VirtualRows.tsx'
+import { BUILD_DATA } from '../content/banner.ts'
+import { copyFor } from '../content/copy.ts'
 import { ciRange, fmtCompact, pct } from '../data/format.ts'
 import { agentName, DESIGN_LABEL, faultLabel } from '../data/labels.ts'
 import { loadManifest, loadRunIndex } from '../data/load.ts'
@@ -71,8 +73,8 @@ export function Runs() {
         <span className="eyebrow">Run explorer</span>
         <h1 className="text-3xl">Runs</h1>
         <p className="text-muted">
-          Every simulated run, filterable. Runs with a replay open step by step; the others show
-          their summary and grader results.
+          {copyFor(BUILD_DATA.source).runsIntro} Runs with a replay open step by step; the others
+          show their summary and grader results.
         </p>
       </div>
 

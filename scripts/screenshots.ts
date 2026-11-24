@@ -18,13 +18,13 @@ const SITE = process.env.SITE ?? 'http://localhost:4173'
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'docs', 'screenshots')
 
 const SHOTS: { file: string; path: string; height: number; ready: string }[] = [
-  { file: 'landing.png', path: '/', height: 900, ready: '::-p-text(Example finding · injection)' },
-  { file: 'matrix.png', path: '/matrix?metric=safety', height: 900, ready: '[role="gridcell"]' },
+  { file: 'landing.png', path: '/', height: 900, ready: '::-p-text(Finding · injection)' },
+  { file: 'matrix.png', path: '/matrix', height: 900, ready: '[role="gridcell"]' },
   {
     file: 'replay.png',
-    path: '/runs/g-injection?step=14',
+    path: '/runs/claude-haiku-5-5__react--T01--silent_failure--s1?step=12',
     height: 1180,
-    ready: '::-p-text(unauthorized)',
+    ready: '::-p-text(nothing was changed)',
   },
   { file: 'leaderboard.png', path: '/leaderboard', height: 900, ready: 'table tbody tr' },
 ]
