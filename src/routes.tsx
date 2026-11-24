@@ -12,6 +12,9 @@ import { RouteError } from './pages/RouteError.tsx'
 export const routes: RouteObject[] = [
   {
     element: <Layout />,
+    // The catch-all route has a loader, so the router asks for something to show
+    // before its first render; nothing is what the app showed anyway.
+    HydrateFallback: () => null,
     children: [
       {
         errorElement: <RouteError />,
