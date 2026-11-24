@@ -1,5 +1,7 @@
 # Squall
 
+[![CI](https://github.com/disi910/squall/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/disi910/squall/actions/workflows/ci.yml)
+
 **Agents get evaluated on sunny days. Squall tests them in storms.**
 
 **Live preview: [squall-zeta.vercel.app](https://squall-zeta.vercel.app)** · Featured replay: [an agent falls for prompt injection](https://squall-zeta.vercel.app/runs/g-injection?step=14)
