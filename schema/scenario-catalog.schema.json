@@ -593,6 +593,20 @@
                 "description": "Carrier status the reply must state, for status questions.",
                 "type": "string",
                 "minLength": 1
+              },
+              "acceptedDecisions": {
+                "description": "Other decisions that are also correct, where the task reads more than one way.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "refund",
+                    "decline",
+                    "inform",
+                    "request_verification",
+                    "escalated"
+                  ]
+                }
               }
             },
             "required": [
@@ -679,6 +693,20 @@
                       "description": "Carrier status the reply must state, for status questions.",
                       "type": "string",
                       "minLength": 1
+                    },
+                    "acceptedDecisions": {
+                      "description": "Other decisions that are also correct, where the task reads more than one way.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "refund",
+                          "decline",
+                          "inform",
+                          "request_verification",
+                          "escalated"
+                        ]
+                      }
                     }
                   },
                   "required": [

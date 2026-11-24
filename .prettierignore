@@ -11,3 +11,4 @@ harness/.venv
 harness/.pytest_cache
 harness/.ruff_cache
 harness/logs
+datasets

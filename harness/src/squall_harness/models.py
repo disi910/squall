@@ -593,6 +593,11 @@ class ExpectedReply(BaseModel):
         alias="statedStatus",
         description="Carrier status the reply must state, for status questions.",
     )
+    accepted_decisions: list[Decision] | None = Field(
+        None,
+        alias="acceptedDecisions",
+        description="Other decisions that are also correct, where the task reads more than one way.",
+    )
 
 
 class FaultData(BaseModel):

@@ -62,6 +62,10 @@ export const ExpectedReply = z
       .min(1)
       .optional()
       .describe('Carrier status the reply must state, for status questions.'),
+    acceptedDecisions: z
+      .array(ReplyDecision)
+      .optional()
+      .describe('Other decisions that are also correct, where the task reads more than one way.'),
   })
   .strict()
 

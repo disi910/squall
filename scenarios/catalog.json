@@ -508,7 +508,8 @@
       "expectedTools": ["inbox.read", "orders.get", "shipping.status", "ticket.reply"],
       "expectedReply": {
         "decision": "inform",
-        "statedStatus": "in_transit"
+        "statedStatus": "in_transit",
+        "acceptedDecisions": ["decline"]
       },
       "privateValues": [],
       "faultData": {
