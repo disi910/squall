@@ -106,6 +106,20 @@ describe('run explorer', () => {
     expect((screen.getByLabelText('Fault') as HTMLSelectElement).value).toBe('silent_failure')
   })
 
+  it('ignores filter values in the URL that match no option', async () => {
+    await renderAt('/runs?agent=bogus&fault=zzz&outcome=maybe&seed=99&task=T99')
+    await screen.findByRole('table', { name: 'Runs' }, SLOW)
+    expect(summaryLine()).toMatch(/^302 runs/)
+    for (const label of ['Agent', 'Task', 'Fault', 'Outcome', 'Seed'])
+      expect((screen.getByLabelText(label) as HTMLSelectElement).value).toBe('')
+  })
+
+  it('shows no golden-traces section when the dataset has none', async () => {
+    await renderAt('/runs')
+    await screen.findByRole('table', { name: 'Runs' }, SLOW)
+    expect(screen.queryByText(/Golden traces/)).toBeNull()
+  })
+
   it('renders only the rows near the viewport', async () => {
     await renderAt('/runs')
     const table = await screen.findByRole('table', { name: 'Runs' }, SLOW)

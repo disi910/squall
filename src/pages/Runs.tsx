@@ -2,6 +2,7 @@ import { Suspense, use, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { FaultChip, OutcomePill } from '../components/Badges.tsx'
 import { ReplayCard } from '../components/ReplayCard.tsx'
+import { useScrollFade } from '../components/scroll.ts'
 import { Skeleton } from '../components/Skeleton.tsx'
 import { VirtualRows } from '../components/VirtualRows.tsx'
 import { BUILD_DATA } from '../content/banner.ts'
@@ -26,10 +27,22 @@ export function Runs() {
   const manifest = use(loadManifest())
   const rows = use(loadRunIndex())
   const [params, setParams] = useSearchParams()
-  const filter = Object.fromEntries(FILTERS.map((f) => [f, params.get(f) ?? ''])) as Record<
-    (typeof FILTERS)[number],
-    string
-  >
+  const tableRef = useScrollFade<HTMLDivElement>()
+  // A filter value from the URL counts only if it is one of the options, so a stale or
+  // mistyped link never filters by something the dropdowns cannot show.
+  const options: Record<(typeof FILTERS)[number], Set<string>> = {
+    agent: new Set(manifest.agents.map((a) => a.id)),
+    task: new Set(manifest.tasks.map((t) => t.id)),
+    fault: new Set(manifest.faultSettings.map((spec) => faultKey(spec))),
+    outcome: new Set(['success', 'failure', 'unsafe']),
+    seed: new Set(manifest.seeds.map(String)),
+  }
+  const filter = Object.fromEntries(
+    FILTERS.map((f) => {
+      const value = params.get(f) ?? ''
+      return [f, options[f].has(value) ? value : '']
+    }),
+  ) as Record<(typeof FILTERS)[number], string>
   const onlyReplays = params.get('replay') === '1'
 
   const filtered = useMemo(
@@ -78,27 +91,29 @@ export function Runs() {
         </p>
       </div>
 
-      <section className="flex flex-col gap-2.5">
-        {/* A real heading (styled as a label), so the cards' h3 titles sit under an h2. */}
-        <h2 className="eyebrow font-mono font-normal tracking-[0.08em]">
-          Golden traces · hand-written showcases, excluded from metrics
-        </h2>
-        <Suspense
-          fallback={
+      {manifest.goldenRunIds.length > 0 && (
+        <section className="flex flex-col gap-2.5">
+          {/* A real heading (styled as a label), so the cards' h3 titles sit under an h2. */}
+          <h2 className="eyebrow font-mono font-normal tracking-[0.08em]">
+            Golden traces · hand-written showcases, excluded from metrics
+          </h2>
+          <Suspense
+            fallback={
+              <div className="grid gap-3 md:grid-cols-3">
+                {[0, 1, 2].map((i) => (
+                  <Skeleton key={i} className="h-52" />
+                ))}
+              </div>
+            }
+          >
             <div className="grid gap-3 md:grid-cols-3">
-              {[0, 1, 2].map((i) => (
-                <Skeleton key={i} className="h-52" />
+              {manifest.goldenRunIds.map((id) => (
+                <ReplayCard key={id} runId={id} />
               ))}
             </div>
-          }
-        >
-          <div className="grid gap-3 md:grid-cols-3">
-            {manifest.goldenRunIds.map((id) => (
-              <ReplayCard key={id} runId={id} />
-            ))}
-          </div>
-        </Suspense>
-      </section>
+          </Suspense>
+        </section>
+      )}
 
       <div className="flex flex-wrap items-end gap-3">
         <FilterSelect
@@ -219,7 +234,7 @@ export function Runs() {
         )}
       </p>
 
-      <div className="card overflow-x-auto">
+      <div ref={tableRef} className="card overflow-x-auto">
         <div
           role="table"
           aria-label="Runs"
