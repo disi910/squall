@@ -66,3 +66,14 @@ def play(
             if layer.call(world, name, args).outcome["ok"]:
                 break
     return Played(layer, world, initial)
+
+
+def as_outputs(steps: list[Step], final: str = "Done.") -> list:
+    """The steps as scripted mockllm outputs: one tool call per turn, then a final message."""
+    from inspect_ai.model import ModelOutput
+
+    outs = [
+        ModelOutput.for_tool_call("mockllm/model", name.replace(".", "_"), args)
+        for name, args in steps
+    ]
+    return [*outs, ModelOutput.from_content("mockllm/model", final)]
