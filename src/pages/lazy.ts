@@ -12,3 +12,5 @@ export const Leaderboard = lazy(() =>
 export const Matrix = lazy(() => import('./Matrix.tsx').then((m) => ({ default: m.Matrix })))
 export const Runs = lazy(() => import('./Runs.tsx').then((m) => ({ default: m.Runs })))
 export const Replay = lazy(() => import('./Replay.tsx').then((m) => ({ default: m.Replay })))
+export const Tasks = lazy(() => import('./Tasks.tsx').then((m) => ({ default: m.Tasks })))
+export const Report = lazy(() => import('./Report.tsx').then((m) => ({ default: m.Report })))

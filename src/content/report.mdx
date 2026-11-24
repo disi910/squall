@@ -1,0 +1,64 @@
+import {
+  BaselineSuccess,
+  CellSize,
+  DatasetScale,
+  HardestFault,
+  MostInjectable,
+  VerifierOnSilentFailure,
+} from './report-numbers.tsx'
+
+## Question
+
+Agent benchmarks usually assume tools that answer quickly, correctly and honestly. Production tools time out, rate-limit, return stale or contradictory data, fail silently, and pass along text written by untrusted people. **How much does agent performance degrade under these faults, and which agent designs hold up?**
+
+## Methodology
+
+- **Environment.** A simulated order-support desk for Nordlys Supply, a fictional shop: 20 tasks across 5 categories and 9 tools. The world state (orders, refunds, tickets, customers, carrier records) is fully determined by the task and the seed.
+- **Faults.** Seven fault types plus a baseline, injected by a seeded layer between the agent and its tools. The seed fixes which call is hit and how, so a run can be repeated exactly.
+- **Design.** <DatasetScale />.
+- **Grading.** Deterministic graders inspect the final world state in code. There are no LLM judges. Each grader is tagged _task_ or _safety_; any failed safety grader makes the run _unsafe_.
+- **Traces.** Every step (reasoning, tool call, tool result, world change) is recorded in a versioned JSON format and can be replayed step by step.
+
+## Metrics and uncertainty
+
+Every rate is a share of runs and comes with a 95% Wilson score interval. Wilson behaves well near 0% and 100% and at the small sample sizes here (<CellSize /> runs per matrix cell), where the textbook normal interval collapses or spills outside 0–100%.
+
+```text
+CI = ( p̂ + z²/2n ± z·√( p̂(1−p̂)/n + z²/4n² ) ) / ( 1 + z²/n ),  z = 1.96
+```
+
+**Recovery rate** is paired: of the task–seed pairs an agent solved at baseline, the share it still solved with the fault on. A paired share stays a proportion, so it gets a Wilson interval like every other rate. A ratio of two success rates would not, and it can exceed 1.
+
+**Escalation correctness** counts a run as correct when the agent escalated exactly when it should have: escalation-policy tasks, unverified account changes, and status questions where the order database and the carrier disagree.
+
+## Example findings
+
+The findings below are **hypothetical**. They show the intended format, computed live from the simulated runs. No real models have been run.
+
+<Finding n={1}>
+  Baseline success across all agents is <BaselineSuccess />. The hardest fault is <HardestFault />.
+</Finding>
+
+<Finding n={2}>
+  A verifier step mostly pays off on silent failures: <VerifierOnSilentFailure />, pooled over
+  models.
+</Finding>
+
+<Finding n={3}>
+  Prompt injection mostly causes unsafe outcomes rather than plain failures. The most affected
+  config is <MostInjectable />.
+</Finding>
+
+## Limitations
+
+- One simulated domain. Results may not transfer to coding agents, browsing agents or other tool sets.
+- Faults are injected one at a time. Real outages often stack, and combinations are not studied yet.
+- Five seeds per cell give intervals about ±10 points wide, so small differences between configs are not distinguishable.
+- Graders check outcomes, not the quality of the reply text beyond basic rules.
+- The models in this preview are anonymized placeholders, and every result is simulated.
+
+## Next steps
+
+- A Python harness with containerized mock tools, the seeded fault layer, and trace export in this site's data format.
+- Real runs on open models and one or two API models, with more seeds.
+- A CLI and a GitHub Action so others can run Squall against their own agents.
