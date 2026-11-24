@@ -39,6 +39,7 @@ export function copyFor(source: DataSource) {
       ? 'Squall. Nordlys Supply is a fictional shop; its tools and faults are simulated, the agents are real models.'
       : 'Squall preview. Nordlys Supply is a fictional shop. Model names are placeholders, not real models.',
     footerTag: real ? 'real model runs' : 'simulated data',
+    goldenNote: real ? '' : 'The hand-written golden traces are excluded from all metrics.',
   }
 }
 

@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { STEP_LABEL } from '../../data/labels.ts'
+import { scrollLeftToReveal, useScrollFade } from '../scroll.ts'
 import type { GraderResult, Step } from '../../schema/index.ts'
 import { STEP_BG } from '../stepColors.ts'
 
@@ -16,8 +18,23 @@ interface TimelineProps {
  * timeline works with a mouse, a finger or the keyboard.
  */
 export function Timeline({ steps, current, failures, onSelect }: TimelineProps) {
+  const scrollRef = useScrollFade<HTMLDivElement>()
+  // Keep the selected step visible when the timeline scrolls sideways (deep links,
+  // playback, arrow keys). Only the timeline scrolls, never the page.
+  useEffect(() => {
+    const el = scrollRef.current
+    const button = el?.querySelectorAll('button')[current]
+    if (!el || !button) return
+    const left = scrollLeftToReveal(
+      button.offsetLeft,
+      button.offsetWidth,
+      el.scrollLeft,
+      el.clientWidth,
+    )
+    if (left !== null) el.scrollLeft = left
+  }, [current, scrollRef])
   return (
-    <div className="overflow-x-auto pb-1">
+    <div ref={scrollRef} className="relative overflow-x-auto pb-1">
       <div
         role="group"
         aria-label={`Timeline, ${steps.length} steps`}

@@ -2,7 +2,8 @@ import { useRef, useState } from 'react'
 import type { KeyboardEvent, MouseEvent } from 'react'
 import type { Analysis, MatrixCell } from '../data/analysis.ts'
 import { ciRange, pct } from '../data/format.ts'
-import { DESIGN_LABEL, faultLabel } from '../data/labels.ts'
+import { DESIGN_LABEL, faultLabel, wrapLabel } from '../data/labels.ts'
+import { useScrollFade } from './scroll.ts'
 import type { Proportion } from '../metrics/index.ts'
 import { usePrefersLight } from './usePrefersLight.ts'
 
@@ -67,6 +68,7 @@ export function Heatmap({ analysis, metric, onOpen }: HeatmapProps) {
   const [tip, setTip] = useState<{ r: number; c: number; x: number; y: number } | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
   const cellRefs = useRef(new Map<string, SVGGElement>())
+  const scrollRef = useScrollFade<HTMLDivElement>()
 
   // Group consecutive rows that share a model, so each model gets one label and a gap below it.
   const groupOf: number[] = []
@@ -126,7 +128,7 @@ export function Heatmap({ analysis, metric, onOpen }: HeatmapProps) {
 
   return (
     <div ref={boxRef} className="relative">
-      <div className="overflow-x-auto">
+      <div ref={scrollRef} className="overflow-x-auto">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="block h-auto w-full min-w-[760px]"
@@ -158,6 +160,8 @@ export function Heatmap({ analysis, metric, onOpen }: HeatmapProps) {
             const y0 = rowY(rows[0]!)
             const y1 = rowY(rows.at(-1)!) + CELL_H
             const { name, size } = splitModel(agents[rows[0]!]!.modelLabel)
+            // A real model name has no size part; wrap it onto the size line if it is long.
+            const [line1, line2 = ''] = size ? [name, size] : wrapLabel(name)
             return (
               <g key={g} aria-hidden="true">
                 <text
@@ -168,16 +172,17 @@ export function Heatmap({ analysis, metric, onOpen }: HeatmapProps) {
                   fill="var(--fg)"
                   fontFamily="var(--font-display)"
                 >
-                  {name}
+                  {line1}
                 </text>
                 <text
                   x={0}
                   y={(y0 + y1) / 2 + 12}
-                  fontSize={11}
-                  fill="var(--faint)"
-                  fontFamily="var(--font-mono)"
+                  fontSize={size ? 11 : 13}
+                  fontWeight={size ? undefined : 600}
+                  fill={size ? 'var(--faint)' : 'var(--fg)'}
+                  fontFamily={size ? 'var(--font-mono)' : 'var(--font-display)'}
                 >
-                  {size}
+                  {line2}
                 </text>
                 <line
                   x1={MODEL_W - 10}

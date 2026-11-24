@@ -122,8 +122,8 @@ export function Matrix() {
         <div className="flex flex-col gap-1">
           <dt className="font-medium text-fg">Recovery (paired)</dt>
           <dd>
-            Of the task–seed pairs an agent solved at baseline, the share it still solved with the
-            fault on. The baseline column is the reference, so it has no value.
+            Of the tasks an agent solved in every baseline run, the share of runs it still solved
+            with the fault on. The baseline column is the reference, so it has no value.
           </dd>
         </div>
       </dl>
