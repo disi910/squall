@@ -7,3 +7,7 @@ scripts/golden
 HANDOFF.md
 # Local editor/agent config
 .claude
+harness/.venv
+harness/.pytest_cache
+harness/.ruff_cache
+harness/logs

@@ -87,9 +87,13 @@ These are explained in more depth in [`schema/README.md`](schema/README.md) (the
 
 Fully static. [`vercel.json`](vercel.json) deploys to Vercel as is, a manual GitHub Actions workflow deploys to GitHub Pages, and [`docs/deploy.md`](docs/deploy.md) has an nginx setup for your own server. CI runs every check on each push.
 
+## Harness
+
+The Python harness in [`harness/`](harness/) runs real models against the same desk: the shared scenario catalog, the 9 tools, a seeded fault layer and deterministic graders, with UK AISI's Inspect running the agent loop. It exports datasets in this data format and checks them with `npm run validate:dataset`. See [`harness/README.md`](harness/README.md).
+
 ## What comes next
 
-1. A Python harness: containerized mock tools, a seeded fault-injection layer, deterministic graders, and traces exported in this data format (likely building on an existing eval framework such as UK AISI's Inspect).
+1. A paid trial on one small model, reviewed trace by trace.
 2. Real runs on open models and one or two API models, with more seeds.
 3. Real results replace the simulated data, and the report gets written for real.
 4. A CLI and a GitHub Action so others can test their own agents.
