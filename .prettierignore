@@ -3,3 +3,7 @@ node_modules
 public/data
 schema/*.schema.json
 scripts/golden
+# The brief is kept exactly as written
+HANDOFF.md
+# Local editor/agent config
+.claude

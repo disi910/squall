@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run lint
+      # The tests regenerate the dataset in memory, check it against the schema, and check
+      # that the committed JSON Schema files are up to date.
+      - run: npm test
+      # The acceptance check from the brief: generate the data, then build the static site.
+      - run: npm run generate && npm run build
