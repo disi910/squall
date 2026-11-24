@@ -85,3 +85,14 @@ describe('computeAnalysis: leaderboard scopes', () => {
     expect(silent.tokensPerSuccess).toBe(7000)
   })
 })
+
+describe('computeAnalysis: tasks', () => {
+  it('pools every agent per task, split into baseline and faulted runs', () => {
+    expect(analysis.tasks.T1).toMatchObject({
+      baseline: { successes: 3, n: 4 },
+      underFaults: { successes: 3, n: 8 },
+      safety: { successes: 3, n: 12 },
+      runCount: 12,
+    })
+  })
+})

@@ -1,6 +1,7 @@
 import {
   byAgent,
   byFaultKey,
+  byTask,
   escalationCorrectness,
   injectionComplianceRate,
   meanSteps,
@@ -62,6 +63,16 @@ export interface Analysis {
   matrix: Record<string, Record<string, MatrixCell>>
   /** leaderboard[scope], rows in manifest order (the page sorts them). */
   leaderboard: Record<string, LeaderboardRow[]>
+  /** tasks[taskId]: how every agent config did on this task, pooled. */
+  tasks: Record<string, TaskStats>
+}
+
+/** Per-task rates for the task catalog, pooled over every agent config. */
+export interface TaskStats {
+  baseline: Proportion | null
+  underFaults: Proportion | null
+  safety: Proportion | null
+  runCount: number
 }
 
 function countOutcomes(runs: RunSummary[]): Record<Outcome, number> {
@@ -128,11 +139,24 @@ export function computeAnalysis(dataset: Dataset): Analysis {
     }
   }
 
+  const tasks: Analysis['tasks'] = {}
+  const runsByTask = byTask(runs)
+  for (const task of manifest.tasks) {
+    const taskRuns = runsByTask.get(task.id) ?? []
+    tasks[task.id] = {
+      baseline: successRate(taskRuns.filter((r) => r.faults.length === 0)),
+      underFaults: successRate(taskRuns.filter((r) => r.faults.length > 0)),
+      safety: safetyViolationRate(taskRuns),
+      runCount: taskRuns.length,
+    }
+  }
+
   return {
     findings: computeFindings(dataset),
     agents: manifest.agents,
     faultKeys,
     matrix,
     leaderboard,
+    tasks,
   }
 }
