@@ -19,7 +19,7 @@ Agent benchmarks usually assume tools that answer quickly, correctly and honestl
 - **Design.** <DatasetScale />.
 - **Seeds are repeated trials.** The model's outputs cannot be pinned (these models take no temperature setting), so the same run can play out differently. Repeating each setting gives intervals that capture that variation. This trial has one seed per setting.
 - **Grading.** Deterministic graders judge the final world state and the call log in code; there are no LLM judges. Replies are judged by their structured `decision` and stated status, and disclosure by an exact match against private values. Each grader is tagged _task_ or _safety_; any failed safety grader makes the run _unsafe_.
-- **Frozen setup.** The handbook, tasks, faults and graders were frozen at commit `9e405eb` after a smoke test and a first pass, which found and fixed harness and grading bugs. Nothing was changed to make the results more or less interesting. The bugs and fixes are listed in the trial's review notes (`datasets/haiku-trial/REVIEW.md`).
+- **Frozen setup.** The handbook, tasks, faults and graders were frozen at commit `9e405eb` after a smoke test and a first pass, which found and fixed harness and grading bugs. A final review fixed three grading rules and one fault-data bug at `047b21d`; the three runs that bug affected were rerun, and every run was regraded. Nothing was changed to make the results more or less interesting. The bugs and fixes are listed in the trial's review notes (`datasets/haiku-trial/REVIEW.md`).
 - **Traces.** Every step (reasoning, tool call, tool result, world change) is recorded in a versioned JSON format and can be replayed step by step.
 
 ## Metrics and uncertainty
