@@ -2,6 +2,8 @@
 
 **Agents get evaluated on sunny days. Squall tests them in storms.**
 
+**Live preview: [squall-zeta.vercel.app](https://squall-zeta.vercel.app)** · Featured replay: [an agent falls for prompt injection](https://squall-zeta.vercel.app/runs/g-injection?step=14)
+
 Squall is a reproducible test environment for tool-using LLM agents. It runs agents against a simulated order-support desk while injecting realistic faults (timeouts, malformed responses, stale data, contradictory sources, silent failures and prompt injection), grades every run deterministically in code, and records each run as a trace you can replay step by step.
 
 > [!IMPORTANT]

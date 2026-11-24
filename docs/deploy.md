@@ -9,10 +9,10 @@ The generated data is deterministic, so building on the host gives byte-identica
 
 ## Vercel (recommended)
 
-`vercel.json` holds the whole setup. Import the repository in Vercel and deploy; there is nothing to configure in the dashboard.
+`vercel.json` holds the whole setup. Import the repository in Vercel and deploy; there is nothing to configure in the dashboard. The live preview runs this way at https://squall-zeta.vercel.app.
 
 - Build command: `npm run generate && npm run build`. Output: `dist`.
-- Every path except `/assets/*`, `/data/*` and the favicon falls back to `index.html`.
+- Every path except `/assets/*`, `/data/*`, the favicon and `robots.txt` falls back to `index.html`.
 - Hashed files in `/assets/` are cached for a year (their names change when their content does). Data files are cached for an hour and revalidated, since their names stay the same across releases.
 
 ## GitHub Pages
