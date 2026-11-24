@@ -125,5 +125,19 @@ class World:
         self.changes.append(change)
         return change
 
+    def revert(self, n: int) -> None:
+        """Undoes the last n recorded changes and forgets them (used by silent_failure)."""
+        for change in reversed(self.changes[len(self.changes) - n :] if n else []):
+            *parents, last = _tokens(change["path"])
+            node: Any = self.state
+            for t in parents:
+                node = node[t]
+            if change["before"] is None:
+                node.pop(last, None)
+            else:
+                node[last] = copy.deepcopy(change["before"])
+        if n:
+            del self.changes[-n:]
+
     def snapshot(self) -> dict:
         return copy.deepcopy(self.state)
