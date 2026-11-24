@@ -4,6 +4,7 @@ import type { Location } from 'react-router'
 import { BUILD_DATA, bannerChip, bannerText } from '../content/banner.ts'
 import { copyFor } from '../content/copy.ts'
 import { Logo } from './Logo.tsx'
+import { useScrollFade } from './scroll.ts'
 import { PageSkeleton } from './Skeleton.tsx'
 
 const NAV = [
@@ -38,6 +39,7 @@ export function PreviewBanner() {
 }
 
 function SiteHeader() {
+  const navRef = useScrollFade<HTMLElement>()
   return (
     <div className={`${container} flex items-center gap-5 py-2.5`}>
       <NavLink
@@ -49,6 +51,7 @@ function SiteHeader() {
         <span className="max-sm:sr-only">Squall</span>
       </NavLink>
       <nav
+        ref={navRef}
         aria-label="Main"
         className="flex min-w-0 gap-0.5 overflow-x-auto [scrollbar-width:none]"
       >

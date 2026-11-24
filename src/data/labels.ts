@@ -71,3 +71,16 @@ export const EXPECTED_ACTION_LABEL: Record<ExpectedAction, string> = {
   reply: 'reply only',
   escalate: 'escalate to a human',
 }
+
+/**
+ * Splits a label into at most two lines of about `max` characters at spaces, for the
+ * matrix's narrow model column ("Claude Haiku 5.5" -> "Claude Haiku", "5.5").
+ */
+export function wrapLabel(label: string, max = 12): string[] {
+  if (label.length <= max || !label.includes(' ')) return [label]
+  const words = label.split(' ')
+  let first = words[0]!
+  let i = 1
+  while (i < words.length && `${first} ${words[i]}`.length <= max) first = `${first} ${words[i++]}`
+  return [first, words.slice(i).join(' ')]
+}

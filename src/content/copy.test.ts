@@ -21,6 +21,11 @@ describe('copy for the data source', () => {
     )
   })
 
+  it('mentions golden traces only for data that has them', () => {
+    expect(copyFor('simulated').goldenNote).toMatch(/golden traces/)
+    expect(copyFor('harness').goldenNote).toBe('')
+  })
+
   it('words the step comparison by its actual direction', () => {
     expect(stepsSentence(20, 10)).toMatch(/take more steps/)
     expect(stepsSentence(14.0, 14.4)).toMatch(/take about as many steps/)

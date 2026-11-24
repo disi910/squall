@@ -143,3 +143,21 @@
     @apply rounded-md border border-line bg-surface;
   }
 }
+
+/* A sideways-scrolling area fades the edge that still has content hidden, so cut-off
+   text reads as "more this way" (set by useScrollFade; nothing changes where it fits). */
+[data-fade='right'] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+[data-fade='left'] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 32px), transparent);
+}
+[data-fade='both'] {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 32px,
+    #000 calc(100% - 32px),
+    transparent
+  );
+}

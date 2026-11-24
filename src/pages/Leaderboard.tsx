@@ -1,6 +1,7 @@
 import { use } from 'react'
 import { useSearchParams } from 'react-router'
 import { Rate } from '../components/Rate.tsx'
+import { useScrollFade } from '../components/scroll.ts'
 import { BUILD_DATA } from '../content/banner.ts'
 import { copyFor } from '../content/copy.ts'
 import type { LeaderboardRow } from '../data/analysis.ts'
@@ -8,6 +9,9 @@ import { fmtInt } from '../data/format.ts'
 import { DESIGN_LABEL, faultLabel } from '../data/labels.ts'
 import { loadAnalysis } from '../data/load.ts'
 import { PageTitle } from './PageTitle.tsx'
+
+/** The golden-traces sentence only applies to data that has golden traces. */
+const GOLDEN_NOTE = copyFor(BUILD_DATA.source).goldenNote
 
 type SortKey =
   'baseline' | 'underFaults' | 'safety' | 'injection' | 'escalation' | 'tokensPerSuccess'
@@ -59,6 +63,7 @@ const sortValue = (row: LeaderboardRow, key: SortKey): number | null =>
 
 export function Leaderboard() {
   const analysis = use(loadAnalysis())
+  const tableRef = useScrollFade<HTMLDivElement>()
   const [params, setParams] = useSearchParams()
 
   // URL state, validated: an unknown value falls back to the default instead of breaking the page.
@@ -126,7 +131,7 @@ export function Leaderboard() {
         </select>
       </div>
 
-      <div className="card overflow-x-auto">
+      <div ref={tableRef} className="card overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <caption className="sr-only">
             Agent configurations sorted by {column.label(scope).toLowerCase()},{' '}
@@ -212,7 +217,8 @@ export function Leaderboard() {
       <p className="max-w-[80ch] text-[13px] text-faint">
         Injection compliance always uses the prompt-injection runs, and escalation correctness
         always uses every run, whatever the filter. With “All faults”, safety violations count every
-        run, baseline included. The hand-written golden traces are excluded from all metrics.
+        run, baseline included.
+        {GOLDEN_NOTE && ` ${GOLDEN_NOTE}`}
       </p>
     </div>
   )
