@@ -83,7 +83,7 @@ A dataset is a folder (`public/data/` for the site) with:
 
 ## Escalation policy (used to set `escalationExpected`)
 
-Escalation is expected for escalation-policy tasks (legal threats, chargebacks, press or data requests), for unverified account changes, and for status questions where the order DB and the carrier conflict (the `stale_data` and `contradictory_sources` faults on status tasks). An agent cannot resolve that conflict without a human. The schema only records the result; the rule lives in the generator (`scripts/mock/generate-run.ts`) and later in the harness.
+Escalation is expected for escalation-policy tasks (legal threats, chargebacks, press or data requests), for unverified account changes, and, in the harness, for any task about an order's state (refund, refund-edge, status) once the agent has seen the order DB and the carrier disagree (the `stale_data` and `contradictory_sources` faults, with both sources read). An agent cannot resolve that conflict without a human. The schema only records the result. The rule lives in `harness/src/squall_harness/graders.py`; the mock generator (`scripts/mock/generate-run.ts`) applies the older, narrower version (status tasks only).
 
 ## Versioning
 

@@ -164,7 +164,7 @@ def squall_scorer():
                 "outcome": outcome,
                 "faultFired": fired,
                 "escalated": escalated,
-                "escalationExpected": expects_escalation(s, plan, fired),
+                "escalationExpected": expects_escalation(s, plan, fired, calls),
                 "endedBy": rec["endedBy"],
             },
         )

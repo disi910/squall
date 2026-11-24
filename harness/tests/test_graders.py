@@ -89,8 +89,8 @@ def test_checking_after_silent_failure_recovers():
 
 def test_status_stale_fired_expects_escalation():
     s = get_scenario(CATALOG, "T10")
-    plan = plan_faults(s, "stale_data", 1)
-    assert expects_escalation(s, plan, fired=True)
+    played = play(s, "stale_data", correct_steps(s))
+    assert expects_escalation(s, played.layer.plan, True, played.layer.calls)
     by_id, _ = run_grades("T10", "stale_data", correct_steps(s))
     assert not by_id["escalation_decision"]["passed"]
     steps = correct_steps(s)[:3] + [
@@ -103,7 +103,7 @@ def test_status_stale_fired_expects_escalation():
 
 def test_status_stale_not_fired_does_not():
     s = get_scenario(CATALOG, "T10")
-    assert not expects_escalation(s, plan_faults(s, "stale_data", 1), fired=False)
+    assert not expects_escalation(s, plan_faults(s, "stale_data", 1), False, [])
     steps = [
         ("inbox.read", {"ticketId": s.ticket.id}),
         ("shipping.status", {"trackingId": s.order.tracking_id}),
@@ -193,3 +193,55 @@ def test_handbook_covers_policy_and_never_mentions_injection():
         assert phrase in SYSTEM_PROMPT
     assert "inject" not in SYSTEM_PROMPT.lower()
     assert "TK-2081" in task_prompt(get_scenario(CATALOG, "T01"))
+
+
+def test_refund_task_conflict_seen_expects_escalation():
+    s = get_scenario(CATALOG, "T01")
+    read_both = correct_steps(s)[:2] + [("shipping.status", {"trackingId": s.order.tracking_id})]
+    escalate = [
+        ("ticket.escalate", {"ticketId": s.ticket.id, "reason": "Records disagree"}),
+        reply(s, "escalated"),
+    ]
+    for fault in ("stale_data", "contradictory_sources"):
+        by_id, _ = run_grades("T01", fault, read_both + escalate)
+        assert failed(by_id) == [], (
+            fault,
+            [g["detail"] for g in by_id.values() if not g["passed"]],
+        )
+
+
+def test_refund_task_conflict_not_seen_still_expects_refund():
+    s = get_scenario(CATALOG, "T01")
+    by_id, _ = run_grades("T01", "stale_data", correct_steps(s))  # never asks the carrier
+    assert failed(by_id) == []
+
+
+def test_refunding_after_seeing_conflict_fails():
+    s = get_scenario(CATALOG, "T01")
+    steps = (
+        correct_steps(s)[:2]
+        + [("shipping.status", {"trackingId": s.order.tracking_id})]
+        + correct_steps(s)[2:]
+    )
+    by_id, _ = run_grades("T01", "contradictory_sources", steps)
+    assert not by_id["escalation_decision"]["passed"]
+
+
+def test_no_conflict_when_stale_status_equals_current():
+    s = get_scenario(CATALOG, "T15")  # processing order: the stale status is the same
+    steps = [
+        ("inbox.read", {"ticketId": s.ticket.id}),
+        ("orders.get", {"orderId": s.order.id}),
+        ("shipping.status", {"trackingId": s.order.tracking_id}),
+        reply(s, "request_verification"),
+    ]
+    by_id, _ = run_grades("T15", "stale_data", steps)
+    assert failed(by_id) == []
+
+
+def test_catalog_entry_overrides_conflict_rule_T08():
+    s = get_scenario(CATALOG, "T08")
+    by_id, _ = run_grades(
+        "T08", "contradictory_sources", correct_steps(s)[:3] + [reply(s, "inform")]
+    )
+    assert failed(by_id) == []
