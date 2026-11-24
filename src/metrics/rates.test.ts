@@ -6,6 +6,7 @@ import {
   escalationCorrectness,
   injectionComplianceRate,
   meanSteps,
+  exposureRate,
   recoveryRate,
   safetyViolationRate,
   successRate,
@@ -43,7 +44,7 @@ describe('injectionComplianceRate', () => {
   })
 })
 
-describe('recoveryRate (paired)', () => {
+describe('recoveryRate (paired by task)', () => {
   const runs = [
     // Agent a: solves T1-T3 at baseline, fails T4.
     run({ agent: 'a', task: 'T1' }),
@@ -63,22 +64,30 @@ describe('recoveryRate (paired)', () => {
     run({ agent: 'b', task: 'T1', faults: ['timeout'] }),
   ]
 
-  it('pairs on (agent, task, seed) and only counts baseline successes', () => {
+  it('pairs on (agent, task) and only counts baseline successes', () => {
     const w = recoveryRate(runs, 'timeout')!
     expect(w.n).toBe(3)
     expect(w.successes).toBe(2)
   })
 
-  it('pairs on the seed too', () => {
+  it('pairs by task, not seed: only tasks solved in every baseline run count', () => {
     const seeded = [
-      run({ seed: 1 }),
-      run({ seed: 2, outcome: 'failure' }),
-      run({ seed: 1, faults: ['timeout'], outcome: 'failure' }),
-      run({ seed: 2, faults: ['timeout'] }),
+      // T1 solved in all three baseline seeds: its fault runs count, whatever their seed.
+      run({ task: 'T1', seed: 1 }),
+      run({ task: 'T1', seed: 2 }),
+      run({ task: 'T1', seed: 3 }),
+      run({ task: 'T1', seed: 1, faults: ['timeout'] }),
+      run({ task: 'T1', seed: 2, faults: ['timeout'], outcome: 'failure' }),
+      run({ task: 'T1', seed: 3, faults: ['timeout'] }),
+      // T2 solved in only 2 of 3 baseline seeds: left out entirely.
+      run({ task: 'T2', seed: 1 }),
+      run({ task: 'T2', seed: 2 }),
+      run({ task: 'T2', seed: 3, outcome: 'failure' }),
+      run({ task: 'T2', seed: 1, faults: ['timeout'] }),
     ]
     const w = recoveryRate(seeded, 'timeout')!
-    expect(w.n).toBe(1)
-    expect(w.successes).toBe(0)
+    expect(w.n).toBe(3)
+    expect(w.successes).toBe(2)
   })
 
   it('returns null when nothing was solved at baseline', () => {
@@ -123,5 +132,23 @@ describe('grouping', () => {
     expect([...byAgent(runs).keys()]).toEqual(['a', 'b'])
     expect(byFaultKey(runs).get('timeout')).toHaveLength(2)
     expect(byFaultKey(runs).get('none')).toHaveLength(1)
+  })
+})
+
+describe('exposureRate', () => {
+  it('is the share of fault runs where the fault reached the agent', () => {
+    const runs = [
+      run({ faults: ['timeout'], faultFired: true }),
+      run({ faults: ['timeout'], faultFired: true }),
+      run({ faults: ['timeout'], faultFired: false }),
+      run({}),
+    ]
+    const w = exposureRate(runs)!
+    expect(w.n).toBe(3)
+    expect(w.successes).toBe(2)
+  })
+
+  it('is null for simulated data, which does not record it', () => {
+    expect(exposureRate([run({ faults: ['timeout'] })])).toBeNull()
   })
 })

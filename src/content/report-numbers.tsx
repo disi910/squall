@@ -89,7 +89,12 @@ function MostInjectableValue() {
   )
 }
 
+function ExposureValue() {
+  return <RateText p={useFindings().exposure} />
+}
+
 export const DatasetScale = () => <Live value={DatasetScaleValue} />
+export const Exposure = () => <Live value={ExposureValue} />
 export const CellSize = () => <Live value={CellSizeValue} />
 export const BaselineSuccess = () => <Live value={BaselineSuccessValue} />
 export const HardestFault = () => <Live value={HardestFaultValue} />

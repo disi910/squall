@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 import { NavLink, Outlet, ScrollRestoration } from 'react-router'
 import type { Location } from 'react-router'
+import { BUILD_DATA, bannerChip, bannerText } from '../content/banner.ts'
+import { copyFor } from '../content/copy.ts'
 import { Logo } from './Logo.tsx'
 import { PageSkeleton } from './Skeleton.tsx'
 
@@ -17,18 +19,19 @@ const NAV = [
 export const container = 'mx-auto w-full max-w-[1180px] px-4 sm:px-6'
 
 /**
- * The preview banner is static, not data-driven, on purpose: it must be
- * visible on every page from the first paint, including error and loading
- * states (HANDOFF §2, honesty rule).
+ * The banner never waits for data: it must be visible on every page from the
+ * first paint, including error and loading states (HANDOFF §2, honesty rule).
+ * Its wording is fixed at build time from the dataset the site was built with.
  */
 export function PreviewBanner() {
+  const { source, agentCount } = BUILD_DATA
   return (
     <div role="note" className="border-b border-line bg-surface-2">
       <div className={`${container} flex items-center gap-2.5 py-1.5 text-[13px] text-muted`}>
         <span className="flex-none rounded-sm border border-line-strong px-1.5 font-mono text-[11px] tracking-[0.08em] text-fg uppercase">
-          Preview
+          {bannerChip(source, agentCount)}
         </span>
-        <span>Preview: all results shown are simulated placeholder data.</span>
+        <span>{bannerText(source, agentCount)}</span>
       </div>
     </div>
   )
@@ -70,15 +73,14 @@ function SiteHeader() {
   )
 }
 
+const FOOTER = copyFor(BUILD_DATA.source)
+
 function SiteFooter() {
   return (
     <footer className="border-t border-line py-6 text-[13px] text-faint">
       <div className={`${container} flex flex-wrap justify-between gap-4`}>
-        <span>
-          Squall preview. Nordlys Supply is a fictional shop. Model names are placeholders, not real
-          models.
-        </span>
-        <span className="font-mono">simulated data</span>
+        <span>{FOOTER.footer}</span>
+        <span className="font-mono">{FOOTER.footerTag}</span>
       </div>
     </footer>
   )

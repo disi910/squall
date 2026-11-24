@@ -25,3 +25,6 @@ dist-ssr
 
 # Generated mock data (npm run generate)
 public/data
+
+# Local plan-execution scratch (superpowers)
+.superpowers/

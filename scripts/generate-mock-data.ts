@@ -10,7 +10,7 @@
 import { mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { DatasetManifest, Run, RunSummary } from '../src/schema/index.ts'
+import { checkDataset } from './lib/validate.ts'
 import { DATA_FILES, generateDataset, shouldKeepTrace } from './mock/dataset.ts'
 
 const outDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'data')
@@ -18,19 +18,13 @@ const outDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'da
 const started = performance.now()
 const { manifest, runs, summaries, goldenRuns } = generateDataset()
 
-// Validate everything first, so a bad dataset never reaches the site.
-const problems: string[] = []
-const check = (
-  label: string,
-  result: { success: boolean; error?: { issues: { path: PropertyKey[]; message: string }[] } },
-) => {
-  if (!result.success)
-    for (const i of result.error!.issues.slice(0, 5))
-      problems.push(`${label} ${i.path.join('.')}: ${i.message}`)
-}
-for (const r of runs) check(r.id, Run.safeParse(r))
-for (const s of summaries) check(`${s.id} (summary)`, RunSummary.safeParse(s))
-check('manifest', DatasetManifest.safeParse(manifest))
+// Validate everything first, so a bad dataset never reaches the site. Every
+// generated run is checked in full, not only the ones whose traces are kept.
+const problems = checkDataset({
+  manifest,
+  summaries,
+  traces: new Map([...runs, ...goldenRuns].map((r) => [r.id, r])),
+})
 if (problems.length) {
   console.error(
     `Generated data failed validation (${problems.length} problems):\n${problems.slice(0, 30).join('\n')}`,

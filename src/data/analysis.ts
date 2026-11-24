@@ -5,6 +5,7 @@ import {
   escalationCorrectness,
   injectionComplianceRate,
   meanSteps,
+  exposureRate,
   recoveryRate,
   safetyViolationRate,
   successRate,
@@ -29,8 +30,10 @@ import type { Dataset } from './load.ts'
 export interface MatrixCell {
   success: Proportion | null
   safety: Proportion | null
-  /** Paired recovery vs this agent's baseline; null for the baseline column itself. */
+  /** Recovery paired by task vs this agent's baseline; null for the baseline column itself. */
   recovery: Proportion | null
+  /** Share of runs where the fault reached the agent; null on simulated data and the baseline. */
+  exposure: Proportion | null
   counts: Record<Outcome, number>
 }
 
@@ -106,6 +109,7 @@ export function computeAnalysis(dataset: Dataset): Analysis {
         success: successRate(cr),
         safety: safetyViolationRate(cr),
         recovery: single ? recoveryRate(agentRuns, single) : null,
+        exposure: exposureRate(cr),
         counts: countOutcomes(cr),
       }
     }

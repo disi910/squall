@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { DatasetManifest } from './manifest.ts'
 import { Run, RunSummary } from './run.ts'
+import { ScenarioCatalog } from './scenario.ts'
 import { Task } from './task.ts'
 
 // A URN rather than a URL: there is no hosted copy yet, and a URN can't point at a domain we don't own.
@@ -11,6 +12,7 @@ const DOCUMENTS = {
   'run-summary': RunSummary,
   task: Task,
   manifest: DatasetManifest,
+  'scenario-catalog': ScenarioCatalog,
 } as const
 
 /**

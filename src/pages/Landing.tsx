@@ -4,11 +4,16 @@ import { ReplayCard } from '../components/ReplayCard.tsx'
 import { Skeleton } from '../components/Skeleton.tsx'
 import { StatCard } from '../components/StatCard.tsx'
 import { SuccessByFaultChart } from '../components/SuccessByFaultChart.tsx'
+import { BUILD_DATA } from '../content/banner.ts'
+import { copyFor, stepsSentence } from '../content/copy.ts'
 import { FEATURED_REPLAY_ID } from '../content/golden.ts'
 import { ciRange, pct } from '../data/format.ts'
-import { agentName } from '../data/labels.ts'
+import { agentName, faultLabel } from '../data/labels.ts'
 import { loadAnalysis, loadManifest } from '../data/load.ts'
 import { PageTitle } from './PageTitle.tsx'
+
+/** Static wording follows the dataset the site was built with. */
+const COPY = copyFor(BUILD_DATA.source)
 
 /**
  * The hero copy renders immediately; the numbers stream in once the data has
@@ -30,12 +35,13 @@ export function Landing() {
             <strong className="font-medium text-fg">injects realistic faults</strong>: timeouts,
             malformed responses, stale data, contradictory sources and prompt injection. Every run
             is <strong className="font-medium text-fg">graded in code</strong> against the final
-            world state, so results are reproducible down to the seed. Each run is recorded as a
-            trace you can <strong className="font-medium text-fg">replay step by step</strong>.
+            world state, and the faults are seeded, so every run meets the same fault again. Each
+            run is recorded as a trace you can{' '}
+            <strong className="font-medium text-fg">replay step by step</strong>.
           </p>
           <div className="flex flex-wrap gap-2.5">
             <Link
-              to={`/runs/${FEATURED_REPLAY_ID}`}
+              to={`/runs/${BUILD_DATA.featured ?? FEATURED_REPLAY_ID}`}
               className="rounded-md border border-fg bg-fg px-4 py-2 text-sm font-medium text-bg no-underline hover:opacity-90"
             >
               Watch a replay
@@ -56,18 +62,14 @@ export function Landing() {
           <Suspense fallback={<Skeleton className="aspect-[2/1] w-full" />}>
             <PooledChart />
           </Suspense>
-          <p className="text-[12.5px] text-faint">
-            Bars show the success rate; whiskers show the 95% Wilson interval. Simulated data.
-          </p>
+          <p className="text-[12.5px] text-faint">{COPY.chartCaption}</p>
         </div>
       </section>
 
       <section className="flex flex-col gap-3.5">
         <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <h2 className="text-[22px]">Example findings</h2>
-          <span className="text-[13px] text-faint">
-            Hypothetical. Computed from the simulated runs to show the format.
-          </span>
+          <h2 className="text-[22px]">{COPY.findingsTitle}</h2>
+          <span className="text-[13px] text-faint">{COPY.findingsNote}</span>
         </div>
         <Suspense
           fallback={
@@ -128,7 +130,7 @@ const HOW_IT_WORKS = [
   {
     label: 'Agent',
     title: 'Model + design',
-    text: 'ReAct, plan-and-execute, or ReAct with a verifier step, on three placeholder models.',
+    text: COPY.agentStep,
   },
   {
     label: 'Fault layer',
@@ -153,9 +155,13 @@ function DatasetSize() {
   const { runCount } = use(loadAnalysis()).findings
   return (
     <span className="font-mono text-[12.5px] text-faint">
-      {runCount.toLocaleString('en-US')} simulated runs · {manifest.agents.length} agent configs ·{' '}
-      {manifest.faultSettings.length} fault settings · {manifest.tasks.length} tasks ·{' '}
-      {manifest.seeds.length} seeds
+      {copyFor(manifest.source).datasetLine(
+        runCount,
+        manifest.agents.length,
+        manifest.faultSettings.length,
+        manifest.tasks.length,
+        manifest.seeds.length,
+      )}
     </span>
   )
 }
@@ -165,58 +171,71 @@ function PooledChart() {
 }
 
 function FindingCards() {
+  const manifest = use(loadManifest())
   const f = use(loadAnalysis()).findings
-  const gap = f.verifierOnSilentFailure
-    ? Math.round(
-        (f.verifierOnSilentFailure.verifier.rate - f.verifierOnSilentFailure.react.rate) * 100,
-      )
-    : null
-  return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {f.mostInjectable && (
-        <StatCard
-          eyebrow="Example finding · injection"
-          value={pct(f.mostInjectable.rate.rate)}
-          footnote={`95% CI ${ciRange(f.mostInjectable.rate)} · n=${f.mostInjectable.rate.n}`}
-        >
-          {agentName(f.mostInjectable.agent)} followed injected instructions in this share of
-          prompt-injection runs, the most of any config.
-        </StatCard>
-      )}
-      {f.verifierOnSilentFailure && gap !== null && (
-        <StatCard
-          eyebrow="Example finding · silent failure"
-          value={`${gap >= 0 ? '+' : ''}${gap}`}
-          unit="pts"
-          footnote={`ReAct ${ciRange(f.verifierOnSilentFailure.react)} · verifier ${ciRange(f.verifierOnSilentFailure.verifier)}`}
-        >
-          A verifier step lifts success under silent failure from{' '}
-          {pct(f.verifierOnSilentFailure.react.rate)} to{' '}
-          {pct(f.verifierOnSilentFailure.verifier.rate)}, pooled over models.
-        </StatCard>
-      )}
-      {f.steps && (
-        <StatCard
-          eyebrow="Example finding · cost of failure"
-          value={(f.steps.failed / f.steps.succeeded).toFixed(1)}
-          unit="×"
-          footnote={`mean steps · all ${f.runCount.toLocaleString('en-US')} runs`}
-        >
-          Failed and unsafe runs take more steps than successful ones ({f.steps.failed.toFixed(1)}{' '}
-          vs {f.steps.succeeded.toFixed(1)} on average).
-        </StatCard>
-      )}
-    </div>
-  )
+  const copy = copyFor(manifest.source)
+  const single = manifest.agents.length === 1
+  const v = f.verifierOnSilentFailure
+  const gap = v ? Math.round((v.verifier.rate - v.react.rate) * 100) : null
+  const cards = [
+    f.hardestFault && (
+      <StatCard
+        key="hardest"
+        eyebrow={copy.findingEyebrow('hardest fault')}
+        value={pct(f.hardestFault.rate.rate)}
+        footnote={`95% CI ${ciRange(f.hardestFault.rate)} · n=${f.hardestFault.rate.n}`}
+      >
+        Success under {faultLabel(f.hardestFault.key).toLowerCase()}, the lowest of any fault
+        {single ? '' : ', pooled over agents'}.
+      </StatCard>
+    ),
+    f.mostInjectable && (
+      <StatCard
+        key="injection"
+        eyebrow={copy.findingEyebrow('injection')}
+        value={pct(f.mostInjectable.rate.rate)}
+        footnote={`95% CI ${ciRange(f.mostInjectable.rate)} · n=${f.mostInjectable.rate.n}`}
+      >
+        {agentName(f.mostInjectable.agent)} followed injected instructions in this share of
+        prompt-injection runs{single ? '.' : ', the most of any config.'}
+      </StatCard>
+    ),
+    v && gap !== null && (
+      <StatCard
+        key="verifier"
+        eyebrow={copy.findingEyebrow('silent failure')}
+        value={`${gap >= 0 ? '+' : ''}${gap}`}
+        unit="pts"
+        footnote={`ReAct ${ciRange(v.react)} · verifier ${ciRange(v.verifier)}`}
+      >
+        A verifier step lifts success under silent failure from {pct(v.react.rate)} to{' '}
+        {pct(v.verifier.rate)}, pooled over models.
+      </StatCard>
+    ),
+    f.steps && (
+      <StatCard
+        key="steps"
+        eyebrow={copy.findingEyebrow('cost of failure')}
+        value={(f.steps.failed / f.steps.succeeded).toFixed(1)}
+        unit="×"
+        footnote={`mean steps · all ${f.runCount.toLocaleString('en-US')} runs`}
+      >
+        {stepsSentence(f.steps.failed, f.steps.succeeded)}
+      </StatCard>
+    ),
+  ].filter(Boolean)
+  return <div className="grid gap-4 md:grid-cols-3">{cards.slice(0, 3)}</div>
 }
 
 function FeaturedReplays() {
   const manifest = use(loadManifest())
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      {manifest.goldenRunIds.map((id) => (
-        <ReplayCard key={id} runId={id} />
-      ))}
+      {(manifest.featuredRunIds?.length ? manifest.featuredRunIds : manifest.goldenRunIds).map(
+        (id) => (
+          <ReplayCard key={id} runId={id} />
+        ),
+      )}
     </div>
   )
 }

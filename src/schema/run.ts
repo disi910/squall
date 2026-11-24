@@ -11,7 +11,7 @@ import { getAtPointer, jsonEqual, setAtPointer, WorldState } from './world.ts'
  * breaking ones. Every top-level document carries it so a reader can refuse
  * data it does not understand.
  */
-export const SCHEMA_VERSION = '0.2.0'
+export const SCHEMA_VERSION = '0.3.0'
 
 /** Fields shared by the full run and its summary. */
 const runFields = {
@@ -31,11 +31,18 @@ const runFields = {
     .describe(
       'Whether a correct agent would escalate in this run. Decided by the harness per task and faults.',
     ),
+  faultFired: z
+    .boolean()
+    .optional()
+    .describe(
+      'Harness data: whether the fault actually reached the agent. Absent on baseline runs and in simulated data.',
+    ),
 }
 
 type Ctx = z.RefinementCtx
 type RunLike = {
   faults: FaultSpec[]
+  faultFired?: boolean | undefined
   outcome: Outcome
   graders: GraderResult[]
 }
@@ -70,6 +77,13 @@ function checkCommon(run: RunLike, ctx: Ctx): void {
         message: 'failedAtStep is only allowed on failed graders',
       })
   })
+
+  if (run.faultFired !== undefined && run.faults.length === 0)
+    ctx.addIssue({
+      code: 'custom',
+      path: ['faultFired'],
+      message: 'faultFired requires a fault (baseline runs have none)',
+    })
 
   if (faultIds.includes('prompt_injection') && !graderIds.includes(INJECTION_GRADER_ID))
     ctx.addIssue({

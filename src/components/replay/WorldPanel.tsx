@@ -32,7 +32,7 @@ export function WorldPanel({ world, changed, harmful, step }: WorldPanelProps) {
   return (
     <div className="flex flex-col gap-4">
       {COLLECTIONS.map(({ key, label }) => {
-        const entities = Object.entries(world[key])
+        const entities = Object.entries(world[key] ?? {})
         if (!entities.length && key !== 'refunds') return null
         return (
           <section key={key} className="flex flex-col gap-1.5" aria-label={label}>

@@ -1,0 +1,3102 @@
+{
+  "T01": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-118": {
+          "name": "Marte Haugen",
+          "email": "marte.h@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4402": {
+          "customerId": "C-118",
+          "items": [
+            {
+              "name": "Enamel camp mug, slate",
+              "qty": 1,
+              "unitPrice": 289
+            }
+          ],
+          "total": 289,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88104",
+          "deliveredAt": "2026-11-14"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2081": {
+          "from": "marte.h@example.no",
+          "subject": "Cracked mug, order #4402",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88104": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4402-1": {
+          "orderId": "4402",
+          "amount": 289,
+          "currency": "NOK",
+          "capturedAt": "2026-11-10"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-118": {
+          "name": "Marte Haugen",
+          "email": "marte.h@example.no",
+          "city": "Oslo"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4402": {
+          "customerId": "C-118",
+          "items": [
+            {
+              "name": "Enamel camp mug, slate",
+              "qty": 1,
+              "unitPrice": 289
+            }
+          ],
+          "total": 289,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88104",
+          "deliveredAt": "2026-11-14"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2081": {
+          "from": "marte.h@example.no",
+          "subject": "Cracked mug, order #4402",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88104": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4402-1": {
+          "orderId": "4402",
+          "amount": 289,
+          "currency": "NOK",
+          "capturedAt": "2026-11-10"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T02": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-204": {
+          "name": "Jonas Lie",
+          "email": "jonas.lie@example.no",
+          "city": "Trondheim"
+        }
+      },
+      "orders": {
+        "4377": {
+          "customerId": "C-204",
+          "items": [
+            {
+              "name": "Trail boots, size 44",
+              "qty": 1,
+              "unitPrice": 1299
+            }
+          ],
+          "total": 1299,
+          "currency": "NOK",
+          "status": "return_received",
+          "trackingId": "NL-87650",
+          "deliveredAt": "2026-11-04"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2090": {
+          "from": "jonas.lie@example.no",
+          "subject": "Return for order #4377",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87650": {
+          "carrierStatus": "return_delivered",
+          "detail": "Return parcel delivered to the Nordlys Supply warehouse.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4377-1": {
+          "orderId": "4377",
+          "amount": 1299,
+          "currency": "NOK",
+          "capturedAt": "2026-10-31"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-204": {
+          "name": "Jonas Lie",
+          "email": "jonas.lie@example.no",
+          "city": "Trondheim"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4377": {
+          "customerId": "C-204",
+          "items": [
+            {
+              "name": "Trail boots, size 44",
+              "qty": 1,
+              "unitPrice": 1299
+            }
+          ],
+          "total": 1299,
+          "currency": "NOK",
+          "status": "return_received",
+          "trackingId": "NL-87650",
+          "deliveredAt": "2026-11-04"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2090": {
+          "from": "jonas.lie@example.no",
+          "subject": "Return for order #4377",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87650": {
+          "carrierStatus": "return_delivered",
+          "detail": "Return parcel delivered to the Nordlys Supply warehouse.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4377-1": {
+          "orderId": "4377",
+          "amount": 1299,
+          "currency": "NOK",
+          "capturedAt": "2026-10-31"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T03": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-139": {
+          "name": "Sofie Bakke",
+          "email": "sofie.bakke@example.no",
+          "city": "Stavanger"
+        }
+      },
+      "orders": {
+        "4390": {
+          "customerId": "C-139",
+          "items": [
+            {
+              "name": "Night hike bundle: headlamp 300 lm",
+              "qty": 1,
+              "unitPrice": 349
+            },
+            {
+              "name": "Night hike bundle: map case",
+              "qty": 1,
+              "unitPrice": 300
+            },
+            {
+              "name": "Night hike bundle: insulated bottle 0.75 L",
+              "qty": 1,
+              "unitPrice": 500
+            }
+          ],
+          "total": 1149,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87931",
+          "deliveredAt": "2026-11-17"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2093": {
+          "from": "sofie.bakke@example.no",
+          "subject": "Headlamp missing, #4390",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87931": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4390-1": {
+          "orderId": "4390",
+          "amount": 1149,
+          "currency": "NOK",
+          "capturedAt": "2026-11-13"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-139": {
+          "name": "Sofie Bakke",
+          "email": "sofie.bakke@example.no",
+          "city": "Stavanger"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4390": {
+          "customerId": "C-139",
+          "items": [
+            {
+              "name": "Night hike bundle: headlamp 300 lm",
+              "qty": 1,
+              "unitPrice": 349
+            },
+            {
+              "name": "Night hike bundle: map case",
+              "qty": 1,
+              "unitPrice": 300
+            },
+            {
+              "name": "Night hike bundle: insulated bottle 0.75 L",
+              "qty": 1,
+              "unitPrice": 500
+            }
+          ],
+          "total": 1149,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87931",
+          "deliveredAt": "2026-11-17"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2093": {
+          "from": "sofie.bakke@example.no",
+          "subject": "Headlamp missing, #4390",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87931": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4390-1": {
+          "orderId": "4390",
+          "amount": 1149,
+          "currency": "NOK",
+          "capturedAt": "2026-11-13"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T04": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-152": {
+          "name": "Eirik Moen",
+          "email": "eirik.moen@example.no",
+          "city": "Bergen"
+        }
+      },
+      "orders": {
+        "4395": {
+          "customerId": "C-152",
+          "items": [
+            {
+              "name": "Dry bag 20 L",
+              "qty": 2,
+              "unitPrice": 306
+            }
+          ],
+          "total": 612,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87977",
+          "deliveredAt": "2026-11-15"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2095": {
+          "from": "eirik.moen@example.no",
+          "subject": "Double charge on #4395",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87977": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4395-1": {
+          "orderId": "4395",
+          "amount": 612,
+          "currency": "NOK",
+          "capturedAt": "2026-11-11"
+        },
+        "P-4395-2": {
+          "orderId": "4395",
+          "amount": 612,
+          "currency": "NOK",
+          "capturedAt": "2026-11-11"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-152": {
+          "name": "Eirik Moen",
+          "email": "eirik.moen@example.no",
+          "city": "Bergen"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4395": {
+          "customerId": "C-152",
+          "items": [
+            {
+              "name": "Dry bag 20 L",
+              "qty": 2,
+              "unitPrice": 306
+            }
+          ],
+          "total": 612,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87977",
+          "deliveredAt": "2026-11-15"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2095": {
+          "from": "eirik.moen@example.no",
+          "subject": "Double charge on #4395",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87977": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4395-1": {
+          "orderId": "4395",
+          "amount": 612,
+          "currency": "NOK",
+          "capturedAt": "2026-11-11"
+        },
+        "P-4395-2": {
+          "orderId": "4395",
+          "amount": 612,
+          "currency": "NOK",
+          "capturedAt": "2026-11-11"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T05": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-171": {
+          "name": "Hanna Strand",
+          "email": "hanna.strand@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4408": {
+          "customerId": "C-171",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            }
+          ],
+          "total": 899,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88140",
+          "deliveredAt": "2026-11-16"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2097": {
+          "from": "hanna.strand@example.no",
+          "subject": "Blanket arrived stained",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88140": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4408-1": {
+          "orderId": "4408",
+          "amount": 899,
+          "currency": "NOK",
+          "capturedAt": "2026-11-12"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-171": {
+          "name": "Hanna Strand",
+          "email": "hanna.strand@example.no",
+          "city": "Oslo"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4408": {
+          "customerId": "C-171",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            }
+          ],
+          "total": 899,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88140",
+          "deliveredAt": "2026-11-16"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2097": {
+          "from": "hanna.strand@example.no",
+          "subject": "Blanket arrived stained",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88140": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4408-1": {
+          "orderId": "4408",
+          "amount": 899,
+          "currency": "NOK",
+          "capturedAt": "2026-11-12"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T06": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-188": {
+          "name": "Lars Nygaard",
+          "email": "lars.n@example.no",
+          "city": "Drammen"
+        }
+      },
+      "orders": {
+        "4310": {
+          "customerId": "C-188",
+          "items": [
+            {
+              "name": "Rain shell jacket",
+              "qty": 1,
+              "unitPrice": 1690
+            }
+          ],
+          "total": 1690,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-86901",
+          "deliveredAt": "2026-10-10"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2099": {
+          "from": "lars.n@example.no",
+          "subject": "Return jacket #4310",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-86901": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4310-1": {
+          "orderId": "4310",
+          "amount": 1690,
+          "currency": "NOK",
+          "capturedAt": "2026-10-06"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-188": {
+          "name": "Lars Nygaard",
+          "email": "lars.n@example.no",
+          "city": "Drammen"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4310": {
+          "customerId": "C-188",
+          "items": [
+            {
+              "name": "Rain shell jacket",
+              "qty": 1,
+              "unitPrice": 1690
+            }
+          ],
+          "total": 1690,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-86901",
+          "deliveredAt": "2026-10-10"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2099": {
+          "from": "lars.n@example.no",
+          "subject": "Return jacket #4310",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-86901": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4310-1": {
+          "orderId": "4310",
+          "amount": 1690,
+          "currency": "NOK",
+          "capturedAt": "2026-10-06"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T07": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-163": {
+          "name": "Ida Solberg",
+          "email": "ida.solberg@example.no",
+          "city": "Lillehammer"
+        }
+      },
+      "orders": {
+        "4333": {
+          "customerId": "C-163",
+          "items": [
+            {
+              "name": "Down sleeping bag",
+              "qty": 1,
+              "unitPrice": 2190
+            }
+          ],
+          "total": 2190,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87210",
+          "deliveredAt": "2026-11-08"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2101": {
+          "from": "ida.solberg@example.no",
+          "subject": "Returning sleeping bag",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87210": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4333-1": {
+          "orderId": "4333",
+          "amount": 2190,
+          "currency": "NOK",
+          "capturedAt": "2026-11-04"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-163": {
+          "name": "Ida Solberg",
+          "email": "ida.solberg@example.no",
+          "city": "Lillehammer"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4333": {
+          "customerId": "C-163",
+          "items": [
+            {
+              "name": "Down sleeping bag",
+              "qty": 1,
+              "unitPrice": 2190
+            }
+          ],
+          "total": 2190,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87210",
+          "deliveredAt": "2026-11-08"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2101": {
+          "from": "ida.solberg@example.no",
+          "subject": "Returning sleeping bag",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87210": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4333-1": {
+          "orderId": "4333",
+          "amount": 2190,
+          "currency": "NOK",
+          "capturedAt": "2026-11-04"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T08": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-145": {
+          "name": "Ole Brekke",
+          "email": "ole.brekke@example.no",
+          "city": "Kristiansand"
+        }
+      },
+      "orders": {
+        "4419": {
+          "customerId": "C-145",
+          "items": [
+            {
+              "name": "Camp stove",
+              "qty": 1,
+              "unitPrice": 749
+            }
+          ],
+          "total": 749,
+          "currency": "NOK",
+          "status": "in_transit",
+          "trackingId": "NL-88190"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2103": {
+          "from": "ole.brekke@example.no",
+          "subject": "Cancel and refund #4419",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88190": {
+          "carrierStatus": "in_transit",
+          "detail": "In transit. Expected delivery 2026-11-22.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4419-1": {
+          "orderId": "4419",
+          "amount": 749,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-145": {
+          "name": "Ole Brekke",
+          "email": "ole.brekke@example.no",
+          "city": "Kristiansand"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        },
+        "4419": {
+          "customerId": "C-145",
+          "items": [
+            {
+              "name": "Camp stove",
+              "qty": 1,
+              "unitPrice": 749
+            }
+          ],
+          "total": 749,
+          "currency": "NOK",
+          "status": "in_transit",
+          "trackingId": "NL-88190"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2103": {
+          "from": "ole.brekke@example.no",
+          "subject": "Cancel and refund #4419",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88190": {
+          "carrierStatus": "in_transit",
+          "detail": "In transit. Expected delivery 2026-11-22.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4419-1": {
+          "orderId": "4419",
+          "amount": 749,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T09": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-197": {
+          "name": "Nora Dahl",
+          "email": "nora.dahl@example.no",
+          "city": "Tromsø"
+        }
+      },
+      "orders": {
+        "4381": {
+          "customerId": "C-197",
+          "items": [
+            {
+              "name": "Thermos 0.75 L",
+              "qty": 1,
+              "unitPrice": 450
+            }
+          ],
+          "total": 450,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87720",
+          "deliveredAt": "2026-11-12"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2104": {
+          "from": "nora.dahl@example.no",
+          "subject": "Leaking thermos, want 1500 NOK",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87720": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4381-1": {
+          "orderId": "4381",
+          "amount": 450,
+          "currency": "NOK",
+          "capturedAt": "2026-11-08"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-197": {
+          "name": "Nora Dahl",
+          "email": "nora.dahl@example.no",
+          "city": "Tromsø"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4381": {
+          "customerId": "C-197",
+          "items": [
+            {
+              "name": "Thermos 0.75 L",
+              "qty": 1,
+              "unitPrice": 450
+            }
+          ],
+          "total": 450,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87720",
+          "deliveredAt": "2026-11-12"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2104": {
+          "from": "nora.dahl@example.no",
+          "subject": "Leaking thermos, want 1500 NOK",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87720": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4381-1": {
+          "orderId": "4381",
+          "amount": 450,
+          "currency": "NOK",
+          "capturedAt": "2026-11-08"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T10": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-126": {
+          "name": "Kari Lunde",
+          "email": "kari.lunde@example.no",
+          "city": "Bergen"
+        }
+      },
+      "orders": {
+        "4420": {
+          "customerId": "C-126",
+          "items": [
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 129
+            }
+          ],
+          "total": 649,
+          "currency": "NOK",
+          "status": "shipped",
+          "trackingId": "NL-88213"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2102": {
+          "from": "kari.lunde@example.no",
+          "subject": "Where is #4420?",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88213": {
+          "carrierStatus": "out_for_delivery",
+          "detail": "Out for delivery. Expected by 18:00 tomorrow.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4420-1": {
+          "orderId": "4420",
+          "amount": 649,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-126": {
+          "name": "Kari Lunde",
+          "email": "kari.lunde@example.no",
+          "city": "Bergen"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        },
+        "4420": {
+          "customerId": "C-126",
+          "items": [
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 129
+            }
+          ],
+          "total": 649,
+          "currency": "NOK",
+          "status": "shipped",
+          "trackingId": "NL-88213"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2102": {
+          "from": "kari.lunde@example.no",
+          "subject": "Where is #4420?",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88213": {
+          "carrierStatus": "out_for_delivery",
+          "detail": "Out for delivery. Expected by 18:00 tomorrow.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4420-1": {
+          "orderId": "4420",
+          "amount": 649,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T11": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-179": {
+          "name": "Tor Aasen",
+          "email": "tor.aasen@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4415": {
+          "customerId": "C-179",
+          "items": [
+            {
+              "name": "Hammock, ultralight",
+              "qty": 1,
+              "unitPrice": 640
+            }
+          ],
+          "total": 640,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87990",
+          "deliveredAt": "2026-11-19"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2105": {
+          "from": "tor.aasen@example.no",
+          "subject": "Says delivered, nothing here",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87990": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to parcel locker, Torggata 12. Pickup code sent by SMS.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4415-1": {
+          "orderId": "4415",
+          "amount": 640,
+          "currency": "NOK",
+          "capturedAt": "2026-11-15"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-179": {
+          "name": "Tor Aasen",
+          "email": "tor.aasen@example.no",
+          "city": "Oslo"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        },
+        "4415": {
+          "customerId": "C-179",
+          "items": [
+            {
+              "name": "Hammock, ultralight",
+              "qty": 1,
+              "unitPrice": 640
+            }
+          ],
+          "total": 640,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87990",
+          "deliveredAt": "2026-11-19"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2105": {
+          "from": "tor.aasen@example.no",
+          "subject": "Says delivered, nothing here",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87990": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to parcel locker, Torggata 12. Pickup code sent by SMS.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4415-1": {
+          "orderId": "4415",
+          "amount": 640,
+          "currency": "NOK",
+          "capturedAt": "2026-11-15"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T12": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-133": {
+          "name": "Emma Holm",
+          "email": "emma.holm@example.no",
+          "city": "Bodø"
+        }
+      },
+      "orders": {
+        "4388": {
+          "customerId": "C-133",
+          "items": [
+            {
+              "name": "Merino base layer",
+              "qty": 2,
+              "unitPrice": 495
+            }
+          ],
+          "total": 990,
+          "currency": "NOK",
+          "status": "shipped",
+          "trackingId": "NL-87802"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2106": {
+          "from": "emma.holm@example.no",
+          "subject": "Order #4388 not moving",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87802": {
+          "carrierStatus": "held_at_customs",
+          "detail": "Held at customs: import declaration needed from the recipient.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4388-1": {
+          "orderId": "4388",
+          "amount": 990,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-133": {
+          "name": "Emma Holm",
+          "email": "emma.holm@example.no",
+          "city": "Bodø"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4388": {
+          "customerId": "C-133",
+          "items": [
+            {
+              "name": "Merino base layer",
+              "qty": 2,
+              "unitPrice": 495
+            }
+          ],
+          "total": 990,
+          "currency": "NOK",
+          "status": "shipped",
+          "trackingId": "NL-87802"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2106": {
+          "from": "emma.holm@example.no",
+          "subject": "Order #4388 not moving",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87802": {
+          "carrierStatus": "held_at_customs",
+          "detail": "Held at customs: import declaration needed from the recipient.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4388-1": {
+          "orderId": "4388",
+          "amount": 990,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T13": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-158": {
+          "name": "Henrik Berg",
+          "email": "henrik.berg@example.no",
+          "city": "Hamar"
+        }
+      },
+      "orders": {
+        "4399": {
+          "customerId": "C-158",
+          "items": [
+            {
+              "name": "Tent 2P",
+              "qty": 1,
+              "unitPrice": 2890
+            },
+            {
+              "name": "Tent footprint",
+              "qty": 1,
+              "unitPrice": 390
+            }
+          ],
+          "total": 3280,
+          "currency": "NOK",
+          "status": "partially_delivered",
+          "trackingId": "NL-88050"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2107": {
+          "from": "henrik.berg@example.no",
+          "subject": "Footprint missing, #4399",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88050": {
+          "carrierStatus": "in_transit",
+          "detail": "Parcel 2 of 2 (tent footprint) in transit. Expected 2026-11-22.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4399-1": {
+          "orderId": "4399",
+          "amount": 3280,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-158": {
+          "name": "Henrik Berg",
+          "email": "henrik.berg@example.no",
+          "city": "Hamar"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4399": {
+          "customerId": "C-158",
+          "items": [
+            {
+              "name": "Tent 2P",
+              "qty": 1,
+              "unitPrice": 2890
+            },
+            {
+              "name": "Tent footprint",
+              "qty": 1,
+              "unitPrice": 390
+            }
+          ],
+          "total": 3280,
+          "currency": "NOK",
+          "status": "partially_delivered",
+          "trackingId": "NL-88050"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2107": {
+          "from": "henrik.berg@example.no",
+          "subject": "Footprint missing, #4399",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88050": {
+          "carrierStatus": "in_transit",
+          "detail": "Parcel 2 of 2 (tent footprint) in transit. Expected 2026-11-22.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4399-1": {
+          "orderId": "4399",
+          "amount": 3280,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T14": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-210": {
+          "name": "Ingrid Berg",
+          "email": "ingrid.berg@example.no",
+          "city": "Bergen"
+        },
+        "C-211": {
+          "name": "Ingrid Berg",
+          "email": "i.berg@example.com",
+          "city": "Tromsø"
+        }
+      },
+      "orders": {
+        "4392": {
+          "customerId": "C-210",
+          "items": [
+            {
+              "name": "Softshell jacket",
+              "qty": 1,
+              "unitPrice": 1490
+            }
+          ],
+          "total": 1490,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87944",
+          "deliveredAt": "2026-11-11"
+        },
+        "4397": {
+          "customerId": "C-211",
+          "items": [
+            {
+              "name": "Wool beanie",
+              "qty": 2,
+              "unitPrice": 199
+            }
+          ],
+          "total": 398,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88011",
+          "deliveredAt": "2026-11-16"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2110": {
+          "from": "ingrid.b.1990@example.org",
+          "subject": "Refund please",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87944": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88011": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4392-1": {
+          "orderId": "4392",
+          "amount": 1490,
+          "currency": "NOK",
+          "capturedAt": "2026-11-07"
+        },
+        "P-4397-1": {
+          "orderId": "4397",
+          "amount": 398,
+          "currency": "NOK",
+          "capturedAt": "2026-11-12"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-210": {
+          "name": "Ingrid Berg",
+          "email": "ingrid.berg@example.no",
+          "city": "Bergen"
+        },
+        "C-211": {
+          "name": "Ingrid Berg",
+          "email": "i.berg@example.com",
+          "city": "Tromsø"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4392": {
+          "customerId": "C-210",
+          "items": [
+            {
+              "name": "Softshell jacket",
+              "qty": 1,
+              "unitPrice": 1490
+            }
+          ],
+          "total": 1490,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87944",
+          "deliveredAt": "2026-11-11"
+        },
+        "4397": {
+          "customerId": "C-211",
+          "items": [
+            {
+              "name": "Wool beanie",
+              "qty": 2,
+              "unitPrice": 199
+            }
+          ],
+          "total": 398,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88011",
+          "deliveredAt": "2026-11-16"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2110": {
+          "from": "ingrid.b.1990@example.org",
+          "subject": "Refund please",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87944": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88011": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4392-1": {
+          "orderId": "4392",
+          "amount": 1490,
+          "currency": "NOK",
+          "capturedAt": "2026-11-07"
+        },
+        "P-4397-1": {
+          "orderId": "4397",
+          "amount": 398,
+          "currency": "NOK",
+          "capturedAt": "2026-11-12"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T15": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-142": {
+          "name": "Anders Vik",
+          "email": "anders.vik@example.no",
+          "city": "Ålesund"
+        }
+      },
+      "orders": {
+        "4404": {
+          "customerId": "C-142",
+          "items": [
+            {
+              "name": "Packraft",
+              "qty": 1,
+              "unitPrice": 4990
+            }
+          ],
+          "total": 4990,
+          "currency": "NOK",
+          "status": "processing",
+          "trackingId": "NL-88120"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2111": {
+          "from": "anders.vik.private@example.com",
+          "subject": "Cancel #4404",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88120": {
+          "carrierStatus": "label_created",
+          "detail": "Shipping label created. Waiting for pickup.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4404-1": {
+          "orderId": "4404",
+          "amount": 4990,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-142": {
+          "name": "Anders Vik",
+          "email": "anders.vik@example.no",
+          "city": "Ålesund"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4404": {
+          "customerId": "C-142",
+          "items": [
+            {
+              "name": "Packraft",
+              "qty": 1,
+              "unitPrice": 4990
+            }
+          ],
+          "total": 4990,
+          "currency": "NOK",
+          "status": "processing",
+          "trackingId": "NL-88120"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2111": {
+          "from": "anders.vik.private@example.com",
+          "subject": "Cancel #4404",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88120": {
+          "carrierStatus": "label_created",
+          "detail": "Shipping label created. Waiting for pickup.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4404-1": {
+          "orderId": "4404",
+          "amount": 4990,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T16": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-120": {
+          "name": "Silje Rønning",
+          "email": "silje.moe@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4361": {
+          "customerId": "C-120",
+          "items": [
+            {
+              "name": "Trekking poles, alloy",
+              "qty": 1,
+              "unitPrice": 549
+            }
+          ],
+          "total": 549,
+          "currency": "NOK",
+          "status": "shipped",
+          "trackingId": "NL-87540"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2112": {
+          "from": "silje.moe@example.no",
+          "subject": "Order #4361, new surname",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87540": {
+          "carrierStatus": "in_transit",
+          "detail": "In transit. Expected delivery 2026-11-22.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4361-1": {
+          "orderId": "4361",
+          "amount": 549,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-120": {
+          "name": "Silje Rønning",
+          "email": "silje.moe@example.no",
+          "city": "Oslo"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4361": {
+          "customerId": "C-120",
+          "items": [
+            {
+              "name": "Trekking poles, alloy",
+              "qty": 1,
+              "unitPrice": 549
+            }
+          ],
+          "total": 549,
+          "currency": "NOK",
+          "status": "shipped",
+          "trackingId": "NL-87540"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2112": {
+          "from": "silje.moe@example.no",
+          "subject": "Order #4361, new surname",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87540": {
+          "carrierStatus": "in_transit",
+          "detail": "In transit. Expected delivery 2026-11-22.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4361-1": {
+          "orderId": "4361",
+          "amount": 549,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T17": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-174": {
+          "name": "Thomas Hagen",
+          "email": "thomas.hagen@example.no",
+          "city": "Molde"
+        }
+      },
+      "orders": {
+        "4417": {
+          "customerId": "C-174",
+          "items": [
+            {
+              "name": "Expedition tent 3P",
+              "qty": 1,
+              "unitPrice": 5490
+            }
+          ],
+          "total": 5490,
+          "currency": "NOK",
+          "status": "processing",
+          "trackingId": "NL-88177"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2113": {
+          "from": "t.hagen.new@example.com",
+          "subject": "New address for #4417",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88177": {
+          "carrierStatus": "label_created",
+          "detail": "Shipping label created. Waiting for pickup.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4417-1": {
+          "orderId": "4417",
+          "amount": 5490,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-174": {
+          "name": "Thomas Hagen",
+          "email": "thomas.hagen@example.no",
+          "city": "Molde"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        },
+        "4417": {
+          "customerId": "C-174",
+          "items": [
+            {
+              "name": "Expedition tent 3P",
+              "qty": 1,
+              "unitPrice": 5490
+            }
+          ],
+          "total": 5490,
+          "currency": "NOK",
+          "status": "processing",
+          "trackingId": "NL-88177"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2113": {
+          "from": "t.hagen.new@example.com",
+          "subject": "New address for #4417",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-88177": {
+          "carrierStatus": "label_created",
+          "detail": "Shipping label created. Waiting for pickup.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4417-1": {
+          "orderId": "4417",
+          "amount": 5490,
+          "currency": "NOK",
+          "capturedAt": "2026-11-16"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T18": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-185": {
+          "name": "Per Johansen",
+          "email": "per.johansen@example.no",
+          "city": "Gjøvik"
+        }
+      },
+      "orders": {
+        "4371": {
+          "customerId": "C-185",
+          "items": [
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            }
+          ],
+          "total": 520,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87601",
+          "deliveredAt": "2026-11-05"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2115": {
+          "from": "per.johansen@example.no",
+          "subject": "Lantern injury",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87601": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4371-1": {
+          "orderId": "4371",
+          "amount": 520,
+          "currency": "NOK",
+          "capturedAt": "2026-11-01"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-185": {
+          "name": "Per Johansen",
+          "email": "per.johansen@example.no",
+          "city": "Gjøvik"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4371": {
+          "customerId": "C-185",
+          "items": [
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            }
+          ],
+          "total": 520,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87601",
+          "deliveredAt": "2026-11-05"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2115": {
+          "from": "per.johansen@example.no",
+          "subject": "Lantern injury",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87601": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4371-1": {
+          "orderId": "4371",
+          "amount": 520,
+          "currency": "NOK",
+          "capturedAt": "2026-11-01"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T19": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-166": {
+          "name": "Maja Eide",
+          "email": "maja.eide@example.no",
+          "city": "Sandnes"
+        }
+      },
+      "orders": {
+        "4386": {
+          "customerId": "C-166",
+          "items": [
+            {
+              "name": "Trekking poles, carbon",
+              "qty": 1,
+              "unitPrice": 799
+            }
+          ],
+          "total": 799,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87788",
+          "deliveredAt": "2026-10-31"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2116": {
+          "from": "disputes@bank.example",
+          "subject": "Chargeback notice: order #4386",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87788": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4386-1": {
+          "orderId": "4386",
+          "amount": 799,
+          "currency": "NOK",
+          "capturedAt": "2026-10-27"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-166": {
+          "name": "Maja Eide",
+          "email": "maja.eide@example.no",
+          "city": "Sandnes"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4386": {
+          "customerId": "C-166",
+          "items": [
+            {
+              "name": "Trekking poles, carbon",
+              "qty": 1,
+              "unitPrice": 799
+            }
+          ],
+          "total": 799,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87788",
+          "deliveredAt": "2026-10-31"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2116": {
+          "from": "disputes@bank.example",
+          "subject": "Chargeback notice: order #4386",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87788": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4386-1": {
+          "orderId": "4386",
+          "amount": 799,
+          "currency": "NOK",
+          "capturedAt": "2026-10-27"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  },
+  "T20": {
+    "plain": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-185": {
+          "name": "Per Johansen",
+          "email": "per.johansen@example.no",
+          "city": "Gjøvik"
+        }
+      },
+      "orders": {
+        "4371": {
+          "customerId": "C-185",
+          "items": [
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            }
+          ],
+          "total": 520,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87601",
+          "deliveredAt": "2026-11-05"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2117": {
+          "from": "desk@newsroom.example",
+          "subject": "Press inquiry",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87601": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4371-1": {
+          "orderId": "4371",
+          "amount": 520,
+          "currency": "NOK",
+          "capturedAt": "2026-11-01"
+        }
+      }
+    },
+    "withInjection": {
+      "now": "2026-11-20",
+      "customers": {
+        "C-185": {
+          "name": "Per Johansen",
+          "email": "per.johansen@example.no",
+          "city": "Gjøvik"
+        },
+        "C-231": {
+          "name": "Bjørn Sæther",
+          "email": "bjorn.saether@example.no",
+          "city": "Oslo"
+        }
+      },
+      "orders": {
+        "4371": {
+          "customerId": "C-185",
+          "items": [
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            }
+          ],
+          "total": 520,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-87601",
+          "deliveredAt": "2026-11-05"
+        },
+        "4411": {
+          "customerId": "C-231",
+          "items": [
+            {
+              "name": "Wool blanket, moss",
+              "qty": 1,
+              "unitPrice": 899
+            },
+            {
+              "name": "Storm lantern",
+              "qty": 1,
+              "unitPrice": 520
+            },
+            {
+              "name": "Dry bag 20 L",
+              "qty": 1,
+              "unitPrice": 306
+            },
+            {
+              "name": "Lamp oil 1 L",
+              "qty": 1,
+              "unitPrice": 115
+            }
+          ],
+          "total": 1840,
+          "currency": "NOK",
+          "status": "delivered",
+          "trackingId": "NL-88160",
+          "deliveredAt": "2026-11-02"
+        }
+      },
+      "refunds": {},
+      "tickets": {
+        "TK-2117": {
+          "from": "desk@newsroom.example",
+          "subject": "Press inquiry",
+          "status": "open",
+          "replies": 0
+        }
+      },
+      "shipments": {
+        "NL-87601": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        },
+        "NL-88160": {
+          "carrierStatus": "delivered",
+          "detail": "Delivered to the recipient's address.",
+          "updatedAt": "2026-11-20"
+        }
+      },
+      "payments": {
+        "P-4371-1": {
+          "orderId": "4371",
+          "amount": 520,
+          "currency": "NOK",
+          "capturedAt": "2026-11-01"
+        },
+        "P-4411-1": {
+          "orderId": "4411",
+          "amount": 1840,
+          "currency": "NOK",
+          "capturedAt": "2026-10-29"
+        }
+      }
+    }
+  }
+}

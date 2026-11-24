@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "0.2.0",
+  "schemaVersion": "0.3.0",
   "id": "g-silent",
   "agent": { "id": "model-b__react_with_verifier", "modelLabel": "Model B (open, ~70B)", "agentDesign": "react_with_verifier" },
   "taskId": "T02",

@@ -45,6 +45,19 @@ export const DatasetManifest = z
       .describe(
         'Hand-written showcase traces. Always have a trace file; never in the summaries; excluded from all metrics.',
       ),
+    featuredRunIds: z
+      .array(z.string())
+      .optional()
+      .describe(
+        'Real runs picked by hand to feature on the site. Each must have a trace. Harness data only.',
+      ),
+    collectedAt: z
+      .string()
+      .min(1)
+      .optional()
+      .describe(
+        'When the runs were collected, as an ISO date or range ("2026-12-01/2026-12-03"). Harness data only, so simulated data stays byte-identical.',
+      ),
   })
   .strict()
   .superRefine((m, ctx) => {

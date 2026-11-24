@@ -23,3 +23,30 @@ jobs:
       - run: npm test
       # The acceptance check from the brief: generate the data, then build the static site.
       - run: npm run generate && npm run build
+      # The published dataset must pass the contract, and the site must build from it.
+      - run: npm run validate:dataset -- datasets/haiku-trial
+      - run: node scripts/copy-dataset.mjs datasets/haiku-trial && npm run build
+
+  harness:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: harness
+    steps:
+      - uses: actions/checkout@v4
+      # Node is needed for the export test, which checks output with the TypeScript validator.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        working-directory: .
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check
+      - run: uv run ruff format --check
+      - run: uv run pyright
+      # Every test uses Inspect's mockllm model or scripted agents: no API key, no cost.
+      - run: uv run pytest -q
