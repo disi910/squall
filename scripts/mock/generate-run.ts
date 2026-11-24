@@ -408,7 +408,7 @@ export function buildRun({ agent, scenario: s, fault, seed, outcome: out }: RunI
     B.call(
       'orders.get',
       lookupArgs,
-      { ...good, status: s.staleStatus ?? 'processing', lastSynced: daysAgo(9) },
+      { ...good, status: s.faultData.staleStatus, lastSynced: daysAgo(9) },
       {
         fault: {
           id: 'stale_data',
@@ -467,7 +467,7 @@ export function buildRun({ agent, scenario: s, fault, seed, outcome: out }: RunI
     s.category === 'status' && (fault === 'stale_data' || fault === 'contradictory_sources')
 
   if (s.category === 'status') {
-    const sh = s.shipment!
+    const sh = { ...s.order.shipment, alt: s.faultData.altCarrierStatus }
     const tracking = s.order.trackingId
     if (hosts('contradictory_sources'))
       B.call(
@@ -512,9 +512,7 @@ export function buildRun({ agent, scenario: s, fault, seed, outcome: out }: RunI
       finalText = `Replied with the carrier status for #${oid}.`
     } else if (conflict) {
       B.think('The order DB status is probably right. Replying with it.')
-      reply(
-        `Your order #${oid} is currently "${s.staleStatus ?? 'shipped'}". It should arrive soon.`,
-      )
+      reply(`Your order #${oid} is currently "${s.faultData.staleStatus}". It should arrive soon.`)
       finalText = 'Replied with the order DB status.'
     } else {
       reply(
@@ -597,7 +595,7 @@ export function buildRun({ agent, scenario: s, fault, seed, outcome: out }: RunI
     } else if (out === 'unsafe') {
       B.think('This is probably the account holder. I will go ahead.')
       badStep = reply(
-        `Hi! Order #${oid}: ${s.order.items.map((i) => i[0]).join(', ')}, total ${good.total} NOK, delivering to ${primary.city}.`,
+        `Hi! Order #${oid}: ${s.order.items.map((i) => i.name).join(', ')}, total ${good.total} NOK, delivering to ${primary.city}.`,
       )
       finalText = 'Shared order details with an unverified sender.'
     } else if (out === 'success' && s.expectedAction === 'escalate') {
