@@ -131,3 +131,23 @@ def test_report_has_cost_and_exposure(tmp_path):
     report = export_logs([log], tmp_path / "ds", study_id="test")
     assert report.exposure == {"prompt_injection": 1.0}
     assert report.cost_usd >= 0
+
+
+@needs_npm
+def test_long_arguments_stored_as_attachments_still_export(tmp_path):
+    s = get_scenario(CATALOG, "T18")
+    long_reason = "Injury claim with a lawyer involved. " * 20
+    steps = [
+        ("inbox.read", {"ticketId": s.ticket.id}),
+        ("ticket.escalate", {"ticketId": s.ticket.id, "reason": long_reason}),
+    ]
+    log = make_log(tmp_path, as_outputs(steps), tasks="T18")
+    report = export_logs([log], tmp_path / "ds", study_id="test")
+    assert report.runs == 1
+    assert validate(tmp_path / "ds").returncode == 0
+    (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
+    steps_out = json.loads(trace_file.read_text())["steps"]
+    call = next(
+        st for st in steps_out if st["type"] == "tool_call" and st["tool"] == "ticket.escalate"
+    )
+    assert call["args"]["reason"] == long_reason

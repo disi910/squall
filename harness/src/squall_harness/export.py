@@ -17,7 +17,7 @@ from importlib.metadata import version
 from pathlib import Path
 from typing import Any
 
-from inspect_ai.log import EvalLog, EvalSample, read_eval_log
+from inspect_ai.log import EvalLog, EvalSample, read_eval_log, resolve_sample_attachments
 from inspect_ai.model import ContentReasoning, ContentText
 
 from .inspect_task import REASONING_EFFORT, STORE_KEY, fault_key
@@ -271,6 +271,9 @@ def export_logs(
     for path in log_paths:
         log = read_eval_log(str(path))
         for sample in log.samples or []:
+            # Inspect stores long strings (tool arguments, messages) as attachment://
+            # references in its logs; resolve them so events match the call records.
+            sample = resolve_sample_attachments(sample)
             if sample.error is not None or not sample.scores or STORE_KEY not in sample.store:
                 report.skipped_errors += 1
                 continue
