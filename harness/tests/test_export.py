@@ -167,3 +167,14 @@ def test_export_regrades_from_the_record(tmp_path):
     (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
     trace = json.loads(trace_file.read_text())
     assert trace["outcome"] == "success" and trace["graders"]
+
+
+def test_replace_lets_a_later_log_supersede_runs(tmp_path):
+    first = make_log(
+        tmp_path, as_outputs(correct_steps(get_scenario(CATALOG, "T01"))[:1]), name="a"
+    )
+    rerun = make_log(tmp_path, as_outputs(correct_steps(get_scenario(CATALOG, "T01"))), name="b")
+    report = export_logs([first, rerun], tmp_path / "ds", study_id="test", replace=True)
+    assert report.runs == 1 and report.replaced == 1
+    (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
+    assert json.loads(trace_file.read_text())["outcome"] == "success"

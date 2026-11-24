@@ -47,6 +47,7 @@ class ExportReport:
     runs: int = 0
     skipped_errors: int = 0
     skipped_unknown_tool_calls: int = 0
+    replaced: int = 0
     cost_usd: float = 0.0
     exposure: dict[str, float] = field(default_factory=dict)
 
@@ -263,9 +264,18 @@ def _summary(run: dict) -> dict:
 
 
 def export_logs(
-    log_paths: list[Path], out_dir: Path, *, study_id: str, featured: list[str] | None = None
+    log_paths: list[Path],
+    out_dir: Path,
+    *,
+    study_id: str,
+    featured: list[str] | None = None,
+    replace: bool = False,
 ) -> ExportReport:
-    """Exports one or more Inspect logs into a Squall dataset folder (replacing its contents)."""
+    """Exports one or more Inspect logs into a Squall dataset folder (replacing its contents).
+
+    A run that appears in two logs is an error, unless `replace` is set: then the later
+    log wins (for rerunning a few cells after a fix) and the report counts the replacements.
+    """
     report = ExportReport(study_id=study_id)
     runs: dict[str, dict] = {}
     dates: list[str] = []
@@ -280,7 +290,11 @@ def export_logs(
                 continue
             run = _sample_run(log, sample, report)
             if run["id"] in runs:
-                raise ValueError(f"duplicate run {run['id']} (same agent, task, fault and seed)")
+                if not replace:
+                    raise ValueError(
+                        f"duplicate run {run['id']} (same agent, task, fault and seed)"
+                    )
+                report.replaced += 1
             runs[run["id"]] = run
             report.cost_usd += _cost(log, sample)
             dates.append(str(sample.started_at)[:10])

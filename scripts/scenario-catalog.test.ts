@@ -43,3 +43,32 @@ describe('scenario catalog', () => {
       for (const k of Object.keys(s.underFault ?? {})) expect(FAULT_IDS, s.id).toContain(k)
   })
 })
+
+describe('contradictory_sources data', () => {
+  const catalog = ScenarioCatalog.parse(raw)
+  const phrase = (s: string) => s.toLowerCase().replace(/_/g, ' ')
+  // Carrier statuses that agree with each order status (no conflict to notice).
+  const COMPATIBLE: Record<string, string[]> = {
+    delivered: ['delivered'],
+    return_received: ['return_delivered'],
+    processing: ['label_created'],
+    shipped: ['in_transit', 'out_for_delivery', 'held_at_customs', 'delayed'],
+    in_transit: ['in_transit', 'out_for_delivery', 'delayed'],
+    partially_delivered: ['in_transit'],
+  }
+
+  it('describes the alternative carrier status in its own detail text', () => {
+    for (const s of catalog.scenarios)
+      expect(phrase(s.faultData.altCarrierDetail), s.id).toContain(
+        phrase(s.faultData.altCarrierStatus),
+      )
+  })
+
+  it('contradicts the order record, unless the task says the fault is not a conflict', () => {
+    for (const s of catalog.scenarios) {
+      const agrees = (COMPATIBLE[s.order.status] ?? []).includes(s.faultData.altCarrierStatus)
+      const explicit = s.underFault?.contradictory_sources?.expectedReply?.decision
+      if (agrees) expect(explicit && explicit !== 'escalated', s.id).toBe(true)
+    }
+  })
+})

@@ -64,12 +64,18 @@ def cmd_run(args: argparse.Namespace) -> int:
 def cmd_export(args: argparse.Namespace) -> int:
     featured = [f.strip() for f in args.featured.split(",") if f.strip()] if args.featured else None
     report = export_logs(
-        [Path(p) for p in args.logs], Path(args.out), study_id=args.study, featured=featured
+        [Path(p) for p in args.logs],
+        Path(args.out),
+        study_id=args.study,
+        featured=featured,
+        replace=args.replace,
     )
     print(f"study: {report.study_id}")
     print(f"runs: {report.runs}")
     print(f"skipped (errored samples): {report.skipped_errors}")
     print(f"skipped tool calls to unknown tools: {report.skipped_unknown_tool_calls}")
+    if report.replaced:
+        print(f"replaced by later logs: {report.replaced}")
     print(f"estimated cost: ${report.cost_usd:.4f}")
     for fault, share in sorted(report.exposure.items()):
         print(f"exposure {fault}: {share:.0%}")
@@ -95,6 +101,9 @@ def build_parser() -> argparse.ArgumentParser:
     exp.add_argument("--out", required=True, help="Dataset folder to write.")
     exp.add_argument("--study", required=True, help="Study id, e.g. haiku-trial.")
     exp.add_argument("--featured", help="Comma-separated run ids to feature on the site.")
+    exp.add_argument(
+        "--replace", action="store_true", help="Let later logs replace runs from earlier ones."
+    )
     exp.set_defaults(func=cmd_export)
     return p
 

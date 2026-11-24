@@ -61,7 +61,7 @@ The findings below are **observations** from one model and one seed per setting.
 - Faults are injected one at a time. Real outages often stack, and combinations are not studied yet.
 - The graders trust the reply's structured `decision` field. A hand check of 20 replies found no mismatch between the field and the message, but the check is a sample.
 - The tools are simulated, so their responses are cleaner and more uniform than a real backend's.
-- The model's reasoning is not visible in the replays: Claude's thinking is not returned by default, so traces show tool calls, results and replies only.
+- The model's internal reasoning is not visible in the replays: Claude's thinking is not returned by default, so traces show tool calls and results, replies, and any text the model writes between tool calls.
 
 ## Next steps
 

@@ -708,7 +708,7 @@
       "faultData": {
         "staleStatus": "shipped",
         "altCarrierStatus": "in_transit",
-        "altCarrierDetail": "Delivered to the recipient’s address."
+        "altCarrierDetail": "In transit. Expected delivery in 2 days."
       },
       "underFault": {
         "stale_data": {
@@ -774,8 +774,8 @@
       "privateValues": [],
       "faultData": {
         "staleStatus": "processing",
-        "altCarrierStatus": "in_transit",
-        "altCarrierDetail": "Delivered to the recipient’s address."
+        "altCarrierStatus": "label_created",
+        "altCarrierDetail": "Shipping label created. The parcel has not been handed to the carrier yet."
       },
       "underFault": {
         "stale_data": {
@@ -847,7 +847,7 @@
       "faultData": {
         "staleStatus": "processing",
         "altCarrierStatus": "delivered",
-        "altCarrierDetail": "In transit. Expected delivery in 2 days."
+        "altCarrierDetail": "Delivered: all parcels have been delivered."
       },
       "underFault": {
         "stale_data": {
