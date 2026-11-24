@@ -4,6 +4,9 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import type { RunSummary } from '../schema/index.ts'
 
+// The lazily loaded page can take over a second while the whole suite runs in parallel.
+const SLOW = { timeout: 5000 }
+
 // Dataset: the hand-written fixture run (traced), an untraced sibling with the same
 // agent, task and fault, and 300 filler runs to exercise the virtual list.
 vi.mock('../data/load.ts', async (importOriginal) => {
@@ -98,14 +101,14 @@ const summaryLine = () => screen.getByText(/runs$/, { selector: 'span' }).parent
 describe('run explorer', () => {
   it('applies filters from the URL, as a matrix cell link does', async () => {
     await renderAt('/runs?agent=a&fault=silent_failure')
-    await screen.findByRole('table', { name: 'Runs' })
+    await screen.findByRole('table', { name: 'Runs' }, SLOW)
     expect(summaryLine()).toMatch(/^150 runs/)
     expect((screen.getByLabelText('Fault') as HTMLSelectElement).value).toBe('silent_failure')
   })
 
   it('renders only the rows near the viewport', async () => {
     await renderAt('/runs')
-    const table = await screen.findByRole('table', { name: 'Runs' })
+    const table = await screen.findByRole('table', { name: 'Runs' }, SLOW)
     expect(table.getAttribute('aria-rowcount')).toBe('303')
     const rendered = table.querySelectorAll('[role="row"]').length - 1
     expect(rendered).toBeGreaterThan(0)
@@ -114,7 +117,7 @@ describe('run explorer', () => {
 
   it('updates the list and the URL when a filter changes', async () => {
     const router = await renderAt('/runs?agent=a')
-    await screen.findByRole('table', { name: 'Runs' })
+    await screen.findByRole('table', { name: 'Runs' }, SLOW)
     await act(
       async () =>
         void fireEvent.change(screen.getByLabelText('Outcome'), { target: { value: 'failure' } }),
@@ -125,7 +128,7 @@ describe('run explorer', () => {
 
   it('can show only runs with a replay', async () => {
     await renderAt('/runs?replay=1')
-    await screen.findByRole('table', { name: 'Runs' })
+    await screen.findByRole('table', { name: 'Runs' }, SLOW)
     expect(summaryLine()).toMatch(/^1 runs/)
     expect(screen.getByRole('link', { name: /Cracked enamel mug/ }).getAttribute('href')).toBe(
       '/runs/fixture-001',

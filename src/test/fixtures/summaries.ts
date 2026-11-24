@@ -19,6 +19,7 @@ export interface SummaryOpts {
   tokens?: number
   escalated?: boolean
   escalationExpected?: boolean
+  faultFired?: boolean
 }
 
 /** Builds a schema-valid summary; graders are derived from the outcome so the data stays consistent. */
@@ -54,6 +55,7 @@ export function makeSummary(o: SummaryOpts = {}): RunSummary {
     escalated: o.escalated ?? false,
     escalationExpected: o.escalationExpected ?? false,
     stepCount: o.steps ?? 10,
+    ...(o.faultFired !== undefined ? { faultFired: o.faultFired } : {}),
   }
   // Guard against a test helper that silently produces invalid data.
   RunSummary.parse(summary)

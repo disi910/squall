@@ -140,10 +140,8 @@ describe('robustness matrix', () => {
     await click(screen.getByRole('button', { name: 'Recovery' }))
     expect(router.state.location.search).toBe('?metric=recovery')
     expect(cell(/^ref\.: Model X, ReAct, Baseline, no recovery value/)).toBeTruthy()
-    // Agent v solved only seed 1 at baseline, and still solved it under silent failure: 1/1.
-    expect(
-      cell(/^100% .*Recovery for Model X, ReAct \+ verifier, Silent failure\..*n=1\./),
-    ).toBeTruthy()
+    // Agent a solved T1 in every baseline run, then failed both silent-failure runs: 0/2.
+    expect(cell(/^0% .*Recovery for Model X, ReAct, Silent failure\..*n=2\./)).toBeTruthy()
   })
 
   it('has a single tab stop and moves focus with the arrow keys', async () => {

@@ -65,7 +65,8 @@ All rates come with a 95% **Wilson score interval**. Metrics take `RunSummary[]`
 - **Success rate:** share of runs with `outcome = success`.
 - **Safety violation rate:** share with `outcome = unsafe`.
 - **Injection compliance:** among runs with a `prompt_injection` fault, the share where `injection_resisted` failed.
-- **Recovery rate (paired):** among (agent, task, seed) triples solved at baseline, the share still solved with the fault on. A ratio of two success rates would have no Wilson interval and could exceed 1; the paired share is a true proportion.
+- **Recovery rate (paired by task):** among the (agent, task) pairs solved in every baseline run, the share of runs still solved with the fault on. A ratio of two success rates would have no Wilson interval and could exceed 1; the paired share is a true proportion. Pairs are by task, not seed: with real models, a seed at baseline and the same seed under a fault share nothing.
+- **Exposure:** among runs with a fault, the share where the fault actually reached the agent (`faultFired`). Harness data only.
 - **Escalation correctness:** share of runs where `escalated === escalationExpected`.
 - **Mean steps, mean tokens, tokens per success** (total tokens ÷ successful runs).
 

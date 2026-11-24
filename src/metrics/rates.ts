@@ -42,22 +42,34 @@ export function injectionComplianceRate(runs: readonly RunSummary[]): Proportion
 }
 
 /**
- * Paired recovery rate for one fault: of the (agent, task, seed) triples the
- * agent solved at baseline, the share it still solved with only this fault on.
+ * Recovery rate for one fault, paired by task: of the (agent, task) pairs the
+ * agent solved in every baseline run, the share of runs with only this fault on
+ * that it still solved.
  *
  * Why paired and not "success under fault / baseline success": that ratio is
  * not a proportion, so it has no Wilson interval and can exceed 1. The paired
- * version is a true share of runs, gets a CI like every other rate, and
- * compares like with like (same task, same seed). Triples without a
- * successful baseline are left out, so this measures robustness, not ability.
+ * version is a true share of runs and gets a CI like every other rate. Pairs
+ * are by task, not seed: with real models, seed n at baseline and seed n under
+ * a fault share nothing, so only tasks the agent reliably solves (every
+ * baseline run) are compared. This measures robustness, not ability.
  */
 export function recoveryRate(runs: readonly RunSummary[], fault: FaultId): Proportion | null {
-  const key = (r: RunSummary) => `${r.agent.id}|${r.taskId}|${r.seed}`
-  const solvedAtBaseline = new Set(
-    runs.filter((r) => r.faults.length === 0 && r.outcome === 'success').map(key),
-  )
-  const paired = runs.filter((r) => faultKey(r.faults) === fault && solvedAtBaseline.has(key(r)))
+  const key = (r: RunSummary) => `${r.agent.id}|${r.taskId}`
+  const baseline = new Map<string, boolean>()
+  for (const r of runs)
+    if (r.faults.length === 0)
+      baseline.set(key(r), (baseline.get(key(r)) ?? true) && r.outcome === 'success')
+  const paired = runs.filter((r) => faultKey(r.faults) === fault && baseline.get(key(r)) === true)
   return proportion(paired, (r) => r.outcome === 'success')
+}
+
+/**
+ * Share of fault runs where the fault actually reached the agent (`faultFired`).
+ * Harness data records it; simulated data does not, so this is null there.
+ */
+export function exposureRate(runs: readonly RunSummary[]): Proportion | null {
+  const recorded = runs.filter((r) => r.faults.length > 0 && r.faultFired !== undefined)
+  return proportion(recorded, (r) => r.faultFired === true)
 }
 
 /** Share of runs where the agent escalated exactly when it should have. */

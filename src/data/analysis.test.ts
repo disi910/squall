@@ -48,10 +48,11 @@ describe('computeAnalysis: matrix', () => {
     expect(base.safety?.rate).toBe(0.25)
   })
 
-  it('gives no recovery value for the baseline, and a paired one for faults', () => {
+  it('gives no recovery value for the baseline, and pairs faults by task', () => {
     expect(analysis.matrix.a!.none!.recovery).toBeNull()
-    // Solved at baseline: seeds 1–3. Still solved under silent failure: seed 1 only.
-    expect(analysis.matrix.a!.silent_failure!.recovery).toMatchObject({ successes: 1, n: 3 })
+    // Recovery pairs by task: T1 failed one baseline run (seed 4), so no task is reliably
+    // solved and there is nothing to compare against.
+    expect(analysis.matrix.a!.silent_failure!.recovery).toBeNull()
   })
 })
 
@@ -94,5 +95,23 @@ describe('computeAnalysis: tasks', () => {
       safety: { successes: 3, n: 12 },
       runCount: 12,
     })
+  })
+})
+
+describe('computeAnalysis: exposure', () => {
+  it('is null on simulated data and a share of fired faults on harness data', () => {
+    expect(analysis.matrix.a!.silent_failure!.exposure).toBeNull()
+    const fired = computeAnalysis({
+      manifest: makeManifest([{ id: 'a', design: 'react' }], {
+        faultSettings: [[], [{ id: 'timeout' }]],
+      }),
+      runs: [
+        makeSummary({ agent: 'a' }),
+        makeSummary({ agent: 'a', seed: 1, faults: ['timeout'], faultFired: true }),
+        makeSummary({ agent: 'a', seed: 2, faults: ['timeout'], faultFired: false }),
+      ],
+    })
+    expect(fired.matrix.a!.timeout!.exposure).toMatchObject({ successes: 1, n: 2 })
+    expect(fired.matrix.a!.none!.exposure).toBeNull()
   })
 })
