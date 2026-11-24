@@ -53,7 +53,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         print("Not started.")
         return 1
     eval(
-        squall(tasks=args.tasks, faults=args.faults),
+        squall(tasks=args.tasks, faults=args.faults, first_epoch=args.first_epoch),
         model=args.model,
         epochs=args.epochs,
         log_dir=args.log_dir,
@@ -92,6 +92,12 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--epochs", type=int, default=1, help="Seeds per task and fault.")
     run.add_argument("--tasks", default="all", help="Comma-separated task ids, or 'all'.")
     run.add_argument("--faults", default="all", help="Comma-separated faults ('none' = baseline).")
+    run.add_argument(
+        "--first-epoch",
+        type=int,
+        default=1,
+        help="Seed of the first epoch (e.g. 2 to add seeds 2+).",
+    )
     run.add_argument("--log-dir", default="logs", help="Where Inspect writes its logs.")
     run.add_argument("--yes", action="store_true", help="Skip the cost confirmation.")
     run.set_defaults(func=cmd_run)
