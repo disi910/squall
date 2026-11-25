@@ -111,7 +111,7 @@ Ordered so that cheap, high-information work comes first, the environment is mad
 1. **Done: stale-deploy error.** After a deploy, an open tab that navigates to a page whose old script file is gone gets an error page. Reload once automatically when a page's script fails to load. (Seen on the live site on 2026-11-24; fixed in `src/reloadOnce.ts`.)
 2. **Required CI checks** on `main` (a GitHub setting, the owner's action), so merging can wait for CI.
 3. **Done: CLI cost estimate.** It now uses the token use measured in the Haiku trial (about $0.0009 per Haiku run with caching) instead of the pre-caching guess, which was about six times too high. Sonnet and Opus are priced on Haiku's tokens, and the prompt says a larger model may use more.
-4. **Missing test:** exporting runs that end at a message or token limit, or a refusal.
+4. **Done: missing test.** Exporting runs that end at a message or token limit, or a refusal, is now tested (`harness/tests/test_export.py`), including a message limit that cuts a run off between a tool call and its result.
 5. **Copy that assumes one model** ("Claude Haiku 5.5 so far" in `src/content/copy.ts`): derive it from the manifest.
 
 ### Phase 1: Decide the direction (no code)

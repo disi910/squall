@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 from inspect_ai import eval
-from inspect_ai.model import ChatMessageAssistant, ModelOutput, get_model
+from inspect_ai.model import ChatMessageAssistant, ModelOutput, ModelUsage, get_model
 from inspect_ai.tool import ToolCall
 from scripted import CATALOG, as_outputs, correct_steps
 
@@ -16,11 +16,11 @@ from squall_harness.scenarios import get_scenario
 REPO = Path(__file__).resolve().parents[2]
 
 
-def make_log(tmp_path: Path, outputs, tasks="T01", faults="none", name="log") -> Path:
+def make_log(tmp_path: Path, outputs, tasks="T01", faults="none", name="log", **task_args) -> Path:
     log_dir = tmp_path / name
     model = get_model("mockllm/model", custom_outputs=outputs)
     eval(
-        squall(tasks=tasks, faults=faults),
+        squall(tasks=tasks, faults=faults, **task_args),
         model=model,
         display="none",
         log_dir=str(log_dir),
@@ -199,3 +199,105 @@ def test_first_epoch_offsets_seed(tmp_path):
     assert trace["id"].endswith("--s2") and trace["seed"] == 2
     expected = plan_faults(s, "timeout", 2)
     assert trace["faults"][0]["targetTool"] == expected.target_tool
+
+
+# ---------- Runs that end early: a message limit, a token limit, a refusal ----------
+
+
+def looping_outputs(task: str, usage: ModelUsage | None = None) -> list[ModelOutput]:
+    """The model asks for the same order again and again, so only a limit ends the run."""
+    order = get_scenario(CATALOG, task).order.id
+    outs = []
+    for i in range(20):
+        out = ModelOutput.for_tool_call(
+            "mockllm/model", "orders_get", {"orderId": order}, tool_call_id=f"c{i}"
+        )
+        if usage is not None:
+            out.usage = usage
+        outs.append(out)
+    return outs
+
+
+def refusing_outputs(task: str) -> list[ModelOutput]:
+    """One tool call, then a reply the provider stopped with its content filter."""
+    s = get_scenario(CATALOG, task)
+    return [
+        ModelOutput.for_tool_call("mockllm/model", "inbox_read", {"ticketId": s.ticket.id}),
+        ModelOutput.from_content(
+            "mockllm/model", "I can't help with this request.", stop_reason="content_filter"
+        ),
+    ]
+
+
+def message_limit_log(tmp_path: Path, limit: int, task="T01") -> Path:
+    return make_log(
+        tmp_path, looping_outputs(task), tasks=task, name=f"msg{limit}", message_limit=limit
+    )
+
+
+def token_limit_log(tmp_path: Path, task="T02") -> Path:
+    usage = ModelUsage(input_tokens=1000, output_tokens=100, total_tokens=1100)
+    return make_log(
+        tmp_path, looping_outputs(task, usage), tasks=task, name="tokens", token_limit=2500
+    )
+
+
+def refusal_log(tmp_path: Path, task="T03") -> Path:
+    return make_log(tmp_path, refusing_outputs(task), tasks=task, name="refusal")
+
+
+def exported_trace(tmp_path: Path, log: Path) -> dict:
+    report = export_logs([log], tmp_path / "ds", study_id="test")
+    assert report.runs == 1 and report.skipped_errors == 0
+    (trace_file,) = (tmp_path / "ds" / "traces").glob("*.json")
+    return json.loads(trace_file.read_text())
+
+
+def first_task_detail(trace: dict) -> str:
+    return next(g for g in trace["graders"] if g["severity"] == "task")["detail"]
+
+
+# Even limits stop the run right after a tool result. Odd limits stop it after a tool
+# request: the tool still runs and is recorded, but Inspect drops its result message, so
+# the model never sees it. The exporter pairs calls with tool events, not messages, and
+# both cut points must export.
+@pytest.mark.parametrize("limit", [5, 6, 7, 8])
+def test_message_limit_run_exports_as_a_failure(tmp_path, limit):
+    from inspect_ai.log import read_eval_log
+
+    log = message_limit_log(tmp_path, limit)
+    (sample,) = read_eval_log(str(log)).samples or []
+    assert sample.limit is not None and sample.limit.type == "message"
+    trace = exported_trace(tmp_path, log)
+    assert trace["outcome"] == "failure"
+    assert "ended early: limit" in first_task_detail(trace)
+
+
+def test_token_limit_run_exports_as_a_failure(tmp_path):
+    from inspect_ai.log import read_eval_log
+
+    log = token_limit_log(tmp_path)
+    (sample,) = read_eval_log(str(log)).samples or []
+    assert sample.limit is not None and sample.limit.type == "token"
+    trace = exported_trace(tmp_path, log)
+    assert trace["outcome"] == "failure"
+    assert "ended early: limit" in first_task_detail(trace)
+
+
+def test_refusal_run_exports_as_a_failure(tmp_path):
+    trace = exported_trace(tmp_path, refusal_log(tmp_path))
+    assert trace["outcome"] == "failure"
+    assert "ended early: refusal" in first_task_detail(trace)
+    calls = [st["tool"] for st in trace["steps"] if st["type"] == "tool_call"]
+    assert calls == ["inbox.read"]
+    # The refused reply stays in the trace, so the replay shows how the run ended.
+    assert trace["steps"][-1]["type"] == "final_answer"
+
+
+@needs_npm
+def test_early_endings_validate(tmp_path):
+    logs = [message_limit_log(tmp_path, 7), token_limit_log(tmp_path), refusal_log(tmp_path)]
+    report = export_logs(logs, tmp_path / "ds", study_id="test")
+    assert report.runs == 3 and report.skipped_errors == 0
+    result = validate(tmp_path / "ds")
+    assert result.returncode == 0, result.stdout + result.stderr
