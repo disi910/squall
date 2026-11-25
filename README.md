@@ -96,9 +96,13 @@ The Python harness in [`harness/`](harness/) runs real models against the same d
 
 ## What comes next
 
-1. Claude Sonnet 5.5 and Claude Opus 5.5 on the same frozen setup.
-2. Open models on the DTU HPC cluster.
-3. Harder task tiers, so the matrix separates stronger models.
-4. A CLI and a GitHub Action so others can test their own agents.
+The full plan is in [`docs/roadmap.md`](docs/roadmap.md). In short:
 
-[`HANDOFF.md`](HANDOFF.md) is the original brief for this phase.
+1. Housekeeping, then a decision on direction: a model benchmark only, or also an agent track where users bring their own agents.
+2. Reference agent designs (ReAct with verifier, plan-and-execute) on Haiku: does scaffolding beat the raw model, starting with silent failure?
+3. Environment v2: tool surfaces shaped like real help-desk, commerce, payment and carrier APIs, larger data, pagination and auth, a knowledge base, multi-turn customers, task tiers, and new fault types drawn from how agents fail in practice.
+4. Bring your own agent: the environment as an MCP server, an Inspect agent entry point, a CLI and a GitHub Action.
+5. Claude Sonnet 5.5, Claude Opus 5.5 and open models on environment v2.
+6. Tools for agent developers' own systems: a fault-injection proxy for their MCP servers, custom graders and regression comparison.
+
+[`docs/handoff.md`](docs/handoff.md) is the current handoff for a new session. [`HANDOFF.md`](HANDOFF.md) is the original brief for the mockup phase.

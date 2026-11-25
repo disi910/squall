@@ -20,7 +20,9 @@ describe('generated data validates against the schema', () => {
       .map((r) => [r.id, Run.safeParse(r)] as const)
       .filter(([, p]) => !p.success)
     expect(bad.map(([id, p]) => `${id}: ${p.error?.issues[0]?.message}`)).toEqual([])
-  })
+    // Parsing all 7,200 full runs takes several seconds since zod runs jitless (the site's
+    // CSP forbids eval), more than the default 5 s while the whole suite runs in parallel.
+  }, 30_000)
 
   it('every summary is a valid RunSummary, and the manifest is valid', () => {
     expect(data.summaries.filter((s) => !RunSummary.safeParse(s).success)).toEqual([])
