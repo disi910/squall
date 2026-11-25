@@ -59,7 +59,7 @@ Useful code entry points:
 
 1. **Phase 0, item 1 is done:** the stale-deploy error. A page script that fails to load now reloads the page once (`src/reloadOnce.ts`).
 2. **Phase 0, items 3 to 5 are done:** the CLI's cost estimate uses the Haiku trial's measured token use; exporting runs that end early (a limit or a refusal) is tested; and the site's copy takes the model names and counts from the manifest.
-3. **The rest of Phase 0:** item 2, required CI checks on `main`, is the owner's GitHub setting.
+3. **Phase 0, item 2 is done:** `main` is protected. A ruleset requires a pull request and passing `check` and `harness` jobs.
 4. **Phase 1 is done:** two tracks, with teams building operations agents as the primary user ([`decisions/0001`](decisions/0001-direction-and-primary-user.md)).
 5. **Next, Phase 2:** add ReAct with a verifier and plan-and-execute as Inspect agents, built and tested with `mockllm` first. Each 480-run Haiku batch (about $0.45) needs the owner's go-ahead.
 
@@ -71,7 +71,7 @@ Useful code entry points:
   - Haiku costs about $0.001 per run with caching.
 - **Freeze the setup before a paid batch.** After seeing results, only bug fixes are allowed. Grading fixes need no rerun, because the exporter regrades from recorded calls. Anything the model sees (the handbook, tool output, fault data) does need a rerun.
 - **Commits to this public repo use the GitHub noreply address** (already set in the repo's git config).
-- **`main` deploys to production.** Work on a branch and merge through a pull request. The repo has no required checks yet, so `gh pr merge --auto` merges immediately: run the full CI sequence locally first, or wait until both CI jobs pass.
+- **`main` deploys to production.** Work on a branch and merge through a pull request. A ruleset on `main` requires a pull request and passing `check` and `harness` jobs, so `gh pr merge --auto` waits for CI. Still run the full CI sequence locally before pushing.
 - **Don't add features or change the look unless asked.** The owner asked for robustness and polish only in the last session.
 
 ## Commands

@@ -109,7 +109,7 @@ Ordered so that cheap, high-information work comes first, the environment is mad
 ### Phase 0: Housekeeping (no spend, small)
 
 1. **Done: stale-deploy error.** After a deploy, an open tab that navigates to a page whose old script file is gone gets an error page. Reload once automatically when a page's script fails to load. (Seen on the live site on 2026-11-24; fixed in `src/reloadOnce.ts`.)
-2. **Required CI checks** on `main` (a GitHub setting, the owner's action), so merging can wait for CI.
+2. **Done: required CI checks.** A ruleset on `main` requires a pull request and passing `check` and `harness` jobs, and blocks force pushes and deletion. Auto-merge is on, so `gh pr merge --auto` waits for CI.
 3. **Done: CLI cost estimate.** It now uses the token use measured in the Haiku trial (about $0.0009 per Haiku run with caching) instead of the pre-caching guess, which was about six times too high. Sonnet and Opus are priced on Haiku's tokens, and the prompt says a larger model may use more.
 4. **Done: missing test.** Exporting runs that end at a message or token limit, or a refusal, is now tested (`harness/tests/test_export.py`), including a message limit that cuts a run off between a tool call and its result.
 5. **Done: copy that assumes one model.** The agent step names the models from the manifest, and the banner and findings note count distinct models rather than agent configs (`buildDataFrom` in `src/content/banner.ts`).
