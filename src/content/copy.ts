@@ -7,6 +7,13 @@ import type { DataSource } from './banner.ts'
  */
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 
+/** "A", "A and B", "A, B and C"; past three, just the count. */
+function modelList(models: string[]): string {
+  if (models.length > 3) return `${models.length} of them`
+  if (models.length < 3) return models.join(' and ')
+  return `${models.slice(0, -1).join(', ')} and ${models.at(-1)}`
+}
+
 export function copyFor(source: DataSource) {
   const real = source === 'harness'
   return {
@@ -27,9 +34,10 @@ export function copyFor(source: DataSource) {
         plural(tasks, 'task'),
         plural(seeds, 'seed'),
       ].join(' · '),
-    agentStep: real
-      ? 'A real model (Claude Haiku 5.5 so far) runs a ReAct loop over the shop’s tools.'
-      : 'ReAct, plan-and-execute, or ReAct with a verifier step, on three placeholder models.',
+    agentStep: (models: string[]) =>
+      real
+        ? `${models.length > 1 ? 'Real models' : 'A real model'}${models.length ? ` (${modelList(models)})` : ''} ${models.length > 1 ? 'run' : 'runs'} a ReAct loop over the shop’s tools.`
+        : 'ReAct, plan-and-execute, or ReAct with a verifier step, on three placeholder models.',
     leaderboardIntro: (agents: number) =>
       real
         ? `${plural(agents, 'agent config')}: real models running a ReAct agent.`

@@ -25,14 +25,14 @@ export const container = 'mx-auto w-full max-w-[1180px] px-4 sm:px-6'
  * Its wording is fixed at build time from the dataset the site was built with.
  */
 export function PreviewBanner() {
-  const { source, agentCount } = BUILD_DATA
+  const { source, models } = BUILD_DATA
   return (
     <div role="note" className="border-b border-line bg-surface-2">
       <div className={`${container} flex items-center gap-2.5 py-1.5 text-[13px] text-muted`}>
         <span className="flex-none rounded-sm border border-line-strong px-1.5 font-mono text-[11px] tracking-[0.08em] text-fg uppercase">
-          {bannerChip(source, agentCount)}
+          {bannerChip(source, models.length)}
         </span>
-        <span>{bannerText(source, agentCount)}</span>
+        <span>{bannerText(source, models.length)}</span>
       </div>
     </div>
   )

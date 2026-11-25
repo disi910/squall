@@ -21,6 +21,20 @@ describe('copy for the data source', () => {
     )
   })
 
+  it('names the models from the dataset in the agent step', () => {
+    const step = copyFor('harness').agentStep
+    expect(step(['Claude Haiku 5.5'])).toBe(
+      'A real model (Claude Haiku 5.5) runs a ReAct loop over the shop’s tools.',
+    )
+    expect(step(['Claude Haiku 5.5', 'Claude Sonnet 5.5'])).toBe(
+      'Real models (Claude Haiku 5.5 and Claude Sonnet 5.5) run a ReAct loop over the shop’s tools.',
+    )
+    expect(step(['A', 'B', 'C'])).toContain('(A, B and C) run')
+    expect(step(['A', 'B', 'C', 'D'])).toContain('Real models (4 of them) run')
+    expect(step([])).toBe('A real model runs a ReAct loop over the shop’s tools.')
+    expect(copyFor('simulated').agentStep(['Claude Haiku 5.5'])).toMatch(/placeholder models/)
+  })
+
   it('mentions golden traces only for data that has them', () => {
     expect(copyFor('simulated').goldenNote).toMatch(/golden traces/)
     expect(copyFor('harness').goldenNote).toBe('')
