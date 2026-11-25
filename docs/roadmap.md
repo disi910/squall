@@ -112,7 +112,7 @@ Ordered so that cheap, high-information work comes first, the environment is mad
 2. **Required CI checks** on `main` (a GitHub setting, the owner's action), so merging can wait for CI.
 3. **Done: CLI cost estimate.** It now uses the token use measured in the Haiku trial (about $0.0009 per Haiku run with caching) instead of the pre-caching guess, which was about six times too high. Sonnet and Opus are priced on Haiku's tokens, and the prompt says a larger model may use more.
 4. **Done: missing test.** Exporting runs that end at a message or token limit, or a refusal, is now tested (`harness/tests/test_export.py`), including a message limit that cuts a run off between a tool call and its result.
-5. **Copy that assumes one model** ("Claude Haiku 5.5 so far" in `src/content/copy.ts`): derive it from the manifest.
+5. **Done: copy that assumes one model.** The agent step names the models from the manifest, and the banner and findings note count distinct models rather than agent configs (`buildDataFrom` in `src/content/banner.ts`).
 
 ### Phase 1: Decide the direction (no code)
 

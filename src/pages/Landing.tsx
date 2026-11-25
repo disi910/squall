@@ -70,7 +70,7 @@ export function Landing() {
         <div className="flex flex-wrap items-baseline justify-between gap-4">
           <h2 className="text-[22px]">{COPY.findingsTitle}</h2>
           <span className="text-[13px] text-faint">
-            {COPY.findingsNote(BUILD_DATA.agentCount, BUILD_DATA.seedCount)}
+            {COPY.findingsNote(BUILD_DATA.models.length, BUILD_DATA.seedCount)}
           </span>
         </div>
         <Suspense
@@ -132,7 +132,7 @@ const HOW_IT_WORKS = [
   {
     label: 'Agent',
     title: 'Model + design',
-    text: COPY.agentStep,
+    text: COPY.agentStep(BUILD_DATA.models),
   },
   {
     label: 'Fault layer',

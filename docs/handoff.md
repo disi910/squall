@@ -57,8 +57,8 @@ Useful code entry points:
 ## The next step
 
 1. **Phase 0, item 1 is done:** the stale-deploy error. A page script that fails to load now reloads the page once (`src/reloadOnce.ts`).
-2. **Phase 0, items 3 and 4 are done:** the CLI's cost estimate uses the Haiku trial's measured token use, and exporting runs that end early (a limit or a refusal) is tested.
-3. **The rest of Phase 0:** item 2 (the owner's GitHub setting), then item 5.
+2. **Phase 0, items 3 to 5 are done:** the CLI's cost estimate uses the Haiku trial's measured token use; exporting runs that end early (a limit or a refusal) is tested; and the site's copy takes the model names and counts from the manifest.
+3. **The rest of Phase 0:** item 2, required CI checks on `main`, is the owner's GitHub setting.
 4. **Then Phase 1:** the owner decides the direction (two tracks or a model benchmark only, and who the primary user is). **Don't start Phase 2 or later without those answers.**
 
 ## Working rules (from the owner)
