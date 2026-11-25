@@ -1,4 +1,5 @@
 import type { DatasetManifest, Run, RunSummary } from '../schema/index.ts'
+import { reloadOnce } from '../reloadOnce.ts'
 import { handleRequest } from './requests.ts'
 import type { DataRequest, DataResponses } from './requests.ts'
 
@@ -35,9 +36,10 @@ function cached<T>(key: string, load: () => Promise<T>): Promise<T> {
 
 /**
  * The zod schemas are imported on demand: validation happens after a fetch
- * anyway, so zod never sits on the critical rendering path.
+ * anyway, so zod never sits on the critical rendering path. Like the page
+ * chunks, a stale tab may find the file gone after a deploy (see reloadOnce).
  */
-const schemas = () => import('../schema/index.ts')
+const schemas = reloadOnce(() => import('../schema/index.ts'))
 
 async function fetchJson(path: string): Promise<unknown> {
   const res = await fetch(DATA_ROOT + path)

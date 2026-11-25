@@ -108,7 +108,7 @@ Ordered so that cheap, high-information work comes first, the environment is mad
 
 ### Phase 0: Housekeeping (no spend, small)
 
-1. **Stale-deploy error:** after a deploy, an open tab that navigates to a page whose old script file is gone gets an error page. Reload once automatically when a page's script fails to load. (Seen on the live site on 2026-11-24.)
+1. **Done: stale-deploy error.** After a deploy, an open tab that navigates to a page whose old script file is gone gets an error page. Reload once automatically when a page's script fails to load. (Seen on the live site on 2026-11-24; fixed in `src/reloadOnce.ts`.)
 2. **Required CI checks** on `main` (a GitHub setting, the owner's action), so merging can wait for CI.
 3. **CLI cost estimate:** use the measured per-run cost (about $0.001 for Haiku with caching) instead of the pre-caching guess, which is about six times too high.
 4. **Missing test:** exporting runs that end at a message or token limit, or a refusal.
