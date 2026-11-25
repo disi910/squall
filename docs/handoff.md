@@ -38,6 +38,7 @@ In this order:
 | File                                                                                                                       | Why                                                                                                                                                    |
 | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [`docs/roadmap.md`](roadmap.md)                                                                                            | **The plan from here**: the assessment of the owner's four questions (realism, models vs agents, the user, failure modes) and the ordered phases.        |
+| [`docs/decisions/0001-direction-and-primary-user.md`](decisions/0001-direction-and-primary-user.md) | The owner's Phase 1 decisions: two tracks, and teams building operations agents as the primary user. |
 | [`README.md`](../README.md)                                                                                                | What the site and harness do, how to run them, and the key design decisions.                                                                          |
 | [`datasets/haiku-trial/REVIEW.md`](../datasets/haiku-trial/REVIEW.md)                                                      | The trial's setup, cost, outcomes, the hand check of 40 replies, and **every bug fixed before publishing**: the best record of how the grading rules came to be. |
 | [`docs/superpowers/specs/2026-11-24-python-harness-design.md`](superpowers/specs/2026-11-24-python-harness-design.md)      | The approved design of the harness phase, with its amendments.                                                                                         |
@@ -59,7 +60,8 @@ Useful code entry points:
 1. **Phase 0, item 1 is done:** the stale-deploy error. A page script that fails to load now reloads the page once (`src/reloadOnce.ts`).
 2. **Phase 0, items 3 to 5 are done:** the CLI's cost estimate uses the Haiku trial's measured token use; exporting runs that end early (a limit or a refusal) is tested; and the site's copy takes the model names and counts from the manifest.
 3. **The rest of Phase 0:** item 2, required CI checks on `main`, is the owner's GitHub setting.
-4. **Then Phase 1:** the owner decides the direction (two tracks or a model benchmark only, and who the primary user is). **Don't start Phase 2 or later without those answers.**
+4. **Phase 1 is done:** two tracks, with teams building operations agents as the primary user ([`decisions/0001`](decisions/0001-direction-and-primary-user.md)).
+5. **Next, Phase 2:** add ReAct with a verifier and plan-and-execute as Inspect agents, built and tested with `mockllm` first. Each 480-run Haiku batch (about $0.45) needs the owner's go-ahead.
 
 ## Working rules (from the owner)
 

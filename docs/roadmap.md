@@ -53,7 +53,7 @@ Each phase follows the working rules from the harness phase: explain choices bef
 
 **Uploading agent harnesses to a hosted Squall: not now.** It means running untrusted code (sandboxing and abuse risk) and paying for other people's tokens. Instead, users run Squall locally or in CI with their own API keys, and publish the resulting dataset. Traces are replayable and the validator re-checks every contract rule, but a self-reported run can't prove which model produced it. A public agent leaderboard therefore needs a trust policy first (Phase 7).
 
-**Owner decides:** confirm the two-track direction, or keep Squall a model benchmark only.
+**Decided (2026-11-25): two tracks.** See [`decisions/0001`](decisions/0001-direction-and-primary-user.md).
 
 ### 3. Who is the user, and what would make Squall more useful to them?
 
@@ -72,7 +72,7 @@ Each phase follows the working rules from the harness phase: explain choices bef
 4. **Regression comparison:** two datasets side by side (before and after a prompt change, or two models), showing which cells got better or worse.
 5. **A failure taxonomy per run:** what went wrong and where (tool misuse, policy violation, unverified action, unnecessary escalation, injection followed), aggregated across runs.
 
-**Owner decides:** confirm the primary user. It shapes Phases 5 and 7.
+**Decided (2026-11-25): teams building operations agents are the primary user.** See [`decisions/0001`](decisions/0001-direction-and-primary-user.md).
 
 ### 4. How do agents usually fail in real environments, and does the fault set cover it?
 
@@ -116,7 +116,7 @@ Ordered so that cheap, high-information work comes first, the environment is mad
 
 ### Phase 1: Decide the direction (no code)
 
-The owner answers the **Owner decides** items above (the two tracks, the primary user), and the answers go into a short decision record in `docs/decisions/`. Everything after depends on them.
+**Done (2026-11-25).** Two tracks, with teams building operations agents as the primary user, recorded in [`decisions/0001`](decisions/0001-direction-and-primary-user.md).
 
 ### Phase 2: Reference agent designs on Haiku (cheap, high information)
 
@@ -162,7 +162,7 @@ Run Sonnet 5.5 and Opus 5.5 with the reference agents on the frozen v2, when the
 
 ## Open questions
 
-1. Two tracks, or a model benchmark only? (Phase 1)
-2. Is the primary user the agent developer? (Phase 1)
+1. ~~Two tracks, or a model benchmark only? (Phase 1)~~ Two tracks ([`decisions/0001`](decisions/0001-direction-and-primary-user.md)).
+2. ~~Is the primary user the agent developer? (Phase 1)~~ Yes: teams building operations agents ([`decisions/0001`](decisions/0001-direction-and-primary-user.md)).
 3. How far should v2's multi-turn customer go: scripted only, or an LLM-simulated customer for some tiers? (Phase 3)
 4. Should the agent track ever accept hosted submissions, and under what trust policy? (Phase 7)
