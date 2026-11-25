@@ -2,9 +2,9 @@
 
 Controls that exist and work, but have nothing useful to do with the current data, and limits that are deliberate for now. Audited 2026-11-24 against the deployed Haiku trial (one model, three seeds). Every button and link on the site was checked: each one does something; none is a placeholder.
 
-## Open bug
+## Fixed
 
-- **Stale page scripts after a deploy.** A tab opened before a deploy that then navigates to another page asks for that page's old script file, which no longer exists, and shows the error page until reloaded. The fix (reload once when a page's script fails to load) is Phase 0, item 1 in [`roadmap.md`](roadmap.md).
+- **Stale page scripts after a deploy** (Phase 0, item 1). A tab opened before a deploy that then navigated to another page asked for that page's old script file, which no longer exists, and showed the error page. Now a failed page or schema script reloads the page once (`src/reloadOnce.ts`). A second failure within 10 seconds is a real error and shows the error page, so there is no reload loop. One path is left: the data worker's script. Every page starts the worker on its first render, so a stale tab already has it, unless the tab's first page was the 404 page.
 
 ## Controls with no visible effect yet
 

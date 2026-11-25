@@ -43,7 +43,7 @@ In this order:
 | [`docs/superpowers/specs/2026-11-24-python-harness-design.md`](superpowers/specs/2026-11-24-python-harness-design.md)      | The approved design of the harness phase, with its amendments.                                                                                         |
 | [`schema/README.md`](../schema/README.md)                                                                                  | The data contract (schema 0.3.0): the rules JSON Schema can't express, the metric definitions, the escalation policy, the versioning.                  |
 | [`harness/README.md`](../harness/README.md)                                                                                | Setting up and running the harness, exporting and validating datasets.                                                                                 |
-| [`docs/known-gaps.md`](known-gaps.md)                                                                                      | Controls with nothing to do yet, hidden sections, deliberate limits, and the open stale-deploy bug.                                                     |
+| [`docs/known-gaps.md`](known-gaps.md)                                                                                      | Controls with nothing to do yet, hidden sections, deliberate limits, and the fixed stale-deploy bug.                                                     |
 | [`harness/src/squall_harness/policy.py`](../harness/src/squall_harness/policy.py)                                          | The handbook the model sees. Changing it changes results: it is part of the frozen setup.                                                               |
 | [`harness/src/squall_harness/graders.py`](../harness/src/squall_harness/graders.py)                                        | How runs are judged, including the escalation rule (escalate once the agent has seen the order record and the carrier disagree).                        |
 | [`scenarios/catalog.json`](../scenarios/catalog.json)                                                                      | The 20 tasks, their worlds, expected replies, private values and per-fault data. Shared by TypeScript and Python.                                       |
@@ -56,8 +56,8 @@ Useful code entry points:
 
 ## The next step
 
-1. **Phase 0, item 1:** fix the stale-deploy error. After a deploy, an open tab that navigates to a page whose old script file is gone shows an error page. Reload once automatically when a page's script fails to load. It's a small, user-facing bug with no spend, and it was seen on the live site.
-2. **Then the rest of Phase 0.**
+1. **Phase 0, item 1 is done:** the stale-deploy error. A page script that fails to load now reloads the page once (`src/reloadOnce.ts`).
+2. **The rest of Phase 0**, starting with item 2.
 3. **Then Phase 1:** the owner decides the direction (two tracks or a model benchmark only, and who the primary user is). **Don't start Phase 2 or later without those answers.**
 
 ## Working rules (from the owner)
