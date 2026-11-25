@@ -10,18 +10,29 @@ from pathlib import Path
 
 from inspect_ai import eval
 
-from .export import export_logs
+from .export import PRICES, export_logs
 from .faults import FAULT_IDS
 from .inspect_task import squall
 from .scenarios import load_catalog
 
-# Rough USD per run without prompt caching (about 41k input and 4k output tokens), from
-# the price list cached on 2026-11-03. The trial measures the real figure.
-EST_COST_PER_RUN = {
-    "claude-haiku-5-5": 0.006,
-    "claude-sonnet-5-5": 0.12,
-    "claude-opus-5-5": 0.24,
-}
+# Average tokens per run measured in the Haiku trial (datasets/haiku-trial: 483 runs,
+# prompt caching on): uncached input, output, cache read, cache write, in the order of
+# export.PRICES. Priced at Haiku's rates this is about $0.0009 per run, the trial's figure.
+MEASURED_ON = "claude-haiku-5-5"
+MEASURED_TOKENS_PER_RUN = (13, 1186, 13967, 1515)
+
+
+def estimate_cost_per_run(model_id: str) -> float | None:
+    """USD per run: the trial's measured token use at this model's prices, if it has any."""
+    price = PRICES.get(model_id)
+    if price is None:
+        return None
+    return sum(t * p for t, p in zip(MEASURED_TOKENS_PER_RUN, price, strict=True)) / 1_000_000
+
+
+def _usd(amount: float) -> str:
+    """Two decimals, or enough digits that a small run doesn't read as $0.00."""
+    return f"${amount:.2f}" if amount >= 0.01 else f"${amount:.4f}"
 
 
 def _count(value: str, universe: list[str], what: str) -> int:
@@ -36,9 +47,19 @@ def _count(value: str, universe: list[str], what: str) -> int:
 
 def _confirm(model: str, runs: int, assume_yes: bool) -> bool:
     model_id = model.split("/", 1)[-1]
-    per_run = EST_COST_PER_RUN.get(model_id)
-    estimate = f"about ${per_run * runs:.2f}" if per_run is not None else "an unknown cost"
-    print(f"{runs} runs on {model}: {estimate} (estimate, before prompt caching).")
+    per_run = estimate_cost_per_run(model_id)
+    if per_run is None:
+        print(f"{runs} runs on {model}: an unknown cost.")
+    elif model_id == MEASURED_ON:
+        print(
+            f"{runs} runs on {model}: about {_usd(per_run * runs)} "
+            "(estimate from the token use measured in the Haiku trial, with prompt caching)."
+        )
+    else:
+        print(
+            f"{runs} runs on {model}: about {_usd(per_run * runs)} (estimate: the token use "
+            "measured in the Haiku trial at this model's prices; a larger model may use more)."
+        )
     if assume_yes:
         return True
     return input('This calls a paid API. Type "yes" to start: ').strip().lower() == "yes"
