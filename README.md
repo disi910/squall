@@ -9,21 +9,21 @@
 Squall is a reproducible test environment for tool-using LLM agents. It runs agents against a simulated order-support desk while injecting realistic faults (timeouts, malformed responses, stale data, contradictory sources, silent failures and prompt injection), grades every run deterministically in code, and records each run as a trace you can replay step by step.
 
 > [!IMPORTANT]
-> **The site now shows a real trial: 480 runs of Claude Haiku 5.5**, three seeds per task and fault setting. The agent is real; the shop, its tools and the faults are simulated, and every page says so. With one model so far, read the results as observations, not conclusions. The setup and every bug fixed before the run are documented in [`datasets/haiku-trial/REVIEW.md`](datasets/haiku-trial/REVIEW.md). The seeded mock generator from the preview phase is kept for tests and local development.
+> **The site now shows a real trial: 1,440 runs of Claude Haiku 5.5 under three agent designs** (ReAct, ReAct with a verifier, and plan-and-execute), three seeds per task and fault setting. The agent is real; the shop, its tools and the faults are simulated, and every page says so. With one model so far, read the results as observations, not conclusions. The setup and every bug fixed before the run are documented in [`datasets/haiku-trial/REVIEW.md`](datasets/haiku-trial/REVIEW.md). The seeded mock generator from the preview phase is kept for tests and local development.
 
 ![The landing page: the hook line, success by fault with confidence intervals, and three findings from the Haiku trial](docs/screenshots/landing.png)
 
 ## What you can do on the site
 
-| Page                  | What it shows                                                                                                                                                                                                                                          |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Overview**          | The idea in three sentences, success by fault type with 95% intervals, and three findings computed from the runs.                                                                                                                                      |
-| **Leaderboard**       | Every agent config (so far Claude Haiku 5.5 with a ReAct agent), sortable by baseline success, success under faults, safety violations, injection compliance, escalation correctness and tokens per success. Every rate shows its confidence interval. |
-| **Robustness matrix** | The signature view: agent configs × fault types as a hand-drawn SVG heatmap, with success, safety and paired-recovery views. Every cell opens its runs.                                                                                                |
-| **Runs**              | Every run, filterable by agent, task, fault, outcome and seed, in a virtualized list.                                                                                                                                                                  |
-| **Replay**            | One run, step by step: a timeline with fault markers, the agent's reasoning and tool calls, the world state with each change highlighted, and the grader verdicts. Keyboard controls and links to any step (`?step=12`).                               |
-| **Tasks**             | The 20 support tickets, their written success criteria, and how agents did on each.                                                                                                                                                                    |
-| **Report**            | The trial write-up: methodology, metrics, findings with live numbers, limitations. Written in MDX.                                                                                                                                                     |
+| Page                  | What it shows                                                                                                                                                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Overview**          | The idea in three sentences, success by fault type with 95% intervals, and three findings computed from the runs.                                                                                                                                             |
+| **Leaderboard**       | Every agent config (so far Claude Haiku 5.5 under three agent designs), sortable by baseline success, success under faults, safety violations, injection compliance, escalation correctness and tokens per success. Every rate shows its confidence interval. |
+| **Robustness matrix** | The signature view: agent configs × fault types as a hand-drawn SVG heatmap, with success, safety and paired-recovery views. Every cell opens its runs.                                                                                                       |
+| **Runs**              | Every run, filterable by agent, task, fault, outcome and seed, in a virtualized list.                                                                                                                                                                         |
+| **Replay**            | One run, step by step: a timeline with fault markers, the agent's reasoning and tool calls, the world state with each change highlighted, and the grader verdicts. Keyboard controls and links to any step (`?step=12`).                                      |
+| **Tasks**             | The 20 support tickets, their written success criteria, and how agents did on each.                                                                                                                                                                           |
+| **Report**            | The trial write-up: methodology, metrics, findings with live numbers, limitations. Written in MDX.                                                                                                                                                            |
 
 ![The robustness matrix for the Haiku trial: the silent-failure column stands out](docs/screenshots/matrix.png)
 
@@ -98,8 +98,8 @@ The Python harness in [`harness/`](harness/) runs real models against the same d
 
 The full plan is in [`docs/roadmap.md`](docs/roadmap.md). In short:
 
-1. Housekeeping, then a decision on direction: a model benchmark only, or also an agent track where users bring their own agents.
-2. Reference agent designs (ReAct with verifier, plan-and-execute) on Haiku: does scaffolding beat the raw model, starting with silent failure?
+1. ~~Housekeeping and a decision on direction~~ Done: two tracks, for teams building operations agents.
+2. ~~Reference agent designs on Haiku~~ Done: a verifier step lifts silent failure from 0 of 60 to 8 of 60; plan-and-execute did worse overall.
 3. Environment v2: tool surfaces shaped like real help-desk, commerce, payment and carrier APIs, larger data, pagination and auth, a knowledge base, multi-turn customers, task tiers, and new fault types drawn from how agents fail in practice.
 4. Bring your own agent: the environment as an MCP server, an Inspect agent entry point, a CLI and a GitHub Action.
 5. Claude Sonnet 5.5, Claude Opus 5.5 and open models on environment v2.

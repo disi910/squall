@@ -1,3 +1,5 @@
+import { pct } from '../data/format.ts'
+import { DESIGN_LABEL } from '../data/labels.ts'
 import type { DataSource } from './banner.ts'
 
 /**
@@ -10,9 +12,15 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 /** "A", "A and B", "A, B and C"; past three, just the count. */
 function modelList(models: string[]): string {
   if (models.length > 3) return `${models.length} of them`
-  if (models.length < 3) return models.join(' and ')
-  return `${models.slice(0, -1).join(', ')} and ${models.at(-1)}`
+  return listOf(models)
 }
+
+/** "A", "A and B", "A, B and C". */
+const listOf = (items: string[]) =>
+  items.length < 3 ? items.join(' and ') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`
+
+const designLabel = (d: string) => (DESIGN_LABEL as Record<string, string>)[d] ?? d
+const onlyReAct = (designs: string[]) => designs.length === 0 || designs.join() === 'react'
 
 export function copyFor(source: DataSource) {
   const real = source === 'harness'
@@ -34,13 +42,17 @@ export function copyFor(source: DataSource) {
         plural(tasks, 'task'),
         plural(seeds, 'seed'),
       ].join(' · '),
-    agentStep: (models: string[]) =>
+    agentStep: (models: string[], designs: string[] = ['react']) => {
+      if (!real)
+        return 'ReAct, plan-and-execute, or ReAct with a verifier step, on three placeholder models.'
+      const subject = `${models.length > 1 ? 'Real models' : 'A real model'}${models.length ? ` (${modelList(models)})` : ''} ${models.length > 1 ? 'run' : 'runs'}`
+      return onlyReAct(designs)
+        ? `${subject} a ReAct loop over the shop’s tools.`
+        : `${subject} as ${designs.length} reference agents over the shop’s tools: ${listOf(designs.map(designLabel))}.`
+    },
+    leaderboardIntro: (agents: number, designs: string[] = ['react']) =>
       real
-        ? `${models.length > 1 ? 'Real models' : 'A real model'}${models.length ? ` (${modelList(models)})` : ''} ${models.length > 1 ? 'run' : 'runs'} a ReAct loop over the shop’s tools.`
-        : 'ReAct, plan-and-execute, or ReAct with a verifier step, on three placeholder models.',
-    leaderboardIntro: (agents: number) =>
-      real
-        ? `${plural(agents, 'agent config')}: real models running a ReAct agent.`
+        ? `${plural(agents, 'agent config')}: real models running ${onlyReAct(designs) ? 'a ReAct agent' : `${designs.length} reference agent designs`}.`
         : `${plural(agents, 'agent config')}: placeholder models × agent designs.`,
     runsIntro: real ? 'Every run, filterable.' : 'Every simulated run, filterable.',
     footer: real
@@ -59,4 +71,18 @@ export function stepsSentence(failed: number, succeeded: number): string {
   return failed > succeeded
     ? `Failed and unsafe runs take more steps than successful ones ${counts}.`
     : `Failed and unsafe runs take fewer steps than successful ones ${counts}.`
+}
+
+/**
+ * The verifier finding, worded by the actual direction of the difference and
+ * by how many models it pools over.
+ */
+export function verifierSentence(react: number, verifier: number, models: string[]): string {
+  const where =
+    models.length > 1 ? ', pooled over models' : models.length === 1 ? ` on ${models[0]}` : ''
+  const gap = Math.round((verifier - react) * 100)
+  if (gap === 0)
+    return `A verifier step leaves success under silent failure unchanged${where} (${pct(react)} vs ${pct(verifier)}).`
+  const verb = gap > 0 ? 'lifts' : 'lowers'
+  return `A verifier step ${verb} success under silent failure from ${pct(react)} to ${pct(verifier)}${where}.`
 }

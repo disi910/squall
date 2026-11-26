@@ -120,11 +120,15 @@ Ordered so that cheap, high-information work comes first, the environment is mad
 
 ### Phase 2: Reference agent designs on Haiku (cheap, high information)
 
+**Done (2026-11-26).** Both designs ran 480 runs each on setup v1, for $2.31 in total. The verifier lifts silent failure from 0 of 60 to 8 of 60, the first real design finding, but escalates without need more often. Plan-and-execute did worse overall (60% vs 82%), much of it because setup v1 gives no current date for the 30-day refund window. Details: [`datasets/haiku-trial/REVIEW.md`](../datasets/haiku-trial/REVIEW.md#phase-2-two-more-agent-designs), and the design spec in [`superpowers/specs/2026-11-26-agent-designs.md`](superpowers/specs/2026-11-26-agent-designs.md).
+
 - Add **ReAct with verifier** and **plan-and-execute** as Inspect agents next to the current ReAct agent. The schema and the site already support several designs; the mock phase showed the views.
 - Run them on the frozen setup v1 with Haiku: 480 runs each, about $0.45 per design. Each batch needs the owner's go-ahead.
 - **Question it answers:** does scaffolding beat the raw model? The obvious test is silent failure, which plain ReAct handles in 0 of 60 runs. If a verifier step fixes it, the site has its first real design finding, and the agent track has proof that agents, not just models, matter.
 
 ### Phase 3: Environment v2 design (spec, no spend)
+
+- **From Phase 2:** give the agent the current date (the 30-day window can't be checked in v1), and decide how a planner should handle transient errors, which plan-and-execute gave up on.
 
 - Review the prior art (Question 1).
 - Write the v2 design: tool surfaces shaped like real APIs, larger databases, pagination and auth, a knowledge base, a multi-ticket inbox, a scripted multi-turn customer, task tiers, the new faults and task variants (Question 4), and grading for multi-turn tasks.

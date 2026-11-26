@@ -10,6 +10,8 @@ export interface BuildData {
   source: DataSource
   /** Each model's display label once, in manifest order. */
   models: string[]
+  /** Each agent design once, in DESIGN_ORDER. */
+  designs: string[]
   seedCount: number
   /** The first featured run, for the hero's replay link. */
   featured: string | null
@@ -18,8 +20,16 @@ export interface BuildData {
 export const SIMULATED_BUILD: BuildData = {
   source: 'simulated',
   models: [],
+  designs: [],
   seedCount: 0,
   featured: null,
+}
+
+/** The order designs are named in: the baseline first, then what each adds. */
+const DESIGN_ORDER = ['react', 'react_with_verifier', 'plan_execute']
+const designRank = (d: string) => {
+  const i = DESIGN_ORDER.indexOf(d)
+  return i === -1 ? DESIGN_ORDER.length : i
 }
 
 /**
@@ -29,13 +39,16 @@ export const SIMULATED_BUILD: BuildData = {
  */
 export function buildDataFrom(manifest: {
   source: DataSource
-  agents: { modelLabel: string }[]
+  agents: { modelLabel: string; agentDesign: string }[]
   seeds: unknown[]
   featuredRunIds?: string[]
 }): BuildData {
   return {
     source: manifest.source,
     models: [...new Set(manifest.agents.map((a) => a.modelLabel))],
+    designs: [...new Set(manifest.agents.map((a) => a.agentDesign))].sort(
+      (a, b) => designRank(a) - designRank(b),
+    ),
     seedCount: manifest.seeds.length,
     featured: manifest.featuredRunIds?.[0] ?? null,
   }

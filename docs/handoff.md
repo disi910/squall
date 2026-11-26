@@ -1,6 +1,6 @@
 # Squall: handoff for the next session
 
-Updated 2026-11-25. Read this first, then the files in "Read these to get the full picture". The original brief for the mockup phase is [`HANDOFF.md`](../HANDOFF.md) at the repository root; this file supersedes it as the current handoff.
+Updated 2026-11-26. Read this first, then the files in "Read these to get the full picture". The original brief for the mockup phase is [`HANDOFF.md`](../HANDOFF.md) at the repository root; this file supersedes it as the current handoff.
 
 ## What Squall is
 
@@ -11,7 +11,7 @@ A fault-injection test bench for tool-using LLM agents, and the owner's portfoli
 
 ## Current state
 
-**Done and merged** (PRs disi910/squall#1, #2 and #3):
+**Done and merged** (PRs disi910/squall#1 to #13):
 
 1. **The website** (React 19, Vite 8, TypeScript 7, Tailwind v4, zod 4).
    - **Pages:** overview, leaderboard, robustness matrix, run explorer, step-by-step replay, task catalog, report.
@@ -19,17 +19,22 @@ A fault-injection test bench for tool-using LLM agents, and the owner's portfoli
    - **Hardening:** strict security headers and a Content-Security-Policy.
 2. **The Python harness** (`harness/`: uv, Python 3.12, UK AISI's Inspect).
    - **Core:** the shared scenario catalog, a world with recorded diffs, 9 tools, a seeded fault layer (7 faults), deterministic graders and a support handbook.
-   - **Inspect layer:** runs a ReAct agent. An exporter turns Inspect logs into the Squall data format and regrades from the recorded calls.
+   - **Inspect layer:** runs three reference agent designs (`--design react|react_with_verifier|plan_execute`). An exporter turns Inspect logs into the Squall data format and regrades from the recorded calls.
    - **CLI:** asks before any paid run.
 3. **The real trial:** Claude Haiku 5.5, 480 runs (20 tasks × 8 fault settings × 3 seeds), about $0.45 in total.
    - 394 of 480 succeeded.
    - Silent failure succeeded in 0 of 60.
    - Injection was resisted in 60 of 60, with no safety violations.
    - The setup is frozen at `9e405eb`, with the final review's fixes at `047b21d`.
+4. **Phases 0–2:** housekeeping, the owner's direction decisions ([`decisions/0001`](decisions/0001-direction-and-primary-user.md)), and two more agent designs on Haiku: 480 runs each, $2.31 in total.
+   - The dataset now holds 1,440 runs.
+   - The verifier lifts silent failure from 0 of 60 to 8 of 60, but escalates without need more often.
+   - Plan-and-execute did worse (60% overall), much of it because setup v1 gives no current date.
+   - Every setup, cost and bug fix is in [`datasets/haiku-trial/REVIEW.md`](../datasets/haiku-trial/REVIEW.md).
 
 **Deferred:**
 - **Sonnet 5.5 and Opus 5.5:** deferred for cost. The roadmap now runs them on environment v2 instead (Phase 6).
-- **A small backlog:** listed in Phase 0 of the roadmap and in `docs/known-gaps.md`.
+- **Limits kept as they are:** listed in `docs/known-gaps.md`.
 
 ## Read these to get the full picture
 
@@ -42,6 +47,7 @@ In this order:
 | [`README.md`](../README.md)                                                                                                | What the site and harness do, how to run them, and the key design decisions.                                                                          |
 | [`datasets/haiku-trial/REVIEW.md`](../datasets/haiku-trial/REVIEW.md)                                                      | The trial's setup, cost, outcomes, the hand check of 40 replies, and **every bug fixed before publishing**: the best record of how the grading rules came to be. |
 | [`docs/superpowers/specs/2026-11-24-python-harness-design.md`](superpowers/specs/2026-11-24-python-harness-design.md)      | The approved design of the harness phase, with its amendments.                                                                                         |
+| [`docs/superpowers/specs/2026-11-26-agent-designs.md`](superpowers/specs/2026-11-26-agent-designs.md) | The Phase 2 agent designs: their exact scaffold prompts, message limits, how traces show them, and the bugs the smoke test and seed-1 review found. |
 | [`schema/README.md`](../schema/README.md)                                                                                  | The data contract (schema 0.3.0): the rules JSON Schema can't express, the metric definitions, the escalation policy, the versioning.                  |
 | [`harness/README.md`](../harness/README.md)                                                                                | Setting up and running the harness, exporting and validating datasets.                                                                                 |
 | [`docs/known-gaps.md`](known-gaps.md)                                                                                      | Controls with nothing to do yet, hidden sections, deliberate limits, and the fixed stale-deploy bug.                                                     |
@@ -57,11 +63,13 @@ Useful code entry points:
 
 ## The next step
 
-1. **Phase 0, item 1 is done:** the stale-deploy error. A page script that fails to load now reloads the page once (`src/reloadOnce.ts`).
-2. **Phase 0, items 3 to 5 are done:** the CLI's cost estimate uses the Haiku trial's measured token use; exporting runs that end early (a limit or a refusal) is tested; and the site's copy takes the model names and counts from the manifest.
-3. **Phase 0, item 2 is done:** `main` is protected. A ruleset requires a pull request and passing `check` and `harness` jobs.
-4. **Phase 1 is done:** two tracks, with teams building operations agents as the primary user ([`decisions/0001`](decisions/0001-direction-and-primary-user.md)).
-5. **Next, Phase 2:** add ReAct with a verifier and plan-and-execute as Inspect agents, built and tested with `mockllm` first. Each 480-run Haiku batch (about $0.45) needs the owner's go-ahead.
+**Phase 3: the environment v2 design** (a spec, no spend). See the roadmap's Phase 3 and Question 1:
+- review the prior art
+- design tool surfaces shaped like real APIs, with the current date
+- add multi-turn customers, task tiers and the new faults
+- introduce setup versions in the data format
+
+As with the harness phase, the spec goes through a builder check and then the owner's approval before anything is built.
 
 ## Working rules (from the owner)
 

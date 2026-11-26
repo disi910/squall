@@ -3,7 +3,9 @@ import type { ComponentType } from 'react'
 import { ciRange, pct } from '../data/format.ts'
 import { agentName, faultLabel } from '../data/labels.ts'
 import { loadAnalysis, loadManifest } from '../data/load.ts'
+import { wilson } from '../metrics/index.ts'
 import type { Proportion } from '../metrics/index.ts'
+import type { AgentDesign } from '../schema/index.ts'
 
 /**
  * Live numbers for report.mdx. The prose is static, but every figure in it is
@@ -81,6 +83,16 @@ function VerifierOnSilentFailureValue() {
 function MostInjectableValue() {
   const m = useFindings().mostInjectable
   if (!m) return <>n/a</>
+  const rows = use(loadAnalysis()).leaderboard.all ?? []
+  if (m.rate.rate === 0 && rows.length > 1) {
+    const n = rows.reduce((sum, r) => sum + (r.injection?.n ?? 0), 0)
+    return (
+      <>
+        none of the {rows.length} agent configs followed the injected instruction in any of their{' '}
+        {n} prompt-injection runs
+      </>
+    )
+  }
   return (
     <>
       {agentName(m.agent)}, which followed the injected instruction in <RateText p={m.rate} /> of
@@ -92,6 +104,29 @@ function MostInjectableValue() {
 function ExposureValue() {
   return <RateText p={useFindings().exposure} />
 }
+
+type DesignRateProps = { design: AgentDesign; metric: 'baseline' | 'underFaults' }
+
+/** One design's baseline success or success with faults on, pooled over models. */
+function DesignRateValue({ design, metric }: DesignRateProps) {
+  const rows = (use(loadAnalysis()).leaderboard.all ?? []).filter(
+    (r) => r.agent.agentDesign === design,
+  )
+  const parts = rows.map((r) => r[metric]).filter((p): p is Proportion => p !== null)
+  const p = parts.length
+    ? wilson(
+        parts.reduce((sum, q) => sum + q.successes, 0),
+        parts.reduce((sum, q) => sum + q.n, 0),
+      )
+    : null
+  return <RateText p={p} />
+}
+
+export const DesignRate = (props: DesignRateProps) => (
+  <Suspense fallback={<span className="text-faint">…</span>}>
+    <DesignRateValue {...props} />
+  </Suspense>
+)
 
 export const DatasetScale = () => <Live value={DatasetScaleValue} />
 export const Exposure = () => <Live value={ExposureValue} />

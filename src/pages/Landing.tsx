@@ -5,11 +5,12 @@ import { Skeleton } from '../components/Skeleton.tsx'
 import { StatCard } from '../components/StatCard.tsx'
 import { SuccessByFaultChart } from '../components/SuccessByFaultChart.tsx'
 import { BUILD_DATA } from '../content/banner.ts'
-import { copyFor, stepsSentence } from '../content/copy.ts'
+import { copyFor, stepsSentence, verifierSentence } from '../content/copy.ts'
 import { FEATURED_REPLAY_ID } from '../content/golden.ts'
 import { ciRange, pct } from '../data/format.ts'
 import { agentName, faultLabel } from '../data/labels.ts'
 import { loadAnalysis, loadManifest } from '../data/load.ts'
+import { wilson } from '../metrics/index.ts'
 import { PageTitle } from './PageTitle.tsx'
 
 /** Static wording follows the dataset the site was built with. */
@@ -132,7 +133,7 @@ const HOW_IT_WORKS = [
   {
     label: 'Agent',
     title: 'Model + design',
-    text: COPY.agentStep(BUILD_DATA.models),
+    text: COPY.agentStep(BUILD_DATA.models, BUILD_DATA.designs),
   },
   {
     label: 'Fault layer',
@@ -174,9 +175,20 @@ function PooledChart() {
 
 function FindingCards() {
   const manifest = use(loadManifest())
-  const f = use(loadAnalysis()).findings
+  const analysis = use(loadAnalysis())
+  const f = analysis.findings
+  // When no config followed any injection, the card speaks for all of them: pool their runs.
+  const noneInjected = !!f.mostInjectable && f.mostInjectable.rate.rate === 0
+  const injectionRate =
+    noneInjected && manifest.agents.length > 1
+      ? wilson(
+          0,
+          (analysis.leaderboard.all ?? []).reduce((sum, r) => sum + (r.injection?.n ?? 0), 0),
+        )
+      : (f.mostInjectable?.rate ?? null)
   const copy = copyFor(manifest.source)
   const single = manifest.agents.length === 1
+  const models = [...new Set(manifest.agents.map((a) => a.modelLabel))]
   const v = f.verifierOnSilentFailure
   const gap = v ? Math.round((v.verifier.rate - v.react.rate) * 100) : null
   const cards = [
@@ -196,10 +208,13 @@ function FindingCards() {
         key="injection"
         eyebrow={copy.findingEyebrow('injection')}
         value={pct(f.mostInjectable.rate.rate)}
-        footnote={`95% CI ${ciRange(f.mostInjectable.rate)} · n=${f.mostInjectable.rate.n}`}
+        footnote={`95% CI ${ciRange(injectionRate)} · n=${injectionRate?.n ?? 0}`}
       >
-        {agentName(f.mostInjectable.agent)} followed injected instructions in this share of
-        prompt-injection runs{single ? '.' : ', the most of any config.'}
+        {single
+          ? `${agentName(f.mostInjectable.agent)} followed injected instructions in this share of prompt-injection runs.`
+          : f.mostInjectable.rate.rate === 0
+            ? 'No agent config followed an injected instruction in any prompt-injection run.'
+            : `${agentName(f.mostInjectable.agent)} followed injected instructions in this share of prompt-injection runs, the most of any config.`}
       </StatCard>
     ),
     v && gap !== null && (
@@ -210,8 +225,7 @@ function FindingCards() {
         unit="pts"
         footnote={`ReAct ${ciRange(v.react)} · verifier ${ciRange(v.verifier)}`}
       >
-        A verifier step lifts success under silent failure from {pct(v.react.rate)} to{' '}
-        {pct(v.verifier.rate)}, pooled over models.
+        {verifierSentence(v.react.rate, v.verifier.rate, models)}
       </StatCard>
     ),
     f.steps && (
