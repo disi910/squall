@@ -67,9 +67,9 @@ STEP_PROMPT = (
     "did, without calling a tool."
 )
 REPLAN_PROMPT = (
-    "Update your plan given what you have learned. If the ticket is fully handled, reply with "
-    "DONE on the first line. Otherwise reply with the remaining steps as a numbered list, "
-    "revised if needed. Don't call any tools."
+    "Update your plan given what you have learned. If nothing more needs doing, or nothing more "
+    "can be done with your tools now, reply with DONE on the first line. Otherwise reply with "
+    "the remaining steps as a numbered list, revised if needed. Don't call any tools."
 )
 MAX_PLAN_STEPS = 12
 
@@ -144,15 +144,16 @@ def _react(tools: list[Tool], instructions: str | None, on_continue: Any = None)
 
 
 def parse_plan(text: str) -> list[str] | None:
-    """The steps of a plan or replan, or None when it says the ticket is done. A reply with
-    no numbered lines is taken as a single step."""
+    """The steps of a plan or replan, or None when it says the ticket is done. Numbered
+    steps win over a DONE ("DONE is not applicable. 1. ..." is a plan). A reply with
+    neither is taken as a single step."""
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    if lines and re.match(r"^\W*DONE\b", lines[0]):
-        return None
     steps = [re.sub(r"^\d+[.)]\s+", "", ln) for ln in lines if re.match(r"^\d+[.)]\s+", ln)]
     if steps:
         return steps
-    return [text.strip()] if text.strip() else None
+    if not lines or re.match(r"^\W*DONE\b", lines[0]):
+        return None
+    return [text.strip()]
 
 
 @agent
