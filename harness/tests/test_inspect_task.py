@@ -186,5 +186,9 @@ def test_parse_plan():
     assert parse_plan("DONE\nAll handled.") is None
     assert parse_plan("**DONE** — handled.") is None
     assert parse_plan("Done with step one, now:\n1. Reply") == ["Reply"]
+    # Seen in the smoke test: the replanner explains it isn't done, then lists the plan.
+    assert parse_plan("DONE is not applicable. The ticket is still open.\n\n1. Look up") == [
+        "Look up"
+    ]
     assert parse_plan("Just reply to the customer.") == ["Just reply to the customer."]
     assert parse_plan("   ") is None

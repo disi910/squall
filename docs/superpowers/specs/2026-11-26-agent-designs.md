@@ -33,7 +33,11 @@ This is the standard loop (Wang et al., 2023, "Plan-and-Solve"; the LangGraph pl
    > Carry out step {n} of your plan: {step}
    > Use the tools as needed. When this step is done, reply briefly with what you found or did, without calling a tool.
 3. **Replan.** Another call that can't use tools:
-   > Update your plan given what you have learned. If the ticket is fully handled, reply with DONE on the first line. Otherwise reply with the remaining steps as a numbered list, revised if needed. Don't call any tools.
+
+   > Update your plan given what you have learned. If nothing more needs doing, or nothing more can be done with your tools now, reply with DONE on the first line. Otherwise reply with the remaining steps as a numbered list, revised if needed. Don't call any tools.
+
+   Numbered steps win over a DONE: "DONE is not applicable. 1. …" is a plan.
+
 4. **Repeat** steps 2–3 until the replanner says DONE, or 12 steps have run. Twelve steps is a loop guard: hitting it ends the run as `limit`.
 
 **One conversation, not separate contexts.** In LangGraph, the executor sees only the plan and its current step. Here the planner, executor and replanner share one conversation. That keeps every model call in the trace and the replay complete, which is the point of Squall. It also gives the executor the same information the ReAct baseline has.
@@ -66,3 +70,14 @@ For plain ReAct runs, both rules change nothing. Re-exporting the trial's raw lo
 4. **Seeds 2–3:** 320 runs on the frozen setup.
 5. Export everything with the ReAct runs into `datasets/haiku-trial`, and record the setup, cost and review in its `REVIEW.md`.
 6. Make the site's design wording and the verifier finding follow the data, whichever way it goes.
+
+## Smoke test changes (before the freeze)
+
+The first smoke test (9 runs per design, 2026-11-26) found two problems in plan-and-execute. Both were fixed before any seed batch ran:
+
+- **The parser ended a run early.** The replanner wrote "DONE is not applicable. The ticket is still open." and then a numbered plan, and the parser took the DONE. Now numbered steps win.
+- **The replanner didn't know when to stop.** The first prompt said "If the ticket is fully handled, reply with DONE". After replying correctly, the model kept waiting for the customer to answer: it re-read the inbox until it hit the 300k-token limit. The prompt now also says DONE when nothing more can be done with the tools. That's the standard replanner stopping rule, and it names nothing Squall tests for.
+
+The verifier needed no change.
+
+The smoke test also surfaced a gap in setup v1 that affects every design: the handbook's 30-day refund window has no "today" to measure against. ReAct and the verifier proceed without dwelling on it, while plan-and-execute can stall asking for the date. Setup v1 is frozen, so this is recorded for environment v2 rather than changed now.
