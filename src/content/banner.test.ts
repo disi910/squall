@@ -23,19 +23,24 @@ describe('bannerText', () => {
 })
 
 describe('buildDataFrom', () => {
-  const agent = (modelLabel: string) => ({ modelLabel })
+  const agent = (modelLabel: string, agentDesign = 'react') => ({ modelLabel, agentDesign })
 
   it('counts models, not agent configs', () => {
     // Phase 2: three agent designs on one model are still one model.
     const data = buildDataFrom({
       source: 'harness',
-      agents: [agent('Claude Haiku 5.5'), agent('Claude Haiku 5.5'), agent('Claude Haiku 5.5')],
+      agents: [
+        agent('Claude Haiku 5.5', 'plan_execute'),
+        agent('Claude Haiku 5.5', 'react'),
+        agent('Claude Haiku 5.5', 'react_with_verifier'),
+      ],
       seeds: [1, 2, 3],
       featuredRunIds: ['r1', 'r2'],
     })
     expect(data).toEqual({
       source: 'harness',
       models: ['Claude Haiku 5.5'],
+      designs: ['react', 'react_with_verifier', 'plan_execute'],
       seedCount: 3,
       featured: 'r1',
     })

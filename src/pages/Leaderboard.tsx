@@ -107,8 +107,8 @@ export function Leaderboard() {
         <span className="eyebrow">Leaderboard</span>
         <h1 className="text-3xl">Agent configurations</h1>
         <p className="text-muted">
-          {copyFor(BUILD_DATA.source).leaderboardIntro(analysis.agents.length)} Every rate is a
-          share of runs with its 95% Wilson interval. Click a column to sort.
+          {copyFor(BUILD_DATA.source).leaderboardIntro(analysis.agents.length, BUILD_DATA.designs)}{' '}
+          Every rate is a share of runs with its 95% Wilson interval. Click a column to sort.
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { copyFor, stepsSentence } from './copy.ts'
+import { copyFor, stepsSentence, verifierSentence } from './copy.ts'
 
 describe('copy for the data source', () => {
   it('labels simulated findings as examples and real ones as observations', () => {
@@ -33,6 +33,33 @@ describe('copy for the data source', () => {
     expect(step(['A', 'B', 'C', 'D'])).toContain('Real models (4 of them) run')
     expect(step([])).toBe('A real model runs a ReAct loop over the shop’s tools.')
     expect(copyFor('simulated').agentStep(['Claude Haiku 5.5'])).toMatch(/placeholder models/)
+  })
+
+  it('names the agent designs once more than ReAct has run', () => {
+    const real = copyFor('harness')
+    const all = ['react', 'react_with_verifier', 'plan_execute']
+    expect(real.agentStep(['Claude Haiku 5.5'], ['react'])).toBe(
+      'A real model (Claude Haiku 5.5) runs a ReAct loop over the shop’s tools.',
+    )
+    expect(real.agentStep(['Claude Haiku 5.5'], all)).toBe(
+      'A real model (Claude Haiku 5.5) runs as 3 reference agents over the shop’s tools: ReAct, ReAct + verifier and Plan-and-execute.',
+    )
+    expect(real.leaderboardIntro(1, ['react'])).toBe(
+      '1 agent config: real models running a ReAct agent.',
+    )
+    expect(real.leaderboardIntro(3, all)).toBe(
+      '3 agent configs: real models running 3 reference agent designs.',
+    )
+  })
+
+  it('words the verifier finding by its direction and by the models it pools', () => {
+    expect(verifierSentence(0, 0.3, ['Claude Haiku 5.5'])).toBe(
+      'A verifier step lifts success under silent failure from 0% to 30% on Claude Haiku 5.5.',
+    )
+    expect(verifierSentence(0.5, 0.2, ['A', 'B'])).toBe(
+      'A verifier step lowers success under silent failure from 50% to 20%, pooled over models.',
+    )
+    expect(verifierSentence(0, 0.001, ['Claude Haiku 5.5'])).toMatch(/leaves success .* unchanged/)
   })
 
   it('mentions golden traces only for data that has them', () => {
