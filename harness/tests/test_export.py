@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 from inspect_ai import eval
+from inspect_ai.event import ModelEvent
 from inspect_ai.model import ChatMessageAssistant, ModelOutput, ModelUsage, get_model
 from inspect_ai.tool import ToolCall
 from scripted import CATALOG, as_outputs, correct_steps
@@ -299,5 +300,103 @@ def test_early_endings_validate(tmp_path):
     logs = [message_limit_log(tmp_path, 7), token_limit_log(tmp_path), refusal_log(tmp_path)]
     report = export_logs(logs, tmp_path / "ds", study_id="test")
     assert report.runs == 3 and report.skipped_errors == 0
+    result = validate(tmp_path / "ds")
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+# ---------- Agent designs ----------
+
+
+def _text(content: str) -> ModelOutput:
+    return ModelOutput.from_content("mockllm/model", content)
+
+
+def verifier_log(tmp_path: Path, task="T01") -> Path:
+    s = get_scenario(CATALOG, task)
+    outs = [
+        *as_outputs(correct_steps(s), final="Done."),
+        *as_outputs([("orders.get", {"orderId": s.order.id})], final="Verified."),
+    ]
+    return make_log(tmp_path, outs, tasks=task, name="verifier", design="react_with_verifier")
+
+
+def plan_execute_log(tmp_path: Path, task="T02") -> Path:
+    steps = correct_steps(get_scenario(CATALOG, task))
+    outs = [
+        _text("1. Look up the facts\n2. Act and reply"),
+        *as_outputs(steps[:2], final="Looked them up."),
+        _text("1. Act and reply"),
+        *as_outputs(steps[2:], final="Replied."),
+        _text("DONE\nHandled."),
+    ]
+    return make_log(tmp_path, outs, tasks=task, name="plan", design="plan_execute")
+
+
+def test_verifier_trace_shows_the_verification(tmp_path):
+    from squall_harness.inspect_task import VERIFY_PROMPT
+
+    trace = exported_trace(tmp_path, verifier_log(tmp_path))
+    assert trace["agent"]["agentDesign"] == "react_with_verifier"
+    assert trace["id"] == "model__react_with_verifier--T01--none--s1"
+    types = [st["type"] for st in trace["steps"]]
+    assert types.count("final_answer") == 1 and types[-1] == "final_answer"
+    observations = [st["content"] for st in trace["steps"] if st["type"] == "observation"]
+    assert observations[1:] == [VERIFY_PROMPT]
+    # The reply before verification is reasoning, and the verification comes after it.
+    done = next(st for st in trace["steps"] if st.get("content") == "Done.")
+    assert done["type"] == "reasoning"
+    assert trace["steps"][done["index"] + 1]["content"] == VERIFY_PROMPT
+
+
+def test_plan_execute_trace_shows_plan_steps_and_replans(tmp_path):
+    from squall_harness.inspect_task import PLAN_PROMPT, REPLAN_PROMPT
+
+    trace = exported_trace(tmp_path, plan_execute_log(tmp_path))
+    assert trace["agent"]["id"] == "model__plan_execute"
+    observations = [st["content"] for st in trace["steps"] if st["type"] == "observation"]
+    assert observations[1] == PLAN_PROMPT
+    assert observations[2].startswith("Carry out step 1 of your plan: Look up the facts")
+    assert observations.count(REPLAN_PROMPT) == 2
+    plan = next(st for st in trace["steps"] if st.get("content", "").startswith("1. Look up"))
+    assert plan["type"] == "reasoning" and "tokens" in plan
+    final = [st for st in trace["steps"] if st["type"] == "final_answer"]
+    assert len(final) == 1 and final[0]["content"].startswith("DONE")
+    assert trace["outcome"] == "success"
+
+
+def test_failed_model_call_is_not_a_step(tmp_path):
+    """A model call that errored and was retried (a ReadTimeout in the trial) gave the agent
+    no output, so the trace must not show it as an empty final answer."""
+    from inspect_ai.log import read_eval_log, write_eval_log
+
+    log_path = make_log(tmp_path, as_outputs(correct_steps(get_scenario(CATALOG, "T01"))))
+    clean = exported_trace(tmp_path / "clean", log_path)
+    log = read_eval_log(str(log_path))
+    (sample,) = log.samples or []
+    i = next(k for k, e in enumerate(sample.events) if e.event == "model")
+    first = sample.events[i]
+    assert isinstance(first, ModelEvent)
+    failed = first.model_copy(deep=True)
+    failed.error = "ReadTimeout('')"
+    failed.output = ModelOutput.from_content("mockllm/model", "")
+    sample.events.insert(i + 1, failed)
+    tampered = tmp_path / "tampered.eval"
+    write_eval_log(log, str(tampered))
+    trace = exported_trace(tmp_path / "tampered-ds", tampered)
+    assert [st["type"] for st in trace["steps"]] == [st["type"] for st in clean["steps"]]
+
+
+@needs_npm
+def test_design_runs_validate_with_react_runs(tmp_path):
+    react = make_log(tmp_path, as_outputs(correct_steps(get_scenario(CATALOG, "T01"))))
+    logs = [react, verifier_log(tmp_path), plan_execute_log(tmp_path)]
+    report = export_logs(logs, tmp_path / "ds", study_id="test")
+    assert report.runs == 3
+    manifest = json.loads((tmp_path / "ds" / "manifest.json").read_text())
+    assert {a["agentDesign"] for a in manifest["agents"]} == {
+        "react",
+        "react_with_verifier",
+        "plan_execute",
+    }
     result = validate(tmp_path / "ds")
     assert result.returncode == 0, result.stdout + result.stderr

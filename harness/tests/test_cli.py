@@ -123,3 +123,19 @@ def test_first_epoch_is_passed_to_the_task(monkeypatch):
     )
     assert started["epochs"] == 2
     assert started["task"].metadata["first_epoch"] == 2
+
+
+def test_design_is_passed_to_the_task(monkeypatch):
+    started = {}
+    monkeypatch.setattr(cli, "eval", lambda task, **kw: started.update(task=task) or [])
+    argv = ["run", "--model", "mockllm/model", "--tasks", "T01", "--design", "plan_execute"]
+    assert cli.main(argv) == 0
+    assert started["task"].metadata["design"] == "plan_execute"
+    assert started["task"].message_limit == 80
+
+
+def test_design_estimate_warns_it_costs_more(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", lambda prompt="": "")
+    argv = ["run", "--model", "anthropic/claude-haiku-5-5", "--design", "react_with_verifier"]
+    assert cli.main(argv) == 1
+    assert "react_with_verifier design adds scaffold calls" in capsys.readouterr().out

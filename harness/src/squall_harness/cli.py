@@ -12,7 +12,7 @@ from inspect_ai import eval
 
 from .export import PRICES, export_logs
 from .faults import FAULT_IDS
-from .inspect_task import squall
+from .inspect_task import DESIGNS, squall
 from .scenarios import load_catalog
 
 # Average tokens per run measured in the Haiku trial (datasets/haiku-trial: 483 runs,
@@ -45,7 +45,7 @@ def _count(value: str, universe: list[str], what: str) -> int:
     return len(chosen)
 
 
-def _confirm(model: str, runs: int, assume_yes: bool) -> bool:
+def _confirm(model: str, runs: int, assume_yes: bool, design: str = "react") -> bool:
     model_id = model.split("/", 1)[-1]
     per_run = estimate_cost_per_run(model_id)
     if per_run is None:
@@ -60,6 +60,8 @@ def _confirm(model: str, runs: int, assume_yes: bool) -> bool:
             f"{runs} runs on {model}: about {_usd(per_run * runs)} (estimate: the token use "
             "measured in the Haiku trial at this model's prices; a larger model may use more)."
         )
+    if per_run is not None and design != "react":
+        print(f"The {design} design adds scaffold calls, so expect it to cost more than that.")
     if assume_yes:
         return True
     return input('This calls a paid API. Type "yes" to start: ').strip().lower() == "yes"
@@ -70,11 +72,17 @@ def cmd_run(args: argparse.Namespace) -> int:
     n_tasks = _count(args.tasks, [s.id for s in catalog.scenarios], "task")
     n_faults = _count(args.faults, ["none", *FAULT_IDS], "fault")
     runs = n_tasks * n_faults * args.epochs
-    if not args.model.startswith("mockllm/") and not _confirm(args.model, runs, args.yes):
+    real = not args.model.startswith("mockllm/")
+    if real and not _confirm(args.model, runs, args.yes, args.design):
         print("Not started.")
         return 1
     eval(
-        squall(tasks=args.tasks, faults=args.faults, first_epoch=args.first_epoch),
+        squall(
+            tasks=args.tasks,
+            faults=args.faults,
+            first_epoch=args.first_epoch,
+            design=args.design,
+        ),
         model=args.model,
         epochs=args.epochs,
         log_dir=args.log_dir,
@@ -118,6 +126,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=1,
         help="Seed of the first epoch (e.g. 2 to add seeds 2+).",
+    )
+    run.add_argument(
+        "--design",
+        choices=DESIGNS,
+        default="react",
+        help="Reference agent design (default: react).",
     )
     run.add_argument("--log-dir", default="logs", help="Where Inspect writes its logs.")
     run.add_argument("--yes", action="store_true", help="Skip the cost confirmation.")

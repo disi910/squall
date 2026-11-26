@@ -113,9 +113,35 @@ def _build_trace(sample: EvalSample, record: dict, report: ExportReport) -> _Tra
     call_index: dict[str, int] = {}
     call_step: dict[int, int] = {}
     skipped: set[str] = set()
+    # Only the run's last model call can be the final answer: a design's earlier replies
+    # without tool calls (a plan, a step summary, the reply before verification) are
+    # reasoning. In a plain ReAct run the only such reply is the last one anyway.
+    # A model call that failed (say, a ReadTimeout that Inspect then retried) gave the
+    # agent no output, so it is not a step.
+    model_events = [
+        i for i, e in enumerate(sample.events) if e.event == "model" and e.error is None
+    ]
+    last_model = model_events[-1] if model_events else -1
+    # A design's scaffold prompts (verify, carry out step n, replan) reach the model as
+    # user messages after the task prompt; they become observation steps.
+    seen_users: set[str] = set()
+    task_prompt_seen = False
 
-    for e in sample.events:
+    for i, e in enumerate(sample.events):
+        if e.event == "model" and e.error is not None:
+            continue
         if e.event == "model":
+            for m in e.input:
+                if m.role != "user":
+                    continue
+                key = m.id or m.text
+                if key in seen_users:
+                    continue
+                seen_users.add(key)
+                if not task_prompt_seen:
+                    task_prompt_seen = True  # already in the first observation
+                    continue
+                add({"type": "observation", "content": m.text}, e.timestamp)
             at = e.completed or e.timestamp
             pending: dict[str, int] | None = _tokens(e.output.usage)
 
@@ -131,7 +157,8 @@ def _build_trace(sample: EvalSample, record: dict, report: ExportReport) -> _Tra
             for r in reasoning:
                 emit({"type": "reasoning", "content": r})
             if not tool_calls:
-                emit({"type": "final_answer", "content": "\n\n".join(text)})
+                kind = "final_answer" if i == last_model else "reasoning"
+                emit({"type": kind, "content": "\n\n".join(text)})
                 continue
             for t in text:
                 emit({"type": "reasoning", "content": t})
@@ -195,10 +222,11 @@ def _sample_run(log: EvalLog, sample: EvalSample, report: ExportReport) -> dict:
     model_id = _model_id(log.eval.model)
     config = getattr(log.plan, "config", None)
     effort = getattr(config, "reasoning_effort", None) or REASONING_EFFORT
+    design = sample.metadata.get("design", "react")  # logs from before designs existed
     agent = {
-        "id": f"{model_id}__react",
+        "id": f"{model_id}__{design}",
         "modelLabel": MODEL_LABELS.get(model_id, model_id),
-        "agentDesign": "react",
+        "agentDesign": design,
         "modelId": model_id,
         "reasoningEffort": effort,
     }
