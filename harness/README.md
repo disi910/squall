@@ -30,6 +30,14 @@ uv run squall-harness run --model anthropic/claude-haiku-5-5 --epochs 1 --log-di
 
 Limit the grid with `--tasks T01,T02` and `--faults none,timeout`. Inspect's log viewer works on the logs: `uv run inspect view --log-dir logs/haiku-trial`.
 
+Choose a reference agent design with `--design`:
+
+- `react` (the default): Inspect's ReAct loop.
+- `react_with_verifier`: the same loop, plus one verification turn.
+- `plan_execute`: a planner, the ReAct loop as executor and a replanner.
+
+All three share the handbook, tools, faults and graders. [The design spec](../docs/superpowers/specs/2026-11-26-agent-designs.md) has their exact prompts and limits. The export names each run after its design (`claude-haiku-5-5__plan_execute--T01--none--s1`), so logs from several designs merge into one dataset.
+
 ## Export and validate
 
 ```bash
