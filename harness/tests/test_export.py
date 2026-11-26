@@ -400,3 +400,18 @@ def test_design_runs_validate_with_react_runs(tmp_path):
     }
     result = validate(tmp_path / "ds")
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_empty_planner_reply_shows_in_the_trace(tmp_path):
+    s = get_scenario(CATALOG, "T01")
+    outs = [
+        _text("1. Handle the ticket"),
+        *as_outputs(correct_steps(s), final="Handled."),
+        _text(""),
+        _text("DONE\nHandled."),
+    ]
+    log = make_log(tmp_path, outs, name="empty", design="plan_execute")
+    trace = exported_trace(tmp_path, log)
+    contents = [st.get("content") for st in trace["steps"] if st["type"] == "reasoning"]
+    assert "(Empty reply.)" in contents
+    assert trace["steps"][-1]["type"] == "final_answer"

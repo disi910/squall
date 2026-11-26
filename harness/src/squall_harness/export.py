@@ -157,8 +157,10 @@ def _build_trace(sample: EvalSample, record: dict, report: ExportReport) -> _Tra
             for r in reasoning:
                 emit({"type": "reasoning", "content": r})
             if not tool_calls:
-                kind = "final_answer" if i == last_model else "reasoning"
-                emit({"type": kind, "content": "\n\n".join(text)})
+                if i == last_model:
+                    emit({"type": "final_answer", "content": "\n\n".join(text)})
+                else:  # an empty planner reply is asked again; show that it happened
+                    emit({"type": "reasoning", "content": "\n\n".join(text) or "(Empty reply.)"})
                 continue
             for t in text:
                 emit({"type": "reasoning", "content": t})

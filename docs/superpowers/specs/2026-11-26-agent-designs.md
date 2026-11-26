@@ -81,3 +81,9 @@ The first smoke test (9 runs per design, 2026-11-26) found two problems in plan-
 The verifier needed no change.
 
 The smoke test also surfaced a gap in setup v1 that affects every design: the handbook's 30-day refund window has no "today" to measure against. ReAct and the verifier proceed without dwelling on it, while plan-and-execute can stall asking for the date. Setup v1 is frozen, so this is recorded for environment v2 rather than changed now.
+
+## Seed 1 review fix
+
+In 9 of 160 seed-1 plan-and-execute runs, the planner or replanner returned an empty reply: one output token, no text, stop reason `stop`. The parser treated that as DONE, so the run ended mid-task, usually with no reply sent to the customer. An empty reply isn't a decision. The planner now asks again with the same messages, up to 2 times (`EMPTY_REPLY_RETRIES`), and the replay shows the empty reply as "(Empty reply.)".
+
+This is a harness bug fix, so it's allowed after seeing results. As in the Haiku trial, only the 9 affected runs were rerun, and the export replaces them. The verifier had no empty replies.
