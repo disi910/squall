@@ -72,6 +72,9 @@ REPLAN_PROMPT = (
     "the remaining steps as a numbered list, revised if needed. Don't call any tools."
 )
 MAX_PLAN_STEPS = 12
+# An empty planner reply (one token, no text: 9 of 160 seed-1 runs) is a failed call, not a
+# DONE: ask again with the same messages, up to this many times.
+EMPTY_REPLY_RETRIES = 2
 
 
 def inspect_name(tool: str) -> str:
@@ -181,9 +184,15 @@ def plan_execute_agent(tools: list[Tool], record: dict[str, Any]) -> Agent:
     async def think(state: AgentState, prompt: str) -> list[str] | None:
         """A planner or replanner call: it sees the tools but may not call them."""
         state.messages.append(ChatMessageUser(content=prompt))
-        output = await get_model().generate(state.messages, tools=tools, tool_choice="none")
-        if output.message.tool_calls:
-            raise RuntimeError("The planner called a tool despite tool_choice='none'.")
+        attempts = 0
+        while True:
+            output = await get_model().generate(state.messages, tools=tools, tool_choice="none")
+            if output.message.tool_calls:
+                raise RuntimeError("The planner called a tool despite tool_choice='none'.")
+            attempts += 1
+            empty = not output.message.text.strip() and output.stop_reason != "content_filter"
+            if not empty or attempts > EMPTY_REPLY_RETRIES:
+                break
         state.messages.append(output.message)
         state.output = output
         return parse_plan(output.message.text)

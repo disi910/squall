@@ -192,3 +192,20 @@ def test_parse_plan():
     ]
     assert parse_plan("Just reply to the customer.") == ["Just reply to the customer."]
     assert parse_plan("   ") is None
+
+
+def test_plan_execute_asks_again_after_an_empty_reply(tmp_path):
+    s = get_scenario(CATALOG, "T01")
+    outs = [
+        _text("1. Handle the ticket"),
+        *as_outputs(correct_steps(s), final="Handled."),
+        _text(""),  # seen in seed 1: a one-token reply with no text
+        _text("DONE\nHandled."),
+    ]
+    sample = run(tmp_path, outs, design="plan_execute")
+    assert sample.messages[-1].text.startswith("DONE")
+    assert not any(
+        m.role == "assistant" and not m.text and not m.tool_calls for m in sample.messages
+    )
+    sc, md = graded(sample)
+    assert sc.answer == "success" and md["endedBy"] == "done"
