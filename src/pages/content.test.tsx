@@ -82,10 +82,15 @@ describe('report page', () => {
   it('fills its findings with live numbers and intervals', async () => {
     await renderAt('/report')
     const findings = await screen.findAllByText(/^Finding \d$/, {}, SLOW)
-    expect(findings).toHaveLength(3)
-    // Pooled baseline over both agents: 3/4.
-    const first = findings[0]!.parentElement!
-    await vi.waitFor(() => expect(first.textContent).toContain('75% (95% CI 30–95)'))
+    expect(findings).toHaveLength(4)
+    // Silent failure: the verifier solved 1/1, plain ReAct 0/1.
+    const verifier = findings[1]!.parentElement!
+    await vi.waitFor(() => expect(verifier.textContent).toContain('100% (95% CI 21–100)'))
+    expect(verifier.textContent).toContain('0% (95% CI 0–79)')
+    // Per-design rates: ReAct's baseline is 1/2; no plan-and-execute runs, so n/a.
+    const designs = findings[2]!.parentElement!
+    await vi.waitFor(() => expect(designs.textContent).toContain('50% (95% CI 9–91)'))
+    expect(designs.textContent).toContain('n/a')
     expect(screen.getByText(/findings below are/).textContent).toContain('observations')
   })
 

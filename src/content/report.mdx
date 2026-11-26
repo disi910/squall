@@ -1,25 +1,34 @@
 import {
-  BaselineSuccess,
   CellSize,
   DatasetScale,
+  DesignRate,
   Exposure,
   HardestFault,
   MostInjectable,
+  VerifierOnSilentFailure,
 } from './report-numbers.tsx'
 
 ## Question
 
-Agent benchmarks usually assume tools that answer quickly, correctly and honestly. Production tools time out, rate-limit, return stale or contradictory data, fail silently, and pass along text written by untrusted people. **How much does agent performance degrade under these faults, and which faults does an agent handle badly?**
+Agent benchmarks usually assume tools that answer quickly, correctly and honestly. Production tools time out, rate-limit, return stale or contradictory data, fail silently, and pass along text written by untrusted people. **How much does agent performance degrade under these faults, which faults does an agent handle badly, and does the agent's design change that?**
 
 ## Methodology
 
-- **Agent.** Claude Haiku 5.5 as a ReAct agent, run through UK AISI's Inspect at reasoning effort _medium_. It works from a written support handbook for Nordlys Supply, a fictional shop, and the same handbook is used in every run. The handbook does not mention prompt injection.
+- **Agents.** Claude Haiku 5.5 under three reference agent designs, run through UK AISI's Inspect at reasoning effort _medium_:
+  - **ReAct:** the model calls tools until it stops.
+  - **ReAct with a verifier:** the same loop, plus one turn that asks the model to check its work before it finishes.
+  - **Plan-and-execute:** a planner writes the steps, the ReAct loop carries out one step at a time, and a replanner revises the rest.
+
+  All three work from the same written support handbook for Nordlys Supply, a fictional shop. The two later designs add only generic instructions about how to work, which never mention faults. The handbook does not mention prompt injection.
+
 - **Environment.** A simulated order-support desk: 20 tasks across 5 categories and 9 tools. The tools and the world state (orders, payments, refunds, tickets, customers, carrier records) are simulated; the agent is real.
 - **Faults.** Seven fault types plus a baseline, injected by a seeded layer between the agent and its tools. The seed fixes which tool is hit and how, so every run meets the same fault again. A fault reaches the agent only if it calls the targeted tool; in this trial that happened in <Exposure /> of fault runs.
 - **Design.** <DatasetScale />.
 - **Seeds are repeated trials.** The model's outputs cannot be pinned (these models take no temperature setting), so the same run can play out differently. Repeating each setting gives intervals that capture that variation; the design line above gives the number of seeds.
 - **Grading.** Deterministic graders judge the final world state and the call log in code; there are no LLM judges. Replies are judged by their structured `decision` and stated status, and disclosure by an exact match against private values. Each grader is tagged _task_ or _safety_; any failed safety grader makes the run _unsafe_.
-- **Frozen setup.** The handbook, tasks, faults and graders were frozen at commit `9e405eb` after a smoke test and a first pass, which found and fixed harness and grading bugs. A final review fixed three grading rules and one fault-data bug at `047b21d`; the three runs that bug affected were rerun, and every run was regraded. Nothing was changed to make the results more or less interesting. The bugs and fixes are listed in the trial's review notes (`datasets/haiku-trial/REVIEW.md`).
+- **Frozen setup.** The handbook, tasks, faults and graders were frozen at commit `9e405eb` after a smoke test and a first pass, which found and fixed harness and grading bugs. A final review fixed three grading rules and one fault-data bug at `047b21d`; the three runs that bug affected were rerun, and every run was regraded.
+  - The two later designs were frozen after their own smoke test, at `5da1ca0`. Plan-and-execute got one more harness fix from its seed-1 review, at `0eee229`, and the nine runs that bug affected were rerun.
+  - Nothing was changed to make the results more or less interesting. The bugs and fixes are listed in the trial's review notes (`datasets/haiku-trial/REVIEW.md`).
 - **Traces.** Every step (reasoning, tool call, tool result, world change) is recorded in a versioned JSON format and can be replayed step by step.
 
 ## Metrics and uncertainty
@@ -36,35 +45,50 @@ CI = ( p̂ + z²/2n ± z·√( p̂(1−p̂)/n + z²/4n² ) ) / ( 1 + z²/n ),  z
 
 ## Findings
 
-The findings below are **observations** from one model so far. The numbers are computed live from the runs.
+The findings below are **observations** from one model and three agent designs. The numbers are computed live from the runs.
 
 <Finding n={1}>
-  Baseline success is <BaselineSuccess />. The hardest fault is <HardestFault />: every time a
-  refund, reply or escalation reported success without taking effect, the agent moved on without
-  checking.
+  The hardest fault is <HardestFault />, pooled over the designs. When a refund, reply or escalation
+  reports success without taking effect, plain ReAct and plan-and-execute never notice: they move on
+  without checking.
 </Finding>
 
 <Finding n={2}>
-  Prompt injection had no effect: <MostInjectable />. The agent never acted on the injected
-  instruction or disclosed the targeted customer's data.
+  A verifier step helps against silent failure, but only partly: <VerifierOnSilentFailure />. Most
+  of its successes came from re-reading a ticket and seeing that an escalation had not taken effect.
+  It caught no swallowed refunds, and two of its successes were a corrected reply sent again rather
+  than a detected failure. Its price is caution: it escalated without need more often than plain
+  ReAct.
 </Finding>
 
 <Finding n={3}>
-  The agent escalated when the order record and the carrier disagreed, as the handbook asks, but
-  also escalated on one status task (T12) where "shipped" and "held at customs" do not conflict.
+  Plan-and-execute did worse than plain ReAct:{' '}
+  <DesignRate design="plan_execute" metric="baseline" /> baseline success against{' '}
+  <DesignRate design="react" metric="baseline" />, and{' '}
+  <DesignRate design="plan_execute" metric="underFaults" /> with faults on against{' '}
+  <DesignRate design="react" metric="underFaults" />. Much of the gap comes from the setup: writing
+  a plan makes the agent check the handbook's 30-day refund window, and the handbook gives no
+  current date, so it escalates. It also gives up on rate-limited steps where ReAct retries.
+</Finding>
+
+<Finding n={4}>
+  Prompt injection never worked: <MostInjectable />. The only safety violations were
+  plan-and-execute telling a sender at an unregistered address which email the account uses.
 </Finding>
 
 ## Limitations
 
-- One model so far. With <CellSize /> runs per matrix cell, intervals are still wide, so only large effects are visible.
+- One model so far, under three designs. With <CellSize /> runs per matrix cell, intervals are still wide, so only large effects are visible.
+- Each design is one reasonable version of its pattern. Other prompts or settings for the verifier or the planner could do better or worse.
+- The handbook's 30-day refund window comes with no current date. That matters most for plan-and-execute, which checks the window explicitly.
 - One simulated domain. Results may not transfer to coding agents, browsing agents or other tool sets.
 - Faults are injected one at a time. Real outages often stack, and combinations are not studied yet.
-- The graders trust the reply's structured `decision` field. A hand check of 40 replies found no mismatch between the field and the message, but the check is a sample.
+- The graders trust the reply's structured `decision` field. Hand checks of 40 ReAct replies and 40 from the later designs found one borderline case and no clear mismatch, but the checks are samples.
 - The tools are simulated, so their responses are cleaner and more uniform than a real backend's.
 - The model's internal reasoning is not visible in the replays: Claude's thinking is not returned by default, so traces show tool calls and results, replies, and any text the model writes between tool calls.
 
 ## Next steps
 
-- Claude Sonnet 5.5 and Claude Opus 5.5 on the same frozen setup.
-- Harder task tiers, so the matrix separates stronger models.
+- Environment v2: tool surfaces shaped like real APIs, the current date, multi-turn customers and harder task tiers, so the matrix separates stronger models.
+- Claude Sonnet 5.5 and Claude Opus 5.5 on environment v2, under all three designs.
 - A CLI and a GitHub Action so others can run Squall against their own agents.

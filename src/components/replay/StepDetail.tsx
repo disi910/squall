@@ -30,7 +30,9 @@ export function StepDetail({ step, failures }: { step: Step; failures: GraderRes
       {step.type === 'observation' && (
         <>
           <p className="text-[12.5px] text-faint">
-            Instructions the harness gives the agent at the start of the run.
+            {step.index === 0
+              ? 'Instructions the harness gives the agent at the start of the run.'
+              : 'A prompt from the agent design itself, such as a plan, step or verification prompt.'}
           </p>
           <p className="leading-relaxed whitespace-pre-wrap">{step.content}</p>
         </>

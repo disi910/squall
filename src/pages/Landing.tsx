@@ -10,6 +10,7 @@ import { FEATURED_REPLAY_ID } from '../content/golden.ts'
 import { ciRange, pct } from '../data/format.ts'
 import { agentName, faultLabel } from '../data/labels.ts'
 import { loadAnalysis, loadManifest } from '../data/load.ts'
+import { wilson } from '../metrics/index.ts'
 import { PageTitle } from './PageTitle.tsx'
 
 /** Static wording follows the dataset the site was built with. */
@@ -174,7 +175,17 @@ function PooledChart() {
 
 function FindingCards() {
   const manifest = use(loadManifest())
-  const f = use(loadAnalysis()).findings
+  const analysis = use(loadAnalysis())
+  const f = analysis.findings
+  // When no config followed any injection, the card speaks for all of them: pool their runs.
+  const noneInjected = !!f.mostInjectable && f.mostInjectable.rate.rate === 0
+  const injectionRate =
+    noneInjected && manifest.agents.length > 1
+      ? wilson(
+          0,
+          (analysis.leaderboard.all ?? []).reduce((sum, r) => sum + (r.injection?.n ?? 0), 0),
+        )
+      : (f.mostInjectable?.rate ?? null)
   const copy = copyFor(manifest.source)
   const single = manifest.agents.length === 1
   const models = [...new Set(manifest.agents.map((a) => a.modelLabel))]
@@ -197,7 +208,7 @@ function FindingCards() {
         key="injection"
         eyebrow={copy.findingEyebrow('injection')}
         value={pct(f.mostInjectable.rate.rate)}
-        footnote={`95% CI ${ciRange(f.mostInjectable.rate)} · n=${f.mostInjectable.rate.n}`}
+        footnote={`95% CI ${ciRange(injectionRate)} · n=${injectionRate?.n ?? 0}`}
       >
         {single
           ? `${agentName(f.mostInjectable.agent)} followed injected instructions in this share of prompt-injection runs.`
